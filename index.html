@@ -1739,7 +1739,11 @@
           <button id="btn-bg-remover" class="flex items-center gap-1.5 px-2 py-1 bg-flame/15 text-flame hover:bg-flame hover:text-white font-black rounded-lg transition shrink-0">
             <i data-lucide="wand-2" class="w-3.5 h-3.5"></i> <span class="hidden md:inline">BG Remover</span>
           </button>
-          <div class="h-4 w-px bg-sand"></div>
+          <div id="frame-colors-container" class="hidden items-center gap-2">
+            <span class="font-bold text-slate">Color:</span>
+            <div id="frame-colors-list" class="flex items-center gap-1"></div>
+            <div class="h-4 w-px bg-sand mx-1"></div>
+          </div>
           <div class="flex items-center gap-1 md:gap-2">
             <span class="font-bold text-slate">Radius</span>
             <input type="range" id="top-border-radius" min="0" max="150" value="0" class="w-12 md:w-16 accent-flame">
@@ -3571,17 +3575,27 @@
                artLayer.appendChild(bgWrap);
 
                // Add Frame Image precisely matched and auto-fitted to the canvas bounds
-               const frameWrap = document.createElement('div');
-               frameWrap.className = 'canvas-item absolute cursor-move select-none bg-transparent';
-               frameWrap.dataset.type = 'image';
-               frameWrap.style.width = finalW + 'px';
-               frameWrap.style.height = finalH + 'px';
-               frameWrap.style.left = frameLeft + 'px';
-               frameWrap.style.top = frameTop + 'px';
-               frameWrap.dataset.cost = product.price || 0;
-               frameWrap.dataset.itemName = product.name;
-               frameWrap.innerHTML = `<img src="${product.frameImage}" crossorigin="anonymous" style="width:100%; height:100%;" class="pointer-events-none block drop-shadow-xl">`;
-               artLayer.appendChild(frameWrap);
+               let defaultColor = "transparent";
+                if (product.colors && product.colors.length > 0) {
+                    defaultColor = product.colors[0].value;
+                }
+
+                const frameWrap = document.createElement('div');
+                frameWrap.className = 'canvas-item absolute cursor-move select-none bg-transparent';
+                frameWrap.dataset.type = 'image';
+                frameWrap.style.width = finalW + 'px';
+                frameWrap.style.height = finalH + 'px';
+                frameWrap.style.left = frameLeft + 'px';
+                frameWrap.style.top = frameTop + 'px';
+                frameWrap.dataset.cost = product.price || 0;
+                frameWrap.dataset.itemName = product.name;
+                frameWrap.dataset.productId = product.id;
+                frameWrap.dataset.frameColor = defaultColor;
+                frameWrap.innerHTML = `
+                    <img src="${product.frameImage}" crossorigin="anonymous" style="width:100%; height:100%;" class="pointer-events-none block drop-shadow-xl">
+                    <div class="frame-tint-overlay" style="position: absolute; inset: 0; background-color: ${defaultColor}; -webkit-mask-image: url('${product.frameImage}'); -webkit-mask-size: 100% 100%; mask-image: url('${product.frameImage}'); mask-size: 100% 100%; mix-blend-mode: color; pointer-events: none; transition: background-color 0.2s;"></div>
+                `;
+                artLayer.appendChild(frameWrap);
                
                selectElement(bgWrap, 'image'); 
                recordState();
@@ -3591,7 +3605,7 @@
         } else {
            const imgSrc = product.images && product.images.length > 0 ? product.images[0] : null;
            if (imgSrc) {
-             addFrameToCanvas(imgSrc, product.price, product.name);
+             addFrameToCanvas(imgSrc, product.price, product.name, product.id);
              showToast("Template loaded! Right-click to adjust layers.");
            }
         }
@@ -3911,6 +3925,7 @@
         unsubscribeProducts = db.collection('products').orderBy('createdAt', 'desc').onSnapshot((snapshot) => {
             try {
                 const products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                window.editorProducts = products;
                 const frames = products
                     .filter(p => {
                         return p && 
@@ -3931,7 +3946,7 @@
 
                 if (framesContainer) {
                     framesContainer.innerHTML = frames.length > 0 
-                        ? `<div class="grid grid-cols-2 gap-3">` + frames.map(f => `<button onclick="addFrameToCanvas('${f.imageURL}', ${f.cost || 0}, '${f.name || 'Custom Frame'}')" class="aspect-square bg-editorbg rounded-xl border border-sand/50 overflow-hidden cursor-pointer hover:border-flame transition p-2 flex items-center justify-center"><img src="${f.imageURL}" class="max-w-full max-h-full object-contain pointer-events-none"></button>`).join('') + `</div>`
+                        ? `<div class="grid grid-cols-2 gap-3">` + frames.map(f => `<button onclick="addFrameToCanvas('${f.imageURL}', ${f.cost || 0}, '${f.name || 'Custom Frame'}', '${f.id}')" class="aspect-square bg-editorbg rounded-xl border border-sand/50 overflow-hidden cursor-pointer hover:border-flame transition p-2 flex items-center justify-center"><img src="${f.imageURL}" class="max-w-full max-h-full object-contain pointer-events-none"></button>`).join('') + `</div>`
                         : `<p class="text-xs font-bold text-slate text-center mt-4">Frame designs added by admin will appear here.</p>`;
                 }
             } catch (err) {
@@ -5310,6 +5325,35 @@
           if (strokeEl) document.getElementById('shape-thickness').value = strokeEl.getAttribute('stroke-width') || 4;
         } else {
           topImage.classList.remove('hidden'); topImage.classList.add('flex');
+          
+          // Predefined colors logic
+          const colorsContainer = document.getElementById('frame-colors-container');
+          const colorsList = document.getElementById('frame-colors-list');
+          let colorsShown = false;
+
+          if (el.dataset.productId && window.editorProducts) {
+            const product = window.editorProducts.find(p => p.id === el.dataset.productId);
+            if (product && product.colors && product.colors.length > 0) {
+              colorsShown = true;
+              const activeColor = el.dataset.frameColor || '';
+              colorsList.innerHTML = product.colors.map(c => {
+                const isSelected = activeColor.toLowerCase() === c.value.toLowerCase();
+                const selectedClass = isSelected ? 'ring-2 ring-flame ring-offset-1' : '';
+                return `<button onclick="applyFrameColor('${c.value}')" class="w-5 h-5 rounded-full border border-sand hover:border-flame transition relative focus:outline-none ${selectedClass}" style="background-color: ${c.value};" title="${c.name}"></button>`;
+              }).join('');
+            }
+          }
+
+          if (colorsContainer && colorsList) {
+              if (colorsShown) {
+                colorsContainer.classList.remove('hidden');
+                colorsContainer.classList.add('flex');
+              } else {
+                colorsContainer.classList.add('hidden');
+                colorsContainer.classList.remove('flex');
+              }
+          }
+
           const radiusSlider = document.getElementById('top-border-radius');
           if (radiusSlider) radiusSlider.value = parseInt(window.getComputedStyle(el).borderRadius) || 0;
           const maskControls = document.getElementById('mask-adjust-controls');
@@ -5964,7 +6008,7 @@
       deselectAll();
     });
 
-    window.addFrameToCanvas = (src,cost = 0, name = "Item") => {
+    window.addFrameToCanvas = (src, cost = 0, name = "Item", productId = null) => {
         const canvasW = mainWorkspace.offsetWidth;
         const canvasH = mainWorkspace.offsetHeight;
         const img = new Image();
@@ -6016,6 +6060,14 @@
             const finalW = imgW * scaleX;
             const finalH = imgH * scaleY;
             
+            let defaultColor = "transparent";
+            if (productId && window.editorProducts) {
+                const product = window.editorProducts.find(p => p.id === productId);
+                if (product && product.colors && product.colors.length > 0) {
+                    defaultColor = product.colors[0].value;
+                }
+            }
+
             const wrap = document.createElement('div');
             wrap.className = 'canvas-item absolute cursor-move select-none bg-transparent';
             wrap.dataset.type = 'image'; 
@@ -6023,16 +6075,97 @@
             wrap.style.height = finalH + 'px';
             wrap.dataset.cost = cost;
             wrap.dataset.itemName = name;
+            if (productId) {
+                wrap.dataset.productId = productId;
+                wrap.dataset.frameColor = defaultColor;
+            }
             // Offset the element so the transparent edges hang OUTSIDE the canvas borders
             wrap.style.left = -(minX * scaleX) + 'px';
             wrap.style.top = -(minY * scaleY) + 'px';
             
-            wrap.innerHTML = `<img src="${src}" crossorigin="anonymous" style="width:100%; height:100%;" class="pointer-events-none block">`;
+            wrap.innerHTML = `
+                <img src="${src}" crossorigin="anonymous" style="width:100%; height:100%;" class="pointer-events-none block">
+                <div class="frame-tint-overlay" style="position: absolute; inset: 0; background-color: ${defaultColor}; -webkit-mask-image: url('${src}'); -webkit-mask-size: 100% 100%; mask-image: url('${src}'); mask-size: 100% 100%; mix-blend-mode: color; pointer-events: none; transition: background-color 0.2s;"></div>
+            `;
             artLayer.appendChild(wrap); 
             selectElement(wrap, 'image'); 
             recordState();
         };
         img.src = src;
+    };
+
+    window.applyFrameColor = (color) => {
+        if (!selectedItem) return;
+        
+        const overlay = selectedItem.querySelector('.frame-tint-overlay');
+        if (overlay) {
+            overlay.style.backgroundColor = color;
+            selectedItem.dataset.frameColor = color;
+            
+            // Refresh selections to update swatches border ring
+            selectElement(selectedItem, 'image');
+            recordState();
+        }
+    };
+
+    window.adaptFrameToCanvas = (frameEl, canvasW, canvasH) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        const imgEl = frameEl.querySelector('img');
+        if (!imgEl) return;
+        
+        img.onload = () => {
+            const imgW = img.naturalWidth;
+            const imgH = img.naturalHeight;
+            
+            const scanCanvas = document.createElement('canvas');
+            scanCanvas.width = imgW;
+            scanCanvas.height = imgH;
+            const ctx = scanCanvas.getContext('2d', { willReadFrequently: true });
+            ctx.drawImage(img, 0, 0);
+            
+            let minX = imgW, minY = imgH, maxX = 0, maxY = 0;
+            let hasVisiblePixels = false;
+            
+            try {
+                const imageData = ctx.getImageData(0, 0, imgW, imgH).data;
+                for (let y = 0; y < imgH; y++) {
+                    for (let x = 0; x < imgW; x++) {
+                        const alpha = imageData[(y * imgW + x) * 4 + 3];
+                        if (alpha > 10) {
+                            if (x < minX) minX = x;
+                            if (x > maxX) maxX = x;
+                            if (y < minY) minY = y;
+                            if (y > maxY) maxY = y;
+                            hasVisiblePixels = true;
+                        }
+                    }
+                }
+            } catch(e) {
+                console.warn("Could not scan frame bounds due to CORS.");
+            }
+            
+            if (!hasVisiblePixels) {
+                minX = 0; minY = 0; maxX = imgW; maxY = imgH;
+            }
+            
+            const visibleW = (maxX - minX) || imgW;
+            const visibleH = (maxY - minY) || imgH;
+            
+            const scaleX = canvasW / visibleW;
+            const scaleY = canvasH / visibleH;
+            
+            const finalW = imgW * scaleX;
+            const finalH = imgH * scaleY;
+            
+            frameEl.style.width = finalW + 'px'; 
+            frameEl.style.height = finalH + 'px';
+            frameEl.style.left = -(minX * scaleX) + 'px';
+            frameEl.style.top = -(minY * scaleY) + 'px';
+            
+            syncRing();
+        };
+        img.src = imgEl.src;
     };
 
     document.querySelectorAll('#shape-btn-container button').forEach((btn, idx) => {
@@ -6475,9 +6608,43 @@
 
     window.openResizeModal = () => {
       const modal = document.getElementById('resize-modal');
-      const canvasEl = document.getElementById('design-canvas');
-      document.getElementById('resize-w-input').value = canvasEl.offsetWidth;
-      document.getElementById('resize-h-input').value = canvasEl.offsetHeight;
+      const customContainer = document.getElementById('resize-custom-container');
+      const predefinedContainer = document.getElementById('resize-predefined-container');
+      
+      const frameEl = (selectedItem && selectedItem.dataset.productId) ? selectedItem : document.querySelector('.canvas-item[data-product-id]');
+      
+      let showCustom = true;
+      let predefinedHtml = "";
+      window.activeResizeFrameEl = null;
+
+      if (frameEl && frameEl.dataset.productId && window.editorProducts) {
+        const product = window.editorProducts.find(p => p.id === frameEl.dataset.productId);
+        if (product && product.sizes && product.sizes.length > 0) {
+          showCustom = false;
+          window.activeResizeFrameEl = frameEl;
+          predefinedHtml = `
+            <label class="text-[10px] font-bold uppercase text-slate block mb-2">Predefined Sizes</label>
+            <select id="resize-predefined-select" class="w-full bg-white border border-sand rounded-xl px-4 py-2.5 font-bold text-charcoal focus:outline-none focus:border-flame shadow-sm cursor-pointer">
+              ${product.sizes.map((s, idx) => `<option value="${idx}">${s.name ? s.name + ' (' : ''}${s.width} × ${s.height} mm${s.name ? ')' : ''}</option>`).join('')}
+            </select>
+          `;
+        }
+      }
+
+      if (showCustom) {
+        customContainer.classList.remove('hidden');
+        predefinedContainer.classList.add('hidden');
+        predefinedContainer.innerHTML = "";
+        
+        const canvasEl = document.getElementById('design-canvas');
+        document.getElementById('resize-w-input').value = canvasEl.offsetWidth;
+        document.getElementById('resize-h-input').value = canvasEl.offsetHeight;
+      } else {
+        customContainer.classList.add('hidden');
+        predefinedContainer.classList.remove('hidden');
+        predefinedContainer.innerHTML = predefinedHtml;
+      }
+
       modal.classList.remove('hidden');
       setTimeout(() => {
         modal.classList.remove('opacity-0');
@@ -6493,18 +6660,41 @@
     };
 
     window.applyResize = () => {
-      const newW = document.getElementById('resize-w-input').value;
-      const newH = document.getElementById('resize-h-input').value;
+      const customContainer = document.getElementById('resize-custom-container');
+      
+      let newW, newH;
+
+      if (!customContainer.classList.contains('hidden')) {
+          newW = document.getElementById('resize-w-input').value;
+          newH = document.getElementById('resize-h-input').value;
+      } else {
+          // Predefined size select
+          const select = document.getElementById('resize-predefined-select');
+          const frameEl = window.activeResizeFrameEl;
+          if (select && frameEl && frameEl.dataset.productId && window.editorProducts) {
+              const product = window.editorProducts.find(p => p.id === frameEl.dataset.productId);
+              if (product && product.sizes && product.sizes[select.value]) {
+                  const size = product.sizes[select.value];
+                  newW = size.width;
+                  newH = size.height;
+              }
+          }
+      }
+
       if (!newW || !newH) return;
       const canvasEl = document.getElementById('design-canvas');
       const dLayer = document.getElementById('drawing-layer');
       const frameType = document.getElementById('frame-shape-type').value;
       const w = Math.min(parseInt(newW), 1800);
       const h = Math.min(parseInt(newH), 1800);
+      
       canvasEl.style.width = w + 'px';
       canvasEl.style.height = h + 'px';
-      dLayer.width = w;
-      dLayer.height = h;
+      if (dLayer) {
+          dLayer.width = w;
+          dLayer.height = h;
+      }
+      
       if (frameType === 'circle') {
         canvasEl.style.borderRadius = '50%';
       } else if (frameType === 'rounded') {
@@ -6512,6 +6702,13 @@
       } else {
         canvasEl.style.borderRadius = '0px';
       }
+
+      // Auto-fit frame if present
+      const frameEl = window.activeResizeFrameEl;
+      if (frameEl) {
+          adaptFrameToCanvas(frameEl, w, h);
+      }
+      
       recordState();
       closeResizeModal();
     };
@@ -7362,7 +7559,8 @@
     <div class="glass-panel p-8 rounded-3xl border-2 border-flame/40 shadow-2xl w-full max-w-sm transform scale-95 transition-transform duration-300">
       <h3 class="text-xl font-extrabold text-charcoal mb-2">Resize Workspace</h3>
       <p class="text-xs font-bold text-slate mb-6">Enter new dimensions in millimeters.</p>
-      <div class="flex gap-4 mb-8">
+      <div id="resize-predefined-container" class="hidden mb-8"></div>
+      <div id="resize-custom-container" class="flex gap-4 mb-8">
         <div class="flex-1 flex flex-col gap-2">
           <label class="text-[10px] font-bold uppercase text-slate">Width (mm)</label>
           <input type="number" id="resize-w-input" class="w-full bg-white border border-sand rounded-xl px-4 py-2.5 font-black text-charcoal focus:outline-none focus:border-flame shadow-inner">
