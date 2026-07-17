@@ -3685,7 +3685,7 @@
                 class="text-flame">Craft</span></h3>
             <p class="text-sand mb-6" data-cms="footer.general.desc">Crafting beautiful frames for your beautiful
               memories since 2010.</p>
-            <div class="flex gap-4">
+            <div id="footer-socials" class="flex flex-wrap gap-3 max-w-[200px]">
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
                 class="w-10 h-10 bg-white/10 hover:bg-flame rounded-full flex items-center justify-center transition duration-300 flex-shrink-0"
                 aria-label="Facebook">
@@ -6969,22 +6969,6 @@
             } else {
               mobileNav.appendChild(link);
             }
-          }
-        } else if (p.placement === 'footer') {
-          // 3. Footer Links
-          if (footerNav) {
-            const li = document.createElement('li');
-            li.className = "dynamic-page-link";
-            const link = document.createElement('a');
-            link.href = `#${p.slug}`;
-            link.className = "text-sand hover:text-cream transition";
-            link.innerText = p.title;
-            link.onclick = (e) => {
-              e.preventDefault();
-              window.showDynamicPage(p.slug);
-            };
-            li.appendChild(link);
-            footerNav.appendChild(li);
           }
         }
       });

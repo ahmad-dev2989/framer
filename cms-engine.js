@@ -851,7 +851,14 @@
       let html = '';
       navItems.forEach(item => {
         if (!item.enabled) return;
-        html += `<li><a href="${item.url}" onclick="event.preventDefault(); window.handlePathRouting('${item.url}')" class="text-sand hover:text-cream transition">${item.name}</a></li>`;
+        let displayName = item.name;
+        if (displayName.toUpperCase() === 'ABOUT US') displayName = 'About';
+        else if (displayName.toUpperCase() === 'CONTACT US') displayName = 'Contact';
+        
+        // Capitalize title-case
+        displayName = displayName.charAt(0).toUpperCase() + displayName.slice(1).toLowerCase();
+
+        html += `<li><a href="${item.url}" onclick="event.preventDefault(); window.handlePathRouting('${item.url}')" class="inline-block px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sand hover:bg-flame hover:text-white hover:border-flame transition-all duration-300 text-sm font-semibold">${displayName}</a></li>`;
       });
       footerContainer.innerHTML = html;
     }
@@ -899,7 +906,7 @@
     }
 
     // 3. Footer socials
-    const footerSocials = document.querySelector('#site-footer .flex.gap-4');
+    const footerSocials = document.getElementById('footer-socials') || document.querySelector('#site-footer .flex.gap-4');
     if (footerSocials) {
       let html = '';
       socials.forEach(s => {
@@ -932,7 +939,7 @@
     }
 
     // 5. Footer Contact Info list
-    const footerContact = document.querySelector('#site-footer h4[style*="Oswald"]:last-of-type + ul');
+    const footerContact = document.querySelector('#site-footer h4[data-cms="footer.general.contact"] + ul');
     if (footerContact) {
       const items = footerContact.querySelectorAll('li');
       if (items.length >= 3) {
