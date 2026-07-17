@@ -8,6 +8,14 @@
     ],
     "rewrites": [
       {
+        "source": "/sitemap.xml",
+        "function": "generateSitemap"
+      },
+      {
+        "source": "/robots.txt",
+        "function": "generateRobots"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

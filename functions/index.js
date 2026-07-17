@@ -128,3 +128,123 @@ exports.stripeWebhook = onRequest({ cors: false }, async (req, res) => {
     return res.status(500).send("Internal backend firestore syncing interruption state.");
   }
 });
+
+// 3. DYNAMIC XML SITEMAP GENERATOR FOR SEO
+exports.generateSitemap = onRequest({ cors: true }, async (req, res) => {
+  try {
+    const domain = req.headers["x-forwarded-host"]
+      ? `https://${req.headers["x-forwarded-host"]}`
+      : `https://${req.headers.host || "framer-327a4.web.app"}`;
+
+    const staticPaths = [
+      "",
+      "/products",
+      "/faq",
+      "/about-us",
+      "/contact",
+      "/custom-frame-design",
+      "/products/classic-wood",
+      "/products/modern-metal",
+      "/products/gallery-wrap",
+      "/products/ornate-gold"
+    ];
+
+    const urls = [];
+    
+    // Add static paths
+    staticPaths.forEach(p => {
+      urls.push({
+        loc: `${domain}${p}`,
+        changefreq: p === "" || p === "/products" ? "daily" : "weekly",
+        priority: p === "" ? "1.0" : p.startsWith("/products/") ? "0.8" : p === "/products" ? "0.9" : "0.5"
+      });
+    });
+
+    // Helper to slugify product names matching frontend slugify logic
+    const slugify = (text) => {
+      if (!text) return "";
+      return text
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w\-]+/g, '')
+        .replace(/\-\-+/g, '-')
+        .replace(/^-+/, '')
+        .replace(/-+$/, '');
+    };
+
+    // Fetch dynamic products from firestore
+    const productsSnapshot = await db.collection("products").get();
+    productsSnapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.name) {
+        const slug = slugify(data.name);
+        urls.push({
+          loc: `${domain}/products/${slug}`,
+          changefreq: "weekly",
+          priority: "0.8"
+        });
+      }
+    });
+
+    // Fetch dynamic pages from firestore
+    const pagesSnapshot = await db.collection("pages").get();
+    pagesSnapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.slug) {
+        urls.push({
+          loc: `${domain}/${data.slug}`,
+          changefreq: "weekly",
+          priority: "0.6"
+        });
+      }
+    });
+
+    // Build XML response
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+    urls.forEach(item => {
+      xml += `  <url>\n`;
+      xml += `    <loc>${item.loc}</loc>\n`;
+      xml += `    <changefreq>${item.changefreq}</changefreq>\n`;
+      xml += `    <priority>${item.priority}</priority>\n`;
+      xml += `  </url>\n`;
+    });
+    xml += `</urlset>`;
+
+    res.header("Content-Type", "application/xml");
+    return res.status(200).send(xml);
+
+  } catch (err) {
+    logger.error("Sitemap Generation Core Exception:", err);
+    return res.status(500).send("Error generating sitemap");
+  }
+});
+
+// 4. DYNAMIC ROBOTS.TXT GENERATOR FOR SEO
+exports.generateRobots = onRequest({ cors: true }, async (req, res) => {
+  try {
+    const domain = req.headers["x-forwarded-host"]
+      ? `https://${req.headers["x-forwarded-host"]}`
+      : `https://${req.headers.host || "framer-327a4.web.app"}`;
+
+    const txt = `User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /checkout
+Disallow: /user-profile
+Disallow: /user-settings
+Disallow: /orders-tracking
+Disallow: /order-tracking
+
+Sitemap: ${domain}/sitemap.xml`;
+
+    res.header("Content-Type", "text/plain");
+    return res.status(200).send(txt);
+  } catch (err) {
+    logger.error("Robots.txt Generation Exception:", err);
+    return res.status(500).send("Error generating robots.txt");
+  }
+});
