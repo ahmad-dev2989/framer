@@ -2015,39 +2015,7 @@
                   class="w-full px-4 py-3 bg-editorbg border border-sand rounded-xl font-medium focus:border-flame focus:outline-none focus:ring-1 focus:ring-flame">
               </div>
             </div>
-            <div class="mb-4">
-              <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1.5 block">Select Existing
-                Customer to Upgrade (Optional)</label>
-              <select id="sec-add-existing-customer" onchange="window.toggleStaffInputsForExisting()"
-                class="w-full px-4 py-3 bg-white border border-sand rounded-xl font-bold text-charcoal focus:border-flame focus:outline-none focus:ring-1 focus:ring-flame transition shadow-sm cursor-pointer">
-                <option value="">-- Create New User Account --</option>
-              </select>
-            </div>
-            <div id="new-staff-inputs-container" class="space-y-4">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1.5 block">Staff
-                    Name</label>
-                  <input type="text" id="sec-add-name"
-                    class="w-full px-4 py-3 bg-white border border-sand rounded-xl font-bold text-charcoal focus:border-flame focus:outline-none focus:ring-1 focus:ring-flame transition shadow-sm"
-                    placeholder="Full Name">
-                </div>
-                <div>
-                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1.5 block">Staff
-                    Email</label>
-                  <input type="email" id="sec-add-email"
-                    class="w-full px-4 py-3 bg-white border border-sand rounded-xl font-bold text-charcoal focus:border-flame focus:outline-none focus:ring-1 focus:ring-flame transition shadow-sm"
-                    placeholder="Email Address">
-                </div>
-              </div>
-              <div>
-                <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1.5 block">Temporary
-                  Password</label>
-                <input type="password" id="sec-add-pass"
-                  class="w-full px-4 py-3 bg-white border border-sand rounded-xl font-bold text-charcoal focus:border-flame focus:outline-none focus:ring-1 focus:ring-flame transition shadow-sm"
-                  placeholder="Password (min 6 chars)">
-              </div>
-            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
               <section class="bg-editorbg/60 border border-sand/50 rounded-2xl p-4">
                 <div class="flex items-center justify-between gap-3 mb-3">
@@ -14093,12 +14061,33 @@
       }
     };
 
+    window.populateCustomerUpgradeDropdown = async () => {
+      const dropdown = document.getElementById('sec-add-existing-customer');
+      if (!dropdown) return;
+      try {
+        // Fetch all users to avoid missing those without explicit role fields
+        const allUsersSnap = await db.collection('users').get();
+        let optHtml = '<option value="">-- Create New User Account --</option>';
+        allUsersSnap.docs.forEach(doc => {
+          const d = doc.data();
+          if (d.role !== 'admin' && doc.id !== 'admin_uid') {
+            optHtml += `<option value="${doc.id}">${d.name || 'Unknown User'} (${d.email || 'No Email'})</option>`;
+          }
+        });
+        dropdown.innerHTML = optHtml;
+      } catch (e) {
+        console.error("Error populating customer dropdown:", e);
+      }
+    };
+
     window.loadAdminStaff = async () => {
       const tbody = document.getElementById('admin-staff-table-body');
-      const dropdown = document.getElementById('sec-add-existing-customer');
+
+      // Ensure dropdown is completely populated
+      window.populateCustomerUpgradeDropdown();
+
       if (!tbody) return;
       try {
-        // Populate staff table
         const snap = await db.collection('users').where('role', '==', 'admin').get();
         let html = '';
         snap.docs.forEach(doc => {
@@ -14107,7 +14096,7 @@
           const privs = data.privileges && data.privileges.length > 0 ? data.privileges.join(', ') : 'All/Master';
           html += `
                     <tr class="hover:bg-sand/10 border-b border-sand/30 transition">
-                        <td class="px-4 py-3"><span class="font-bold block text-charcoal">${data.name}</span><span class="text-[10px] text-slate">${data.email}</span></td>
+                        <td class="px-4 py-3"><span class="font-bold block text-charcoal">${data.name || 'Unknown'}</span><span class="text-[10px] text-slate">${data.email || ''}</span></td>
                         <td class="px-4 py-3 text-[10px] text-slate font-bold uppercase max-w-[150px] truncate" title="${privs}">${privs}</td>
                         <td class="px-4 py-3 text-right">
                             <button onclick="window.revokeAdmin('${doc.id}')" class="px-2 py-1 bg-red-50 text-red-600 rounded border border-red-200 text-[10px] font-bold hover:bg-red-100 transition">Revoke</button>
@@ -14116,16 +14105,6 @@
                 `;
         });
         tbody.innerHTML = html || `<tr><td colspan="3" class="px-4 py-3 text-center text-xs text-slate">No extra staff accounts found.</td></tr>`;
-
-        // Populate customers dropdown
-        const custSnap = await db.collection('users').where('role', '==', 'user').get();
-        let optHtml = '<option value="">-- Create New User Account --</option>';
-        custSnap.docs.forEach(doc => {
-          const d = doc.data();
-          optHtml += `<option value="${doc.id}">${d.name} (${d.email})</option>`;
-        });
-        if (dropdown) dropdown.innerHTML = optHtml;
-
       } catch (e) { console.error("Load staff error", e); }
     };
 
