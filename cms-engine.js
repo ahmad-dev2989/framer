@@ -615,12 +615,10 @@
       window.publicCustomization = clone(dbData);
       window.draftCustomization = clone(dbData);
 
-      window.applyCmsAll();
     } catch (e) {
       console.error("CMS Initialization Error:", e);
       window.publicCustomization = clone(window.defaultCustomization);
       window.draftCustomization = clone(window.defaultCustomization);
-      window.applyCmsAll();
     }
   };
 
@@ -820,16 +818,11 @@
     });
 
     // Special renders
-    if (pathString.startsWith('navigation') || pathString.startsWith('pages.footer')) {
-      window.renderDynamicNavigation();
-      if (pathString.startsWith('pages.footer')) {
-        window.renderDynamicSocialsAndContact();
-      }
-    } else if (pathString.startsWith('social') || pathString.startsWith('contactInfo')) {
-      window.renderDynamicSocialsAndContact();
-    } else if (pathString.startsWith('logos')) {
+    if (pathString.startsWith('logos')) {
       window.renderDynamicLogos();
     }
+    // NOTE: Header and Footer CMS renderers are permanently disabled here 
+    // to preserve the custom hardcoded premium UI layout.
   };
 
   // Sweep the whole DOM and apply customization values
@@ -837,11 +830,8 @@
     // 1. Dynamic logos
     window.renderDynamicLogos();
 
-    // 2. Dynamic navigation
-    window.renderDynamicNavigation();
-
-    // 3. Contact & Socials
-    window.renderDynamicSocialsAndContact();
+    // NOTE: Header and Footer CMS renderers are permanently disabled here 
+    // to preserve the custom hardcoded premium UI layout.
   }; // <-- ADD THIS CLOSING BRACE
 
   window.renderDynamicRightActionButtons = function () {
@@ -850,139 +840,53 @@
 
     if (window.currentUser && window.currentUser.role === 'admin') {
       container.innerHTML = `
-        <button onclick="toggleMobileMenu()" class="md:hidden p-2 mr-2 text-charcoal hover:text-flame transition"><i data-lucide="menu" class="w-6 h-6"></i></button>
-        <div class="w-10 h-10 rounded-full bg-flame text-cream flex items-center justify-center font-bold shadow-md cursor-pointer" onclick="handleLogout()" title="Logout">A</div>
+        <div class="hidden md:flex items-center gap-3">
+          <span class="material-symbols-outlined cursor-pointer hover:text-[#775a19] transition-colors text-[#000102] text-[22px]">search</span>
+          <span class="material-symbols-outlined cursor-pointer hover:text-[#775a19] transition-colors text-[#000102] text-[22px]" onclick="toggleModal('cart-modal')">shopping_cart</span>
+        </div>
+        <div class="h-6 w-px bg-outline-variant/30 hidden md:block mx-2"></div>
+        <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-[#000102]"><span class="material-symbols-outlined">menu</span></button>
+        <div class="w-10 h-10 rounded-full bg-[#000102] text-[#ffffff] flex items-center justify-center font-bold shadow-md cursor-pointer" onclick="handleLogout()" title="Logout">A</div>
       `;
-      if (typeof lucide !== 'undefined') lucide.createIcons();
       return;
     }
 
-    if (!window.draftCustomization.right_action_buttons) {
-      window.draftCustomization.right_action_buttons = clone(window.defaultCustomization.right_action_buttons);
-    }
-    const buttons = window.draftCustomization.right_action_buttons;
+    let html = '<div class="hidden md:flex items-center gap-3">';
+    html += `
+      <span class="material-symbols-outlined cursor-pointer hover:text-[#775a19] transition-colors text-[#000102] text-[22px]">search</span>
+      <span class="material-symbols-outlined cursor-pointer hover:text-[#775a19] transition-colors text-[#000102] text-[22px]" onclick="toggleModal('cart-modal')">shopping_cart</span>
+    `;
+    html += '</div><div class="h-6 w-px bg-outline-variant/30 hidden md:block mx-2"></div>';
 
-    let html = '';
-
-    if (!window.currentUser) {
+    if (window.currentUser) {
       html += `
-        <button onclick="toggleMobileMenu()" class="md:hidden p-2 mr-1 text-charcoal hover:text-flame transition">
-          <i data-lucide="menu" class="w-6 h-6"></i>
-        </button>
-      `;
-    }
-
-    buttons.forEach(btn => {
-      if (!btn.enabled || !btn.visible) return;
-
-      const showBeforeLoginVal = (btn.showBeforeLogin !== undefined)
-        ? btn.showBeforeLogin
-        : (btn.actionType !== 'profile');
-
-      if (!window.currentUser && !showBeforeLoginVal) return;
-
-      let iconHtml = '';
-      if ((btn.iconSource === 'image_url' || btn.iconSource === 'upload_image') && btn.iconUrl) {
-        iconHtml = `<img src="${btn.iconUrl}" class="w-4 h-4 object-contain inline-block mr-1.5 align-middle">`;
-      } else {
-        iconHtml = `<i data-lucide="${btn.defaultIcon || 'info'}" class="w-4 h-4 text-flame"></i>`;
-      }
-
-      const resolvedUrl = btn.customUrl ? btn.customUrl : (btn.page || '/');
-
-      if (btn.actionType === 'cart') {
-        html += `
-          <button id="header-nav-cart-btn" onclick="toggleModal('cart-modal')" class="p-2 md:p-2.5 rounded-xl text-charcoal bg-editorbg border border-sand hover:border-charcoal hover:bg-sand/30 transition flex items-center justify-center relative shadow-sm mr-1 md:mr-1" title="${btn.name}">
-            ${iconHtml}
-          </button>
-        `;
-      } else if (btn.actionType === 'orders') {
-        html += `
-          <button id="header-nav-orders-btn" onclick="window.handlePathRouting('${resolvedUrl}')" class="p-2 md:p-2.5 rounded-xl text-charcoal bg-editorbg border border-sand hover:border-charcoal hover:bg-sand/30 transition flex items-center justify-center relative shadow-sm mr-1 md:mr-1.5" title="${btn.name}">
-            ${iconHtml}
-          </button>
-        `;
-      } else if (btn.actionType === 'profile') {
-        if (window.currentUser) {
-          html += `
-            <button onclick="toggleMobileMenu()" class="md:hidden p-2 mr-1 text-charcoal hover:text-flame transition">
-              <i data-lucide="menu" class="w-6 h-6"></i>
-            </button>
-          `;
-
-          const dropdownItems = btn.dropdown || [];
-          let dropdownHtml = '';
-          dropdownItems.forEach((sub) => {
-            if (sub.enabled === false || sub.visible === false) return;
-            const subUrl = sub.customUrl ? sub.customUrl : (sub.page || '/');
-            let clickAction = '';
-            if (subUrl === '/user-profile') {
-              clickAction = `onclick="switchView('user-profile'); document.getElementById('profile-dropdown-menu').classList.add('hidden')"`;
-            } else if (subUrl === '/dashboard') {
-              clickAction = `onclick="switchView('dashboard'); switchDashboardTab('projects'); document.getElementById('profile-dropdown-menu').classList.add('hidden')"`;
-            } else if (subUrl === '/orders-tracking') {
-              clickAction = `onclick="switchView('orders-tracking'); document.getElementById('profile-dropdown-menu').classList.add('hidden')"`;
-            } else if (subUrl === '/user-settings') {
-              clickAction = `onclick="switchView('user-settings'); document.getElementById('profile-dropdown-menu').classList.add('hidden')"`;
-            } else {
-              clickAction = `onclick="event.preventDefault(); window.handlePathRouting('${subUrl}'); document.getElementById('profile-dropdown-menu').classList.add('hidden')"`;
-            }
-
-            let subIcon = 'link';
-            const lowerName = sub.name.toLowerCase();
-            if (lowerName.includes('profile')) subIcon = 'user';
-            else if (lowerName.includes('project') || lowerName.includes('folder')) subIcon = 'folder';
-            else if (lowerName.includes('order') || lowerName.includes('package')) subIcon = 'package';
-            else if (lowerName.includes('setting')) subIcon = 'settings';
-
-            dropdownHtml += `
-              <button ${clickAction} class="w-full text-left px-5 py-2.5 text-sm font-bold text-charcoal hover:bg-sand/20 hover:text-flame transition flex items-center gap-3">
-                <i data-lucide="${subIcon}" class="w-4 h-4"></i> ${sub.name}
-              </button>
-            `;
-          });
-
-          dropdownHtml += `
+        <div class="relative">
+          <div class="w-10 h-10 rounded-full bg-[#000102] text-[#ffffff] flex items-center justify-center text-base font-bold shadow-md cursor-pointer shrink-0" onclick="document.getElementById('profile-dropdown-menu').classList.toggle('hidden')">
+            ${window.currentUser.name.charAt(0).toUpperCase()}
+          </div>
+          <div id="profile-dropdown-menu" class="hidden absolute right-0 top-full mt-3 w-56 bg-white border border-sand shadow-xl rounded-2xl py-2 z-[1010]">
+            <div class="px-4 py-3 border-b border-sand/40 mb-2 bg-editorbg/50">
+              <p class="text-sm font-black text-charcoal truncate">${window.currentUser.name}</p>
+              <p class="text-[10px] font-bold text-slate truncate">${window.currentUser.email}</p>
+            </div>
+            <button onclick="switchView('dashboard'); switchDashboardTab('projects'); document.getElementById('profile-dropdown-menu').classList.add('hidden')" class="w-full text-left px-5 py-2.5 text-sm font-bold text-charcoal hover:bg-sand/20 hover:text-flame transition">My Projects</button>
+            <button onclick="switchView('orders-tracking'); document.getElementById('profile-dropdown-menu').classList.add('hidden')" class="w-full text-left px-5 py-2.5 text-sm font-bold text-charcoal hover:bg-sand/20 hover:text-flame transition">My Orders</button>
             <div class="border-t border-sand/40 my-1 pt-1">
-              <button onclick="handleLogout()" class="w-full text-left px-5 py-2.5 text-sm font-black text-red-600 hover:bg-red-50 transition border-2 border-transparent hover:border-red-200 mx-2 !w-[calc(100%-16px)] rounded-xl flex items-center gap-3">
-                <i data-lucide="log-out" class="w-4 h-4"></i> Log Out
-              </button>
+              <button onclick="handleLogout()" class="w-full text-left px-5 py-2.5 text-sm font-black text-red-600 hover:bg-red-50 transition border-2 border-transparent hover:border-red-200 mx-2 !w-[calc(100%-16px)] rounded-xl">Log Out</button>
             </div>
-          `;
-
-          html += `
-            <div class="relative">
-              <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-flame text-cream flex items-center justify-center text-sm md:text-base font-bold shadow-md cursor-pointer shrink-0" onclick="document.getElementById('profile-dropdown-menu').classList.toggle('hidden')" title="${btn.name}">
-                ${window.currentUser.name.charAt(0).toUpperCase()}
-              </div>
-              <div id="profile-dropdown-menu" class="hidden absolute right-0 top-full mt-3 w-56 bg-white border border-sand shadow-xl rounded-2xl py-2 z-[1010]">
-                <div class="px-4 py-3 border-b border-sand/40 mb-2 bg-editorbg/50">
-                  <p class="text-sm font-black text-charcoal truncate">${window.currentUser.name}</p>
-                  <p class="text-[10px] font-bold text-slate truncate">${window.currentUser.email}</p>
-                </div>
-                ${dropdownHtml}
-              </div>
-            </div>
-          `;
-        }
-      } else {
-        html += `
-          <button onclick="window.handlePathRouting('${resolvedUrl}')" class="p-2 md:p-2.5 rounded-xl text-charcoal bg-editorbg border border-sand hover:border-charcoal hover:bg-sand/30 transition flex items-center justify-center relative shadow-sm mr-1 md:mr-1.5" title="${btn.name}">
-            ${iconHtml}
-          </button>
-        `;
-      }
-    });
-
-    if (!window.currentUser) {
+          </div>
+        </div>
+        <button onclick="toggleMobileMenu()" class="md:hidden material-symbols-outlined p-2 text-[#000102]">menu</button>
+      `;
+    } else {
       html += `
-        <button onclick="toggleModal('login-modal')" class="hidden md:inline-block px-5 py-2.5 rounded-xl text-sm font-bold text-charcoal hover:bg-sand/30 transition">Log In</button>
-        <button onclick="toggleModal('signup-modal')" class="hidden md:inline-block glass-btn-dark px-5 py-2.5 rounded-xl text-sm font-bold text-cream hover:bg-flame hover:border-flame transition duration-200">Sign Up</button>
+        <button onclick="toggleModal('login-modal')" class="hidden sm:block text-[14px] font-bold px-7 py-2.5 border border-[#000102] text-[#000102] hover:bg-[#000102] hover:text-[#ffffff] transition-all duration-300 rounded">Login</button>
+        <button onclick="toggleModal('signup-modal')" class="hidden md:block text-[14px] font-bold px-7 py-2.5 bg-[#000102] text-[#ffffff] hover:bg-[#775a19] transition-all duration-300 shadow-sm rounded">Signup</button>
+        <button onclick="toggleMobileMenu()" class="md:hidden material-symbols-outlined p-2 text-[#000102]">menu</button>
       `;
     }
 
     container.innerHTML = html;
-    if (typeof lucide !== 'undefined') lucide.createIcons();
   };
 
   // ==========================================
@@ -1063,22 +967,26 @@
       navItems.forEach(item => {
         if (!item.enabled) return;
         const resolvedUrl = item.customUrl ? item.customUrl : (item.page || '/');
+        const linkClass = item.name.toUpperCase() === 'HOME'
+          ? "text-[#000102] font-bold text-[15px] hover:text-[#775a19] transition-colors"
+          : "text-[#45474b] text-[15px] hover:text-[#775a19] transition-colors";
+
         if (item.dropdown && item.dropdown.length > 0) {
           html += `
-            <div class="nav-dropdown-container">
-              <a href="${resolvedUrl}" class="dropdown-trigger" onclick="event.preventDefault(); window.handlePathRouting('${resolvedUrl}')">
-                ${item.name} <i class="fa-solid fa-chevron-down text-[10px] ml-1.5 transition-transform duration-200"></i>
+            <div class="nav-dropdown-container relative">
+              <a href="${resolvedUrl}" class="${linkClass} flex items-center dropdown-trigger" onclick="event.preventDefault(); window.handlePathRouting('${resolvedUrl}')">
+                ${item.name} <span class="material-symbols-outlined text-[14px] ml-1">expand_more</span>
               </a>
-              <div class="dropdown-menu">
+              <div class="dropdown-menu absolute top-full left-0 mt-2 w-48 bg-white shadow-xl rounded-md opacity-0 pointer-events-none transition-all flex flex-col py-2 border border-outline-variant/30 z-50">
                 ${item.dropdown.map(d => {
             const resolvedSubUrl = d.customUrl ? d.customUrl : (d.page || '/');
-            return `<a href="${resolvedSubUrl}" onclick="event.preventDefault(); window.handlePathRouting('${resolvedSubUrl}'); window.closeAllDropdowns()">${d.name}</a>`;
+            return `<a href="${resolvedSubUrl}" class="px-4 py-2 hover:bg-surface-container-low text-primary transition-colors block" onclick="event.preventDefault(); window.handlePathRouting('${resolvedSubUrl}'); window.closeAllDropdowns()">${d.name}</a>`;
           }).join('')}
               </div>
             </div>
           `;
         } else {
-          html += `<a href="${resolvedUrl}" onclick="event.preventDefault(); window.handlePathRouting('${resolvedUrl}')">${item.name}</a>`;
+          html += `<a href="${resolvedUrl}" onclick="event.preventDefault(); window.handlePathRouting('${resolvedUrl}')" class="${linkClass}">${item.name}</a>`;
         }
       });
 
@@ -1121,7 +1029,7 @@
         quickLinksEl.value.forEach(item => {
           const url = item.customUrl || item.page || '/';
           const styleAttr = item.color ? `style="color: ${item.color} !important;"` : '';
-          html += `<li><a href="${url}" onclick="event.preventDefault(); window.handlePathRouting('${url}')" class="text-sand hover:text-cream transition" ${styleAttr}>${item.name}</a></li>`;
+          html += `<li><a href="${url}" onclick="event.preventDefault(); window.handlePathRouting('${url}')" class="hover:text-primary transition-colors block" ${styleAttr}>${item.name}</a></li>`;
         });
       } else {
         navItems.forEach(item => {
@@ -1130,10 +1038,9 @@
           if (displayName.toUpperCase() === 'ABOUT US') displayName = 'About';
           else if (displayName.toUpperCase() === 'CONTACT US') displayName = 'Contact';
 
-          // Capitalize title-case
           displayName = displayName.charAt(0).toUpperCase() + displayName.slice(1).toLowerCase();
 
-          html += `<li><a href="${item.url}" onclick="event.preventDefault(); window.handlePathRouting('${item.url}')" class="text-sand hover:text-cream transition">${displayName}</a></li>`;
+          html += `<li><a href="${item.url}" onclick="event.preventDefault(); window.handlePathRouting('${item.url}')" class="hover:text-primary transition-colors block">${displayName}</a></li>`;
         });
       }
       footerContainer.innerHTML = html;
@@ -1155,7 +1062,7 @@
             clickHandler = `onclick="event.preventDefault(); scrollToSection('${sectionId}')"`;
           }
 
-          html += `<li><a href="${url}" ${clickHandler} class="text-sand hover:text-cream transition" ${styleAttr}>${item.name}</a></li>`;
+          html += `<li><a href="${url}" ${clickHandler} class="hover:text-primary transition-colors block" ${styleAttr}>${item.name}</a></li>`;
         });
         servicesContainer.innerHTML = html;
       }
@@ -1180,40 +1087,25 @@
     const socials = window.draftCustomization.social || [];
     const contact = window.draftCustomization.contactInfo || {};
 
-    // 1. Header info-bar contact info
-    const infoBarPhone = document.querySelector('.home-info-bar a[href^="tel:"]');
-    if (infoBarPhone) {
-      infoBarPhone.href = `tel:${contact.phone}`;
-      infoBarPhone.innerHTML = `<i class="fa-solid fa-phone mr-1"></i> ${contact.phone}`;
-    }
-    const infoBarEmail = document.querySelector('.home-info-bar a[href^="mailto:"]');
-    if (infoBarEmail) {
-      infoBarEmail.href = `mailto:${contact.email}`;
-      infoBarEmail.innerHTML = `<i class="fa-solid fa-envelope mr-1"></i> ${contact.email}`;
-    }
-
-    // 2. Info bar socials
-    const infoBarSocials = document.querySelector('.home-info-social');
-    if (infoBarSocials) {
-      let html = '';
-      socials.forEach(s => {
-        if (!s.enabled) return;
-        html += `<a href="${s.url}" target="_blank" rel="noopener noreferrer" aria-label="${s.name}"><i class="${s.icon}"></i></a>`;
-      });
-      infoBarSocials.innerHTML = html;
-    }
-
     // 3. Footer socials
     const footerSocials = document.getElementById('footer-socials') || document.querySelector('#site-footer .flex.gap-4');
     if (footerSocials) {
       let html = '';
+      const iconMap = {
+        'fa-facebook-f': 'face_nod',
+        'fa-instagram': 'camera',
+        'fa-x-twitter': 'share',
+        'fa-pinterest-p': 'potted_plant',
+        'fa-youtube': 'play_circle'
+      };
       socials.forEach(s => {
         if (!s.enabled) return;
+        let matIcon = 'link';
+        Object.keys(iconMap).forEach(k => { if (s.icon.includes(k)) matIcon = iconMap[k]; });
+
         html += `
-          <a href="${s.url}" target="_blank" rel="noopener noreferrer"
-            class="w-10 h-10 bg-white/10 hover:bg-flame rounded-full flex items-center justify-center transition duration-300 flex-shrink-0"
-            aria-label="${s.name}">
-            <i class="${s.icon} text-white text-lg"></i>
+          <a href="${s.url}" target="_blank" rel="noopener noreferrer" aria-label="${s.name}">
+            <span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors text-primary">${matIcon}</span>
           </a>
         `;
       });
@@ -1225,13 +1117,9 @@
     if (contactSec) {
       const items = contactSec.querySelectorAll('.flex.items-center.gap-4');
       if (items.length >= 4) {
-        // Address card
         items[0].querySelector('p').innerText = contact.address;
-        // Email card
         items[1].querySelector('p').innerText = contact.email;
-        // Phone card
         items[2].querySelector('p').innerText = contact.phone;
-        // Hours card
         items[3].querySelector('p').innerText = contact.workingHours;
       }
     }
@@ -1253,35 +1141,28 @@
           let content = textVal;
           if (item.name === "Email") {
             const mailUrl = item.customUrl || item.page || `mailto:${textVal}`;
-            content = `<a href="${mailUrl}" class="hover:text-cream transition" ${colorStyle}>${textVal}</a>`;
+            content = `<a href="${mailUrl}" class="hover:text-primary transition-colors block" ${colorStyle}>${textVal}</a>`;
           } else if (item.name === "Phone") {
             const telUrl = item.customUrl || item.page || `tel:${textVal}`;
-            content = `<a href="${telUrl}" class="hover:text-cream transition" ${colorStyle}>${textVal}</a>`;
+            content = `<a href="${telUrl}" class="hover:text-primary transition-colors block" ${colorStyle}>${textVal}</a>`;
           } else {
             const mapUrl = item.customUrl || item.page || contact.googleMapsLink;
             if (mapUrl) {
-              content = `<a href="${mapUrl}" target="_blank" rel="noopener noreferrer" class="hover:text-cream transition" ${colorStyle}>${textVal}</a>`;
+              content = `<a href="${mapUrl}" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors block" ${colorStyle}>${textVal}</a>`;
             } else {
-              content = `<span ${colorStyle}>${textVal}</span>`;
+              content = `<span class="block" ${colorStyle}>${textVal}</span>`;
             }
           }
 
-          html += `
-            <li class="flex items-center gap-2" ${colorStyle}>
-              <i data-lucide="${item.icon || 'info'}" class="w-4 h-4 text-flame"></i>
-              ${content}
-            </li>
-          `;
+          html += `<li class="">${content}</li>`;
         });
         footerContact.innerHTML = html;
-        if (typeof lucide !== 'undefined') lucide.createIcons();
       } else {
         const items = footerContact.querySelectorAll('li');
         if (items.length >= 3) {
-          items[0].innerHTML = `<i data-lucide="map-pin" class="w-4 h-4 text-flame"></i> ${contact.address}`;
-          items[1].innerHTML = `<i data-lucide="mail" class="w-4 h-4 text-flame"></i> ${contact.email}`;
-          items[2].innerHTML = `<i data-lucide="phone" class="w-4 h-4 text-flame"></i> ${contact.phone}`;
-          if (typeof lucide !== 'undefined') lucide.createIcons();
+          items[0].innerHTML = `<a class="hover:text-primary transition-colors block" href="/faq">${contact.address}</a>`;
+          items[1].innerHTML = `<a class="hover:text-primary transition-colors block" href="/faq">${contact.email}</a>`;
+          items[2].innerHTML = `<a class="hover:text-primary transition-colors block" href="/faq">${contact.phone}</a>`;
         }
       }
     }
