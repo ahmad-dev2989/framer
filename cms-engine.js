@@ -859,20 +859,40 @@
     html += '</div><div class="h-6 w-px bg-outline-variant/30 hidden md:block mx-2"></div>';
 
     if (window.currentUser) {
+      const userRole = (window.currentUser.role === 'admin') ? 'ADMINISTRATOR' : 'ARTISAN MEMBER';
       html += `
         <div class="relative">
-          <div class="w-10 h-10 rounded-full bg-[#000102] text-[#ffffff] flex items-center justify-center text-base font-bold shadow-md cursor-pointer shrink-0" onclick="document.getElementById('profile-dropdown-menu').classList.toggle('hidden')">
-            ${window.currentUser.name.charAt(0).toUpperCase()}
+          <div class="w-10 h-10 rounded-full bg-[#000102] text-[#ffffff] flex items-center justify-center text-base font-bold shadow-md cursor-pointer shrink-0" onclick="document.getElementById('profile-dropdown-menu').classList.toggle('hidden'); if(window.lucide) lucide.createIcons();">
+            ${(window.currentUser.name || 'U').charAt(0).toUpperCase()}
           </div>
-          <div id="profile-dropdown-menu" class="hidden absolute right-0 top-full mt-3 w-56 bg-white border border-sand shadow-xl rounded-2xl py-2 z-[1010]">
-            <div class="px-4 py-3 border-b border-sand/40 mb-2 bg-editorbg/50">
-              <p class="text-sm font-black text-charcoal truncate">${window.currentUser.name}</p>
-              <p class="text-[10px] font-bold text-slate truncate">${window.currentUser.email}</p>
+          <div id="profile-dropdown-menu" class="hidden absolute right-0 top-full mt-3 w-64 bg-white border border-gray-200/90 shadow-2xl rounded-none z-[1010] overflow-hidden">
+            <div class="px-5 py-4 border-b border-gray-200/80 bg-[#f4f3f0]">
+              <p class="text-[11px] font-bold text-[#9e7024] uppercase tracking-wider mb-1">${userRole}</p>
+              <p class="font-serif text-[15px] text-[#111111] leading-tight truncate font-normal">${window.currentUser.email || ''}</p>
             </div>
-            <button onclick="switchView('dashboard'); switchDashboardTab('projects'); document.getElementById('profile-dropdown-menu').classList.add('hidden')" class="w-full text-left px-5 py-2.5 text-sm font-bold text-charcoal hover:bg-sand/20 hover:text-flame transition">My Projects</button>
-            <button onclick="switchView('orders-tracking'); document.getElementById('profile-dropdown-menu').classList.add('hidden')" class="w-full text-left px-5 py-2.5 text-sm font-bold text-charcoal hover:bg-sand/20 hover:text-flame transition">My Orders</button>
-            <div class="border-t border-sand/40 my-1 pt-1">
-              <button onclick="handleLogout()" class="w-full text-left px-5 py-2.5 text-sm font-black text-red-600 hover:bg-red-50 transition border-2 border-transparent hover:border-red-200 mx-2 !w-[calc(100%-16px)] rounded-xl">Log Out</button>
+            <div class="py-1">
+              <button onclick="if(window.showUserProfilePage){window.showUserProfilePage();}else{switchView('user-profile');} document.getElementById('profile-dropdown-menu').classList.add('hidden')" class="w-full flex items-center gap-3.5 px-5 py-2.5 text-[14px] font-medium text-[#111111] hover:bg-gray-50 transition-colors text-left border-none bg-transparent cursor-pointer">
+                <i data-lucide="user" class="w-4 h-4 text-[#2d3748] stroke-[1.8]"></i>
+                <span>My Profile</span>
+              </button>
+              <button onclick="switchView('dashboard'); switchDashboardTab('projects'); document.getElementById('profile-dropdown-menu').classList.add('hidden')" class="w-full flex items-center gap-3.5 px-5 py-2.5 text-[14px] font-medium text-[#111111] hover:bg-gray-50 transition-colors text-left border-none bg-transparent cursor-pointer">
+                <i data-lucide="palette" class="w-4 h-4 text-[#2d3748] stroke-[1.8]"></i>
+                <span>My Projects</span>
+              </button>
+              <button onclick="switchView('orders-tracking'); document.getElementById('profile-dropdown-menu').classList.add('hidden')" class="w-full flex items-center gap-3.5 px-5 py-2.5 text-[14px] font-medium text-[#111111] hover:bg-gray-50 transition-colors text-left border-none bg-transparent cursor-pointer">
+                <i data-lucide="truck" class="w-4 h-4 text-[#2d3748] stroke-[1.8]"></i>
+                <span>Order Tracking</span>
+              </button>
+              <button onclick="if(window.showUserSettingsPage){window.showUserSettingsPage();}else{switchView('user-settings');} document.getElementById('profile-dropdown-menu').classList.add('hidden')" class="w-full flex items-center gap-3.5 px-5 py-2.5 text-[14px] font-medium text-[#111111] hover:bg-gray-50 transition-colors text-left border-none bg-transparent cursor-pointer">
+                <i data-lucide="settings" class="w-4 h-4 text-[#2d3748] stroke-[1.8]"></i>
+                <span>Settings</span>
+              </button>
+            </div>
+            <div class="border-t border-gray-200/80">
+              <button onclick="handleLogout()" class="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] font-bold text-[#991b1b] hover:bg-red-50/60 transition-colors text-left border-none bg-transparent cursor-pointer">
+                <i data-lucide="log-out" class="w-4 h-4 text-[#991b1b] stroke-[2]"></i>
+                <span>Logout</span>
+              </button>
             </div>
           </div>
         </div>
@@ -887,6 +907,7 @@
     }
 
     container.innerHTML = html;
+    if (window.lucide) window.lucide.createIcons();
   };
 
   // ==========================================

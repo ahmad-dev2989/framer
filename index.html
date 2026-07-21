@@ -1720,27 +1720,43 @@
   </div>
 
   <div id="cart-modal"
-    class="hidden fixed inset-0 z-[2000] flex justify-end bg-charcoal/60 backdrop-blur-sm transition-opacity duration-300">
+    class="hidden fixed inset-0 z-[2000] flex justify-end bg-black/50 backdrop-blur-sm transition-opacity duration-300">
     <div id="cart-slide"
-      class="bg-white w-full max-w-md h-full shadow-2xl border-l border-sand flex flex-col transform transition-transform duration-300 translate-x-full">
-      <div class="p-6 border-b border-sand/40 flex justify-between items-center bg-cream">
-        <h3 class="text-xl font-extrabold text-charcoal flex items-center gap-2"><i data-lucide="shopping-cart"
-            class="w-5 h-5 text-flame"></i> <span data-cms="pages.cart.sections.general.elements.title">Studio
-            Cart</span></h3>
-        <button onclick="toggleModal('cart-modal')" class="text-slate hover:text-flame transition"><i data-lucide="x"
-            class="w-6 h-6"></i></button>
+      class="bg-[#f9f8f6] w-full max-w-md h-full shadow-2xl flex flex-col transform transition-transform duration-300 translate-x-full">
+      <!-- Header -->
+      <div class="px-8 py-7 border-b border-gray-200/60 flex justify-between items-center bg-[#f9f8f6] shrink-0">
+        <h3 class="font-serif text-3xl font-medium text-gray-900 tracking-tight">Your Cart</h3>
+        <button onclick="toggleModal('cart-modal')" class="text-gray-900 hover:opacity-70 transition p-1 cursor-pointer" aria-label="Close Cart">
+          <i data-lucide="x" class="w-6 h-6 stroke-[1.8]"></i>
+        </button>
       </div>
-      <div class="flex-1 overflow-y-auto p-6" id="cart-items-container">
-        <div class="text-center text-slate font-bold mt-10">Your cart is empty.</div>
+
+      <!-- Items Container -->
+      <div class="flex-1 overflow-y-auto px-8 py-6 space-y-6 bg-[#f9f8f6]" id="cart-items-container">
+        <div class="text-center text-gray-400 font-serif text-lg mt-12">Your cart is empty.</div>
       </div>
-      <div class="p-6 border-t border-sand/40 bg-editorbg">
-        <div class="flex justify-between items-center mb-4">
-          <span class="font-bold text-slate uppercase text-xs tracking-wider">Subtotal</span>
-          <span class="text-xl font-black text-charcoal" id="cart-total">$0.00</span>
+
+      <!-- Footer Section -->
+      <div class="p-8 border-t border-gray-200/80 bg-[#f9f8f6] shrink-0 space-y-4">
+        <div class="flex justify-between items-center text-sm">
+          <span class="text-[15px] font-normal text-gray-600">Subtotal</span>
+          <span class="text-[15px] font-semibold text-gray-900" id="cart-subtotal">$0.00</span>
+        </div>
+        <div class="flex justify-between items-center text-sm">
+          <span class="text-[15px] font-normal text-gray-600">Shipping</span>
+          <span class="text-[11px] font-semibold tracking-wider text-gray-500 uppercase">CALCULATED AT CHECKOUT</span>
+        </div>
+        <div class="flex justify-between items-center pt-2">
+          <span class="text-[17px] font-bold text-gray-900">Total</span>
+          <span class="text-[18px] font-bold text-gray-900" id="cart-total">$0.00</span>
         </div>
         <button onclick="proceedToCheckout()"
-          class="w-full btn-solid-orange py-3.5 rounded-xl text-cream font-extrabold text-lg shadow-lg flex justify-center items-center gap-2">Proceed
-          to Checkout</button>
+          class="w-full bg-black hover:bg-gray-900 text-white py-4 font-bold text-[14px] transition tracking-wider rounded-none cursor-pointer mt-2 uppercase">
+          Checkout
+        </button>
+        <p class="text-[11px] text-gray-400 text-center font-normal tracking-wide pt-1">
+          Complimentary white-glove delivery on orders over $500
+        </p>
       </div>
     </div>
   </div>
@@ -3331,13 +3347,6 @@
         </div>
       </div>
 
-      <!-- Floating Chat Icon -->
-      <div class="fixed bottom-8 right-8 z-40 hidden md:block">
-        <div onclick="window.toggleUserChat()"
-          class="floating-action bg-primary text-on-primary p-4 rounded-full shadow-xl cursor-pointer hover:bg-secondary transition-colors">
-          <span class="material-symbols-outlined text-3xl">chat_bubble</span>
-        </div>
-      </div>
     </main>
 
     <section id="frames-section" class="bg-surface py-24">
@@ -3573,7 +3582,7 @@
       <div class="flex justify-center items-center gap-3 mt-4" id="cat-dots"></div>
     </section>
 
-    <section id="about-section" class="py-24 px-4 md:px-8 max-w-[1280px] mx-auto hidden">
+    <section id="about-section" class="py-24 px-4 md:px-8 max-w-[1280px] mx-auto">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
         <div class="scroll-animate slide-left">
           <span class="text-secondary font-label-sm text-[13px] uppercase tracking-widest block mb-4"
@@ -3640,7 +3649,7 @@
       </div>
     </section>
 
-    <section id="contact-section" class="py-24 bg-surface-container-lowest hidden">
+    <section id="contact-section" class="py-24 bg-surface-container-lowest">
       <div class="px-4 md:px-8 max-w-[1280px] mx-auto">
         <div class="bg-white shadow-xl flex flex-col lg:flex-row overflow-hidden rounded-lg">
           <!-- Form -->
@@ -6466,10 +6475,13 @@
       const win = document.getElementById('user-chat-window');
       if (win.classList.contains('hidden')) {
         win.classList.remove('hidden');
-        setTimeout(() => win.classList.remove('scale-95', 'opacity-0', 'pointer-events-none'), 10);
+        setTimeout(() => {
+          win.classList.remove('scale-95', 'opacity-0', 'pointer-events-none');
+          if (window.lucide) window.lucide.createIcons();
+        }, 10);
 
         db.collection('chat_sessions').doc(currentUser.uid).set({ unreadUser: 0 }, { merge: true });
-        document.getElementById('user-chat-unread-badge').classList.add('hidden');
+        document.getElementById('user-chat-unread-badge')?.classList.add('hidden');
       } else {
         win.classList.add('scale-95', 'opacity-0', 'pointer-events-none');
         setTimeout(() => win.classList.add('hidden'), 300);
@@ -6500,7 +6512,11 @@
     function attachGlobalChatListeners(user) {
       if (!user) {
         if (userChatListener) { userChatListener(); userChatListener = null; }
-        document.getElementById('user-live-chat-container')?.classList.add('hidden');
+        const container = document.getElementById('user-live-chat-container');
+        if (container) {
+          container.classList.remove('hidden');
+          container.classList.add('flex');
+        }
         return;
       }
 
@@ -6519,20 +6535,38 @@
         userChatListener = db.collection('chat_sessions').doc(user.uid).collection('messages')
           .orderBy('timestamp', 'asc')
           .onSnapshot(snapshot => {
+            const formatMsgTime = (ts) => {
+              if (!ts) return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+              const d = typeof ts === 'number' ? new Date(ts) : (ts.toDate ? ts.toDate() : new Date(ts));
+              return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            };
+
             if (snapshot.docs.length > 0) {
               msgContainer.innerHTML = snapshot.docs.map(doc => {
                 const msg = doc.data();
                 const isMe = msg.sender === 'user';
+                const timeStr = formatMsgTime(msg.timestamp);
                 return `
-                       <div class="flex ${isMe ? 'justify-end' : 'justify-start'}">
-                         <div class="max-w-[85%] rounded-2xl px-4 py-2 text-sm shadow-sm ${isMe ? 'bg-flame text-cream rounded-br-sm' : 'bg-white border border-sand/50 text-charcoal rounded-bl-sm'}">
-                           ${msg.text}
-                         </div>
-                       </div>
-                     `;
+                  <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} w-full">
+                    <div class="max-w-[82%] ${isMe ? 'bg-black text-white' : 'bg-[#eaeaea] text-[#111111]'} p-4 rounded-md text-[14px] leading-relaxed font-sans shadow-none">
+                      ${msg.text}
+                    </div>
+                    <span class="text-[11px] text-gray-400 mt-1.5 ${isMe ? 'mr-1' : 'ml-1'} font-normal">${timeStr}</span>
+                  </div>
+                `;
               }).join('');
               msgContainer.scrollTop = msgContainer.scrollHeight;
+            } else {
+              msgContainer.innerHTML = `
+                <div class="flex flex-col items-start w-full">
+                  <div class="max-w-[82%] bg-[#eaeaea] text-[#111111] p-4 rounded-md text-[14px] leading-relaxed font-sans shadow-none">
+                    Hello! Welcome to FrameCraft. How can we help you preserve your memories today?
+                  </div>
+                  <span class="text-[11px] text-gray-400 mt-1.5 ml-1 font-normal">Welcome</span>
+                </div>
+              `;
             }
+            if (window.lucide) window.lucide.createIcons();
           });
 
         // Listen for unread badges on the floating button
@@ -7987,6 +8021,10 @@
         const el = document.getElementById(id);
         if (el && show) el.classList.add('hidden');
       });
+
+      if (show && window.initScrollAnimations) {
+        setTimeout(() => window.initScrollAnimations(), 50);
+      }
     };
 
     // Switch to FAQ view
@@ -10299,36 +10337,76 @@
       }
     }
 
+    window.updateCartItemQuantity = async (id, delta) => {
+      const item = cartItems.find(i => i.id === id);
+      if (!item) return;
+      const currentQty = item.quantity || item.qty || 1;
+      const newQty = currentQty + delta;
+      if (newQty <= 0) {
+        window.removeFromCart(id);
+      } else {
+        item.quantity = newQty;
+        item.qty = newQty;
+        updateCartUI();
+        if (currentUser) {
+          try {
+            await db.collection('users').doc(currentUser.uid).collection('cart').doc(id).set({ quantity: newQty, qty: newQty }, { merge: true });
+          } catch(e) {}
+        }
+      }
+    };
+
     function updateCartUI() {
       const container = document.getElementById('cart-items-container');
+      const subtotalEl = document.getElementById('cart-subtotal');
       const totalEl = document.getElementById('cart-total');
-      if (!container || !totalEl) return;
+      if (!container) return;
 
       if (cartItems.length === 0) {
-        container.innerHTML = `<div class="text-center text-slate font-bold mt-10">Your cart is empty.</div>`;
-        totalEl.innerText = `${window.appCurrency || '$'}0.00`;
+        container.innerHTML = `<div class="text-center text-gray-400 font-serif text-lg mt-12">Your cart is empty.</div>`;
+        if (subtotalEl) subtotalEl.innerText = `${window.appCurrency || '$'}0.00`;
+        if (totalEl) totalEl.innerText = `${window.appCurrency || '$'}0.00`;
         return;
       }
 
       container.innerHTML = cartItems.map(item => {
-        const parsedCost = parseFloat(item.cost) || 0;
+        const unitCost = parseFloat(item.cost) || 0;
+        const qty = item.quantity || item.qty || 1;
+        const itemTotal = unitCost * qty;
+        const imgUrl = item.imageURL || item.image || item.preview || 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=300&q=80';
+        const sizeText = item.size || item.dimensions || (item.customization ? `${item.customization.width || 16}×${item.customization.height || 20}"` : '16×20"');
+
         return `
-                <div class="flex justify-between items-center bg-editorbg p-4 rounded-xl border border-sand mb-3">
-                    <div class="truncate mr-4">
-                        <h4 class="text-sm font-extrabold text-charcoal truncate">${item.title}</h4>
-                        <p class="text-[10px] text-slate font-bold">Bespoke Frame</p>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="text-sm font-black text-flame">${window.appCurrency || '$'}${parsedCost.toFixed(2)}</span>
-                        <button onclick="removeFromCart('${item.id}')" class="text-slate hover:text-red-500 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                    </div>
+          <div class="flex items-start gap-5 py-2">
+            <img src="${imgUrl}" alt="${item.title}" class="w-24 h-24 sm:w-28 sm:h-28 object-cover rounded-none bg-gray-100 shrink-0 border border-gray-200/50">
+            <div class="flex-1 flex flex-col justify-between min-h-[96px] sm:min-h-[112px]">
+              <div>
+                <h4 class="font-bold text-[#111111] text-[15px] leading-tight">${item.title || 'Custom Frame'}</h4>
+                <p class="text-xs text-gray-500 mt-1 font-normal">Size: ${sizeText}</p>
+              </div>
+              <div class="flex items-center justify-between mt-auto pt-2">
+                <div class="border border-gray-300 bg-[#f9f8f6] flex items-center gap-3 px-3 py-1 text-xs select-none">
+                  <button type="button" onclick="updateCartItemQuantity('${item.id}', -1)" class="cursor-pointer hover:opacity-60 text-gray-700 px-1 font-medium">-</button>
+                  <span class="font-medium text-gray-900 px-1">${qty}</span>
+                  <button type="button" onclick="updateCartItemQuantity('${item.id}', 1)" class="cursor-pointer hover:opacity-60 text-gray-700 px-1 font-medium">+</button>
                 </div>
-            `;
+                <span class="font-bold text-[#111111] text-[16px] sm:text-[17px] ml-auto">${window.appCurrency || '$'}${itemTotal.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+        `;
       }).join('');
 
-      const cartCalculatedSumTotal = cartItems.reduce((sum, item) => sum + (parseFloat(item.cost) || 0), 0);
-      totalEl.innerText = `${window.appCurrency || '$'}${cartCalculatedSumTotal.toFixed(2)}`;
-      lucide.createIcons();
+      const cartCalculatedSumTotal = cartItems.reduce((sum, item) => {
+        const cost = parseFloat(item.cost) || 0;
+        const q = item.quantity || item.qty || 1;
+        return sum + (cost * q);
+      }, 0);
+
+      const formattedTotal = `${window.appCurrency || '$'}${cartCalculatedSumTotal.toFixed(2)}`;
+      if (subtotalEl) subtotalEl.innerText = formattedTotal;
+      if (totalEl) totalEl.innerText = formattedTotal;
+      if (window.lucide) lucide.createIcons();
     }
 
     // FIREBASE REALTIME AUTH LISTENER
@@ -15000,35 +15078,57 @@
   </div>
 
   <!-- Floating Chat Widget -->
-  <div id="user-live-chat-container" class="fixed bottom-6 right-6 z-[9000] hidden flex-col items-end">
+  <div id="user-live-chat-container" class="fixed bottom-6 right-6 z-[9000] flex flex-col items-end">
     <!-- Chat Window -->
     <div id="user-chat-window"
-      class="bg-white border border-sand shadow-2xl rounded-2xl w-[320px] h-[450px] mb-4 flex flex-col overflow-hidden transition-all duration-300 transform scale-95 opacity-0 origin-bottom-right pointer-events-none hidden">
-      <div class="bg-charcoal text-cream p-4 flex justify-between items-center">
-        <div class="flex items-center gap-2">
-          <i data-lucide="headphones" class="w-5 h-5 text-flame"></i>
-          <span class="font-bold text-sm">Studio Support</span>
+      class="bg-white border border-gray-200/80 shadow-2xl rounded-2xl w-[340px] sm:w-[370px] h-[520px] mb-4 flex flex-col overflow-hidden transition-all duration-300 transform scale-95 opacity-0 origin-bottom-right pointer-events-none hidden">
+      <!-- Header -->
+      <div class="bg-black text-white px-5 py-4 flex justify-between items-center shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-xl bg-[#855D28] flex items-center justify-center shrink-0 shadow-inner">
+            <i data-lucide="headphones" class="w-6 h-6 text-white stroke-[2.2]"></i>
+          </div>
+          <div class="flex flex-col leading-tight">
+            <span class="font-serif text-[17px] font-medium text-white tracking-wide">Studio Support</span>
+            <div class="flex items-center gap-1.5 mt-0.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#10b981]"></span>
+              <span class="text-[12px] font-semibold text-[#e58e26]">Online</span>
+            </div>
+          </div>
         </div>
-        <button onclick="window.toggleUserChat()" class="text-slate hover:text-cream transition"><i data-lucide="x"
-            class="w-4 h-4"></i></button>
+        <button onclick="window.toggleUserChat()" class="text-gray-400 hover:text-white transition p-1 cursor-pointer" aria-label="Close Chat">
+          <i data-lucide="x" class="w-6 h-6 stroke-[2]"></i>
+        </button>
       </div>
-      <div id="user-chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-cream/20">
-        <div class="text-center text-xs font-bold text-slate py-4">Start a conversation with us!</div>
+
+      <!-- Messages Body -->
+      <div id="user-chat-messages" class="flex-1 overflow-y-auto p-5 space-y-5 bg-white">
+        <div class="flex flex-col items-start w-full">
+          <div class="max-w-[82%] bg-[#eaeaea] text-[#111111] p-4 rounded-md text-[14px] leading-relaxed font-sans shadow-none">
+            Hello! Welcome to FrameCraft. How can we help you preserve your memories today?
+          </div>
+          <span class="text-[11px] text-gray-400 mt-1.5 ml-1 font-normal">Welcome</span>
+        </div>
       </div>
-      <div class="p-3 border-t border-sand/50 bg-white">
-        <form onsubmit="window.sendUserChatMessage(event)" class="flex gap-2">
-          <input type="text" id="user-chat-input"
-            class="flex-1 px-3 py-2 bg-editorbg border border-sand rounded-lg text-sm focus:outline-none focus:border-flame"
-            placeholder="Type a message..." autocomplete="off">
-          <button type="submit" class="bg-flame text-cream px-3 py-2 rounded-lg hover:bg-charcoal transition"><i
-              data-lucide="send" class="w-4 h-4"></i></button>
+
+      <!-- Footer Input Area -->
+      <div class="p-4 border-t border-gray-200/80 bg-white shrink-0">
+        <form onsubmit="window.sendUserChatMessage(event)" class="w-full">
+          <div class="w-full bg-[#f3f3f3] rounded-lg px-4 py-3 flex items-center gap-2 border border-transparent focus-within:border-gray-300 transition-colors">
+            <input type="text" id="user-chat-input"
+              class="w-full bg-transparent border-none outline-none focus:outline-none text-[14px] text-gray-900 placeholder:text-gray-400 font-sans p-0 m-0 shadow-none ring-0 focus:ring-0"
+              placeholder="Type a message..." autocomplete="off">
+            <button type="submit" class="text-black hover:text-gray-700 transition shrink-0 p-0 border-none bg-transparent cursor-pointer flex items-center justify-center" aria-label="Send Message">
+              <i data-lucide="send" class="w-5 h-5 stroke-[2]"></i>
+            </button>
+          </div>
         </form>
       </div>
     </div>
 
     <!-- Floating Button -->
     <button onclick="window.toggleUserChat()"
-      class="w-14 h-14 bg-flame hover:bg-charcoal text-white rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-105 relative">
+      class="w-14 h-14 bg-primary hover:bg-charcoal text-on-primary rounded-full flex items-center justify-center shadow-xl transition-transform hover:scale-105 relative cursor-pointer" aria-label="Toggle Support Chat">
       <i data-lucide="message-circle" class="w-6 h-6"></i>
       <span id="user-chat-unread-badge"
         class="absolute -top-1 -right-1 bg-green-500 text-white text-[9px] font-black w-5 h-5 rounded-full items-center justify-center hidden border-2 border-white">0</span>
