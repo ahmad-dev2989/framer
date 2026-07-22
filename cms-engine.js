@@ -29,14 +29,12 @@
       { id: "nav_about", name: "ABOUT US", url: "/about-us", enabled: true }
     ],
     social: [
-      { id: "social_fb", name: "Facebook", icon: "fa-brands fa-facebook-f", url: "https://facebook.com", enabled: true },
-      { id: "social_ig", name: "Instagram", icon: "fa-brands fa-instagram", url: "https://instagram.com", enabled: true },
-      { id: "social_x", name: "X (Twitter)", icon: "fa-brands fa-x-twitter", url: "https://x.com", enabled: true },
-      { id: "social_wa", name: "WhatsApp", icon: "fa-brands fa-whatsapp", url: "https://wa.me/923001234567", enabled: true },
-      { id: "social_pin", name: "Pinterest", icon: "fa-brands fa-pinterest-p", url: "https://pinterest.com", enabled: true },
-      { id: "social_tt", name: "TikTok", icon: "fa-brands fa-tiktok", url: "https://tiktok.com", enabled: true },
-      { id: "social_yt", name: "YouTube", icon: "fa-brands fa-youtube", url: "https://youtube.com", enabled: true },
-      { id: "social_li", name: "LinkedIn", icon: "fa-brands fa-linkedin-in", url: "https://linkedin.com", enabled: true }
+      { id: "social_fb", name: "Facebook", icon: "fa-brands fa-facebook-f", url: "https://facebook.com/", enabled: true },
+      { id: "social_ig", name: "Instagram", icon: "fa-brands fa-instagram", url: "https://instagram.com/", enabled: true },
+      { id: "social_yt", name: "YouTube", icon: "fa-brands fa-youtube", url: "https://youtube.com/", enabled: true },
+      { id: "social_tt", name: "TikTok", icon: "fa-brands fa-tiktok", url: "https://tiktok.com/", enabled: true },
+      { id: "social_li", name: "LinkedIn", icon: "fa-brands fa-linkedin-in", url: "https://linkedin.com/", enabled: true },
+      { id: "social_pin", name: "Pinterest", icon: "fa-brands fa-pinterest-p", url: "https://pinterest.com/", enabled: true }
     ],
     contactInfo: {
       phone: "+1 (555) 123-4567",
@@ -429,7 +427,7 @@
               desc: {
                 type: "text",
                 label: "Footer Description",
-                value: "Crafting beautiful frames for your beautiful memories since 2010.",
+                value: "Curating the world's finest mouldings and professional matting since 2014. Your art deserves the best.",
                 style: {}
               },
               quick_links: {
@@ -620,6 +618,7 @@
       window.publicCustomization = clone(window.defaultCustomization);
       window.draftCustomization = clone(window.defaultCustomization);
     }
+    window.checkCmsDirty();
   };
 
   // Helper getters
@@ -821,17 +820,22 @@
     if (pathString.startsWith('logos')) {
       window.renderDynamicLogos();
     }
-    // NOTE: Header and Footer CMS renderers are permanently disabled here 
-    // to preserve the custom hardcoded premium UI layout.
+    if (pathString.startsWith('navigation') || pathString.startsWith('right_action')) {
+      window.renderDynamicNavigation();
+    }
+    if (pathString.startsWith('social') || pathString.startsWith('contactInfo') || pathString.startsWith('pages.footer')) {
+      window.renderDynamicSocialsAndContact();
+    }
   };
 
   // Sweep the whole DOM and apply customization values
   window.applyCmsAll = function () {
     // 1. Dynamic logos
     window.renderDynamicLogos();
-
-    // NOTE: Header and Footer CMS renderers are permanently disabled here 
-    // to preserve the custom hardcoded premium UI layout.
+    // 2. Navigation
+    window.renderDynamicNavigation();
+    // 3. Socials and Contact
+    window.renderDynamicSocialsAndContact();
   }; // <-- ADD THIS CLOSING BRACE
 
   window.renderDynamicRightActionButtons = function () {
@@ -840,9 +844,8 @@
 
     if (window.currentUser && window.currentUser.role === 'admin') {
       container.innerHTML = `
-        <div class="hidden md:flex items-center gap-3">
-          <span class="material-symbols-outlined cursor-pointer hover:text-[#775a19] transition-colors text-[#000102] text-[22px]">search</span>
-          <span class="material-symbols-outlined cursor-pointer hover:text-[#775a19] transition-colors text-[#000102] text-[22px]" onclick="toggleModal('cart-modal')">shopping_cart</span>
+        <div class="flex items-center gap-2.5 sm:gap-3">
+          <span class="material-symbols-outlined cursor-pointer hover:text-[#775a19] transition-colors text-[#000102] text-[20px] sm:text-[22px]" onclick="toggleModal('cart-modal')" title="Shopping Cart">shopping_cart</span>
         </div>
         <div class="h-6 w-px bg-outline-variant/30 hidden md:block mx-2"></div>
         <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-[#000102]"><span class="material-symbols-outlined">menu</span></button>
@@ -851,10 +854,9 @@
       return;
     }
 
-    let html = '<div class="hidden md:flex items-center gap-3">';
+    let html = '<div class="flex items-center gap-2.5 sm:gap-3">';
     html += `
-      <span class="material-symbols-outlined cursor-pointer hover:text-[#775a19] transition-colors text-[#000102] text-[22px]">search</span>
-      <span class="material-symbols-outlined cursor-pointer hover:text-[#775a19] transition-colors text-[#000102] text-[22px]" onclick="toggleModal('cart-modal')">shopping_cart</span>
+      <span class="material-symbols-outlined cursor-pointer hover:text-[#775a19] transition-colors text-[#000102] text-[20px] sm:text-[22px]" onclick="toggleModal('cart-modal')" title="Shopping Cart">shopping_cart</span>
     `;
     html += '</div><div class="h-6 w-px bg-outline-variant/30 hidden md:block mx-2"></div>';
 
@@ -900,9 +902,9 @@
       `;
     } else {
       html += `
-        <button onclick="toggleModal('login-modal')" class="hidden sm:block text-[14px] font-bold px-7 py-2.5 border border-[#000102] text-[#000102] hover:bg-[#000102] hover:text-[#ffffff] transition-all duration-300 rounded">Login</button>
-        <button onclick="toggleModal('signup-modal')" class="hidden md:block text-[14px] font-bold px-7 py-2.5 bg-[#000102] text-[#ffffff] hover:bg-[#775a19] transition-all duration-300 shadow-sm rounded">Signup</button>
-        <button onclick="toggleMobileMenu()" class="md:hidden material-symbols-outlined p-2 text-[#000102]">menu</button>
+        <button onclick="toggleModal('login-modal')" class="inline-flex items-center justify-center text-[11px] sm:text-[13px] md:text-[14px] font-bold px-2.5 sm:px-4 md:px-6 py-1 sm:py-2 md:py-2.5 border border-[#000102] text-[#000102] hover:bg-[#000102] hover:text-[#ffffff] transition-all duration-300 rounded whitespace-nowrap shrink-0">Login</button>
+        <button onclick="toggleModal('signup-modal')" class="inline-flex items-center justify-center text-[11px] sm:text-[13px] md:text-[14px] font-bold px-2.5 sm:px-4 md:px-6 py-1 sm:py-2 md:py-2.5 bg-[#000102] text-[#ffffff] hover:bg-[#775a19] transition-all duration-300 shadow-sm rounded whitespace-nowrap shrink-0">Signup</button>
+        <button onclick="toggleMobileMenu()" class="md:hidden inline-flex items-center justify-center p-1 text-[#000102] hover:bg-black/5 rounded transition-colors cursor-pointer select-none shrink-0" aria-label="Toggle Navigation Menu"><span class="material-symbols-outlined text-[22px] sm:text-[24px]">menu</span></button>
       `;
     }
 
@@ -951,12 +953,21 @@
     });
 
     if (conf.type === 'text') {
+      const isDarkMode = document.documentElement.classList.contains('dark');
       if (lightTextLogo) {
-        lightTextLogo.classList.remove('hidden');
+        if (!isDarkMode) {
+          lightTextLogo.classList.remove('hidden');
+        } else {
+          lightTextLogo.classList.add('hidden');
+        }
         lightTextLogo.innerHTML = `<span>${conf.textPrefix || ''}</span><span class="text-flame">${conf.textSuffix || ''}</span>`;
       }
       if (darkTextLogo) {
-        darkTextLogo.classList.remove('hidden');
+        if (isDarkMode) {
+          darkTextLogo.classList.remove('hidden');
+        } else {
+          darkTextLogo.classList.add('hidden');
+        }
         darkTextLogo.innerHTML = `<span>${conf.textPrefix || ''}</span><span class="text-flame">${conf.textSuffix || ''}</span>`;
       }
       if (lightImgLogo) lightImgLogo.classList.add('hidden');
@@ -964,13 +975,22 @@
     } else {
       if (lightTextLogo) lightTextLogo.classList.add('hidden');
       if (darkTextLogo) darkTextLogo.classList.add('hidden');
-      if (lightImgLogo && conf.lightLogoUrl) {
-        lightImgLogo.classList.remove('hidden');
-        lightImgLogo.src = conf.lightLogoUrl;
+      const isDarkMode = document.documentElement.classList.contains('dark');
+      if (lightImgLogo) {
+        if (!isDarkMode && conf.lightLogoUrl) {
+          lightImgLogo.classList.remove('hidden');
+          lightImgLogo.src = conf.lightLogoUrl;
+        } else {
+          lightImgLogo.classList.add('hidden');
+        }
       }
-      if (darkImgLogo && conf.darkLogoUrl) {
-        darkImgLogo.classList.remove('hidden');
-        darkImgLogo.src = conf.darkLogoUrl;
+      if (darkImgLogo) {
+        if (isDarkMode && conf.darkLogoUrl) {
+          darkImgLogo.classList.remove('hidden');
+          darkImgLogo.src = conf.darkLogoUrl;
+        } else {
+          darkImgLogo.classList.add('hidden');
+        }
       }
     }
   };
@@ -979,7 +999,9 @@
     const navItems = window.draftCustomization.navigation || [];
 
     // Render Right Action Buttons
-    window.renderDynamicRightActionButtons();
+    if (typeof window.renderDynamicRightActionButtons === 'function') {
+      window.renderDynamicRightActionButtons();
+    }
 
     // 1. Render Desktop Nav links
     const desktopContainer = document.getElementById('header-nav-links');
@@ -987,10 +1009,12 @@
       let html = '';
       navItems.forEach(item => {
         if (!item.enabled) return;
-        const resolvedUrl = item.customUrl ? item.customUrl : (item.page || '/');
+
+        // Corrected URL Resolution
+        const resolvedUrl = item.customUrl || item.page || item.url || '/';
         const linkClass = item.name.toUpperCase() === 'HOME'
-          ? "text-[#000102] font-bold text-[15px] hover:text-[#775a19] transition-colors"
-          : "text-[#45474b] text-[15px] hover:text-[#775a19] transition-colors";
+          ? "nav-link-item text-[var(--text-header,#000102)] font-bold text-[15px] hover:text-[var(--btn-color,#775a19)] transition-colors"
+          : "nav-link-item text-[var(--text-footer,#45474b)] text-[15px] hover:text-[var(--btn-color,#775a19)] transition-colors";
 
         if (item.dropdown && item.dropdown.length > 0) {
           html += `
@@ -1000,7 +1024,8 @@
               </a>
               <div class="dropdown-menu absolute top-full left-0 mt-2 w-48 bg-white shadow-xl rounded-md opacity-0 pointer-events-none transition-all flex flex-col py-2 border border-outline-variant/30 z-50">
                 ${item.dropdown.map(d => {
-            const resolvedSubUrl = d.customUrl ? d.customUrl : (d.page || '/');
+            // Corrected Sub-URL Resolution
+            const resolvedSubUrl = d.customUrl || d.page || d.url || '/';
             return `<a href="${resolvedSubUrl}" class="px-4 py-2 hover:bg-surface-container-low text-primary transition-colors block" onclick="event.preventDefault(); window.handlePathRouting('${resolvedSubUrl}'); window.closeAllDropdowns()">${d.name}</a>`;
           }).join('')}
               </div>
@@ -1020,14 +1045,17 @@
       let html = '';
       navItems.forEach(item => {
         if (!item.enabled) return;
-        const resolvedUrl = item.customUrl ? item.customUrl : (item.page || '/');
+
+        // Corrected URL Resolution
+        const resolvedUrl = item.customUrl || item.page || item.url || '/';
         if (item.dropdown && item.dropdown.length > 0) {
           html += `
             <div class="space-y-3">
               <span class="block text-xs font-bold text-slate uppercase tracking-wider">${item.name}</span>
               <div class="pl-4 space-y-3 border-l-2 border-sand/30">
                 ${item.dropdown.map(d => {
-            const resolvedSubUrl = d.customUrl ? d.customUrl : (d.page || '/');
+            // Corrected Sub-URL Resolution
+            const resolvedSubUrl = d.customUrl || d.page || d.url || '/';
             return `<a href="${resolvedSubUrl}" onclick="event.preventDefault(); window.handlePathRouting('${resolvedSubUrl}'); toggleMobileMenu()" class="block text-sm font-semibold text-charcoal">${d.name}</a>`;
           }).join('')}
               </div>
@@ -1108,29 +1136,49 @@
     const socials = window.draftCustomization.social || [];
     const contact = window.draftCustomization.contactInfo || {};
 
-    // 3. Footer socials
+    // 2. Header One contact details
+    const topPhone = document.getElementById('header-top-phone');
+    const topEmail = document.getElementById('header-top-email');
+    if (topPhone && contact.phone) {
+      topPhone.href = `tel:${contact.phone.replace(/[^0-9+]/g, '')}`;
+      const textSpan = topPhone.querySelector('.header-phone-text');
+      if (textSpan) textSpan.textContent = contact.phone;
+    }
+    if (topEmail && contact.email) {
+      topEmail.href = `mailto:${contact.email}`;
+      const textSpan = topEmail.querySelector('.header-email-text');
+      if (textSpan) textSpan.textContent = contact.email;
+    }
+
+    // 3. Header & Footer socials
     const footerSocials = document.getElementById('footer-socials') || document.querySelector('#site-footer .flex.gap-4');
-    if (footerSocials) {
-      let html = '';
-      const iconMap = {
-        'fa-facebook-f': 'face_nod',
-        'fa-instagram': 'camera',
-        'fa-x-twitter': 'share',
-        'fa-pinterest-p': 'potted_plant',
-        'fa-youtube': 'play_circle'
-      };
+    const topSocials = document.getElementById('top-socials');
+
+    if (footerSocials || topSocials) {
+      let footerHtml = '';
+      let topHtml = '';
+
       socials.forEach(s => {
         if (!s.enabled) return;
-        let matIcon = 'link';
-        Object.keys(iconMap).forEach(k => { if (s.icon.includes(k)) matIcon = iconMap[k]; });
+        const iconColorStyle = s.color ? `color: ${s.color} !important;` : `color: var(--icon-color, inherit);`;
 
-        html += `
-          <a href="${s.url}" target="_blank" rel="noopener noreferrer" aria-label="${s.name}">
-            <span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors text-primary">${matIcon}</span>
+        // Build Footer Icons
+        footerHtml += `
+          <a href="${s.url}" target="_blank" rel="noopener noreferrer" aria-label="${s.name}" class="w-10 h-10 rounded-full border border-outline-variant/30 flex items-center justify-center transition-all hover:opacity-80" style="${iconColorStyle}">
+            <i class="${s.icon} text-sm"></i>
+          </a>
+        `;
+
+        // Build Top Header Icons
+        topHtml += `
+          <a href="${s.url}" target="_blank" rel="noopener noreferrer" aria-label="${s.name}" class="flex items-center justify-center hover:opacity-80 transition-opacity">
+            <i class="${s.icon} text-[15px]" style="${iconColorStyle}"></i>
           </a>
         `;
       });
-      footerSocials.innerHTML = html;
+
+      if (footerSocials) footerSocials.innerHTML = footerHtml;
+      if (topSocials) topSocials.innerHTML = topHtml;
     }
 
     // 4. Contact section cards
@@ -1276,16 +1324,22 @@
   };
 
   window.checkCmsDirty = function () {
-    const isDirty = JSON.stringify(window.draftCustomization) !== JSON.stringify(window.publicCustomization);
     const saveBar = document.getElementById('cms-unsaved-alert-bar');
-    if (saveBar) {
-      if (isDirty) {
-        saveBar.classList.remove('translate-y-24');
-        saveBar.classList.add('translate-y-0');
-      } else {
-        saveBar.classList.remove('translate-y-0');
-        saveBar.classList.add('translate-y-24');
-      }
+    if (!saveBar) return;
+
+    const isDirty = JSON.stringify(window.draftCustomization) !== JSON.stringify(window.publicCustomization);
+    const isAdmin = window.currentUser && window.currentUser.role === 'admin';
+    const adminPanel = document.getElementById('admin-dashboard-drawer');
+    const isAdminPanelOpen = adminPanel && !adminPanel.classList.contains('hidden');
+
+    if (isDirty && isAdmin && isAdminPanelOpen) {
+      saveBar.classList.remove('hidden');
+      saveBar.classList.remove('translate-y-24');
+      saveBar.classList.add('translate-y-0');
+    } else {
+      saveBar.classList.add('hidden');
+      saveBar.classList.remove('translate-y-0');
+      saveBar.classList.add('translate-y-24');
     }
   };
 
@@ -2146,10 +2200,8 @@
   window.updateNavField = function (idx, key, val) {
     const item = window.draftCustomization.navigation[idx];
     item[key] = val;
-    if (item.page === undefined) item.page = "";
-    if (item.customUrl === undefined) item.customUrl = "";
-
-    item.url = item.customUrl ? item.customUrl : (item.page || '/');
+    // Smart fallback: If customUrl is empty, use page. If both are empty, use existing url.
+    item.url = item.customUrl || item.page || item.url || '/';
 
     window.applyCmsPreview('navigation');
     window.checkCmsDirty();
@@ -2158,10 +2210,8 @@
   window.updateNavSubField = function (idx, sIdx, key, val) {
     const sub = window.draftCustomization.navigation[idx].dropdown[sIdx];
     sub[key] = val;
-    if (sub.page === undefined) sub.page = "";
-    if (sub.customUrl === undefined) sub.customUrl = "";
-
-    sub.url = sub.customUrl ? sub.customUrl : (sub.page || '/');
+    // Smart fallback for dropdown sub-links
+    sub.url = sub.customUrl || sub.page || sub.url || '/';
 
     window.applyCmsPreview('navigation');
     window.checkCmsDirty();
