@@ -218,6 +218,7 @@
         top: 0 !important;
         padding: 12px 16px !important;
       }
+
       #top-thin-header {
         display: none !important;
         height: 0 !important;
@@ -227,11 +228,13 @@
         overflow: hidden !important;
         visibility: hidden !important;
       }
+
       #landing-view {
         margin-top: 0 !important;
         padding-top: 0 !important;
       }
-      #landing-view > header {
+
+      #landing-view>header {
         position: fixed !important;
         top: 0 !important;
         left: 0 !important;
@@ -240,6 +243,7 @@
         z-index: 1000 !important;
         margin-top: 0 !important;
       }
+
       #hero {
         margin-top: 68px !important;
       }
@@ -2132,79 +2136,390 @@
           <h2 class="text-2xl font-extrabold text-charcoal mb-6">Create Product Template</h2>
           <form id="add-product-form" class="space-y-6">
             <input type="hidden" id="editing-product-id">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div class="col-span-1">
-                <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-2 block">Product Name</label>
-                <input type="text" id="product-name"
-                  class="w-full px-4 py-3 bg-editorbg border border-sand rounded-xl font-medium focus:border-flame focus:outline-none focus:ring-1 focus:ring-flame"
-                  required>
-              </div>
-              <div class="col-span-1">
-                <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-2 block">Category</label>
-                <select id="product-category"
-                  class="w-full px-4 py-3 bg-editorbg border border-sand rounded-xl font-medium focus:border-flame focus:outline-none focus:ring-1 focus:ring-flame">
-                  <option value="">No Category</option>
-                  <!-- Populated by JS -->
-                </select>
-              </div>
-              <div>
-                <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-2 block">Price</label>
-                <input type="number" id="product-price" step="0.01"
-                  class="w-full px-4 py-3 bg-editorbg border border-sand rounded-xl font-medium focus:border-flame focus:outline-none focus:ring-1 focus:ring-flame"
-                  required>
-              </div>
-              <div>
-                <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-2 block">Tax Rate (%)</label>
-                <input type="number" id="product-tax" step="0.01" value="0"
-                  class="w-full px-4 py-3 bg-editorbg border border-sand rounded-xl font-medium focus:border-flame focus:outline-none focus:ring-1 focus:ring-flame">
+            
+            <!-- SECTION 1: Product Information -->
+            <div class="glass-card bg-white border border-sand/60 rounded-3xl p-6 shadow-sm space-y-4">
+              <h3 class="text-lg font-extrabold text-charcoal flex items-center gap-2">
+                <i data-lucide="info" class="w-5 h-5 text-flame"></i> Product Information
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="col-span-2">
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Product Name</label>
+                  <input type="text" id="product-name" placeholder="e.g. Minimalist Oak Frame"
+                    class="w-full px-4 py-2.5 bg-editorbg border border-sand rounded-xl font-medium focus:border-flame focus:outline-none focus:ring-1 focus:ring-flame"
+                    required>
+                </div>
+                <div class="col-span-2">
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Small Description</label>
+                  <textarea id="product-description" rows="2" placeholder="Describe the frame template characteristics..."
+                    class="w-full px-4 py-2.5 bg-editorbg border border-sand rounded-xl font-medium focus:border-flame focus:outline-none focus:ring-1 focus:ring-flame"
+                    required></textarea>
+                </div>
+                <div class="col-span-1">
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Category</label>
+                  <select id="product-category"
+                    class="w-full px-4 py-2.5 bg-editorbg border border-sand rounded-xl font-medium focus:border-flame focus:outline-none focus:ring-1 focus:ring-flame">
+                    <option value="">No Category</option>
+                  </select>
+                </div>
+                <div class="col-span-1">
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Tax Rate (%)</label>
+                  <input type="number" id="product-tax" step="0.01" value="0" min="0"
+                    class="w-full px-4 py-2.5 bg-editorbg border border-sand rounded-xl font-medium focus:border-flame focus:outline-none focus:ring-1 focus:ring-flame"
+                    required>
+                </div>
               </div>
             </div>
 
-            <!-- Product Images Management System -->
-            <div class="space-y-6 bg-editorbg/40 border border-sand/60 rounded-2xl p-5">
-              <h3 class="font-extrabold text-charcoal text-base flex items-center gap-2">
-                <i data-lucide="image" class="w-5 h-5 text-flame"></i> Product Images Management
+            <!-- SECTION 2: Background Image -->
+            <div class="glass-card bg-white border border-sand/60 rounded-3xl p-6 shadow-sm space-y-4">
+              <h3 class="text-lg font-extrabold text-charcoal flex items-center gap-2">
+                <i data-lucide="image" class="w-5 h-5 text-flame"></i> Background Image
               </h3>
-
-              <!-- Customization Images (Frame & Background) -->
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <!-- Frame Image Field -->
-                <div class="bg-white p-4 rounded-xl border border-sand/80 space-y-3">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
+                <div class="space-y-3 bg-editorbg/30 p-4 rounded-2xl border border-sand/40">
                   <div>
-                    <label class="text-[11px] font-extrabold uppercase tracking-wider text-charcoal block">Frame Image</label>
-                    <span class="text-[10px] text-slate font-medium block">Used only for 3D/Customization workspace preview</span>
-                  </div>
-                  <div class="space-y-2">
-                    <div class="border-2 border-dashed border-sand/80 hover:border-flame transition rounded-xl p-3 text-center cursor-pointer bg-editorbg relative">
-                      <input type="file" id="product-frame-img" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                      <span id="frame-img-text" class="text-xs font-bold text-charcoal block truncate">Upload Frame Image File</span>
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">Upload File</label>
+                    <div class="border-2 border-dashed border-sand/80 hover:border-flame transition rounded-xl p-3 text-center cursor-pointer bg-white relative">
+                      <input type="file" id="product-bg-img" accept="image/*" onchange="window.previewImageFile('bg')"
+                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                      <span id="bg-img-text" class="text-xs font-bold text-charcoal block truncate">Upload Background File</span>
                     </div>
-                    <input type="url" id="product-frame-url" placeholder="OR paste Frame Image URL (https://...)" class="w-full px-3 py-2 bg-editorbg border border-sand rounded-xl text-xs font-medium focus:border-flame focus:outline-none">
+                  </div>
+                  <div>
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">OR paste Background Image URL</label>
+                    <input type="url" id="product-bg-url" oninput="window.previewImageUrl('bg')" placeholder="https://..."
+                      class="w-full px-3 py-2 bg-white border border-sand rounded-xl text-xs font-medium focus:border-flame focus:outline-none">
                   </div>
                 </div>
+                <!-- Preview area -->
+                <div class="border border-sand/80 rounded-2xl p-3 bg-editorbg flex flex-col items-center justify-center min-h-[140px] relative overflow-hidden">
+                  <div id="bg-preview-placeholder" class="text-center p-4">
+                    <i data-lucide="image" class="w-8 h-8 text-slate/60 mx-auto mb-1"></i>
+                    <span class="text-xs font-semibold text-slate block">No background image preview</span>
+                  </div>
+                  <img id="bg-preview-img" src="" class="max-h-[120px] max-w-full rounded-lg object-contain hidden" alt="Background Preview">
+                  <button type="button" id="btn-remove-bg-preview" onclick="window.clearImagePreview('bg')"
+                    class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-md hidden" title="Remove image">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
 
-                <!-- Background Image Field -->
-                <div class="bg-white p-4 rounded-xl border border-sand/80 space-y-3">
-                  <div>
-                    <label class="text-[11px] font-extrabold uppercase tracking-wider text-charcoal block">Background Image</label>
-                    <span class="text-[10px] text-slate font-medium block">Used only for 3D/Customization workspace preview</span>
-                  </div>
-                  <div class="space-y-2">
-                    <div class="border-2 border-dashed border-sand/80 hover:border-flame transition rounded-xl p-3 text-center cursor-pointer bg-editorbg relative">
-                      <input type="file" id="product-bg-img" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                      <span id="bg-img-text" class="text-xs font-bold text-charcoal block truncate">Upload Background Image File</span>
-                    </div>
-                    <input type="url" id="product-bg-url" placeholder="OR paste Background Image URL (https://...)" class="w-full px-3 py-2 bg-editorbg border border-sand rounded-xl text-xs font-medium focus:border-flame focus:outline-none">
-                  </div>
+            <!-- SECTION 3: Outer Frame (Required) -->
+            <div class="glass-card bg-white border border-sand/60 rounded-3xl p-6 shadow-sm space-y-4">
+              <h3 class="text-lg font-extrabold text-charcoal flex items-center justify-between">
+                <span class="flex items-center gap-2">
+                  <i data-lucide="layers" class="w-5 h-5 text-flame"></i> Outer Frame <span class="text-xs font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full border border-red-200">Required</span>
+                </span>
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Frame Name</label>
+                  <input type="text" id="product-outer-name" placeholder="Outer Frame Name"
+                    class="w-full px-3 py-2 bg-editorbg border border-sand rounded-xl text-xs font-semibold focus:border-flame focus:outline-none"
+                    required>
+                </div>
+                <div>
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Frame Price</label>
+                  <input type="number" id="product-outer-price" step="0.01" placeholder="Price"
+                    class="w-full px-3 py-2 bg-editorbg border border-sand rounded-xl text-xs font-semibold focus:border-flame focus:outline-none"
+                    required>
+                </div>
+                <div>
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Thickness (cm)</label>
+                  <input type="number" id="product-outer-thickness" step="0.01" placeholder="Thickness in cm"
+                    class="w-full px-3 py-2 bg-editorbg border border-sand rounded-xl text-xs font-semibold focus:border-flame focus:outline-none"
+                    required>
                 </div>
               </div>
 
-              <!-- Product Display Gallery Images -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
+                <div class="space-y-3 bg-editorbg/30 p-4 rounded-2xl border border-sand/40">
+                  <div>
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">Upload Frame File</label>
+                    <div class="border-2 border-dashed border-sand/80 hover:border-flame transition rounded-xl p-3 text-center cursor-pointer bg-white relative">
+                      <input type="file" id="product-outer-img" accept="image/*" onchange="window.previewImageFile('outer')"
+                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                      <span id="outer-img-text" class="text-xs font-bold text-charcoal block truncate">Upload Frame Image</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">OR paste Frame Image URL</label>
+                    <input type="url" id="product-outer-url" oninput="window.previewImageUrl('outer')" placeholder="https://..."
+                      class="w-full px-3 py-2 bg-white border border-sand rounded-xl text-xs font-medium focus:border-flame focus:outline-none">
+                  </div>
+                </div>
+                <div class="border border-sand/80 rounded-2xl p-3 bg-editorbg flex flex-col items-center justify-center min-h-[140px] relative overflow-hidden">
+                  <div id="outer-preview-placeholder" class="text-center p-4">
+                    <i data-lucide="layers" class="w-8 h-8 text-slate/60 mx-auto mb-1"></i>
+                    <span class="text-xs font-semibold text-slate block">No frame image preview</span>
+                  </div>
+                  <img id="outer-preview-img" src="" class="max-h-[120px] max-w-full rounded-lg object-contain hidden" alt="Outer Frame Preview">
+                  <button type="button" id="btn-remove-outer-preview" onclick="window.clearImagePreview('outer')"
+                    class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-md hidden" title="Remove image">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Colours Management System -->
+              <div class="bg-editorbg/60 border border-sand/50 rounded-2xl p-4 space-y-4">
+                <div class="flex items-center justify-between border-b border-sand/40 pb-2">
+                  <span class="text-xs font-bold text-charcoal uppercase tracking-wider">Available Colours</span>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+                  <div class="col-span-1">
+                    <label class="text-[10px] font-bold text-slate mb-1 block">Colour Name</label>
+                    <input type="text" id="color-name-outer" placeholder="e.g. Ebony Black"
+                      class="w-full px-3 py-2 bg-white border border-sand rounded-xl text-xs font-medium focus:border-flame focus:outline-none">
+                  </div>
+                  <div class="col-span-1">
+                    <label class="text-[10px] font-bold text-slate mb-1 block">Colour Hex swatch</label>
+                    <div class="flex gap-2">
+                      <input type="text" id="color-hex-text-outer" value="#000000" placeholder="#000000" oninput="document.getElementById('color-hex-picker-outer').value = this.value"
+                        class="w-full px-3 py-2 bg-white border border-sand rounded-xl text-xs font-medium focus:border-flame focus:outline-none">
+                      <input type="color" id="color-hex-picker-outer" value="#000000" oninput="document.getElementById('color-hex-text-outer').value = this.value.toUpperCase()"
+                        class="w-10 h-9 bg-white border border-sand rounded-xl p-0.5 cursor-pointer">
+                    </div>
+                  </div>
+                  <button type="button" onclick="window.addColorChip('outer')"
+                    class="btn-solid-orange py-2 px-4 rounded-xl text-xs font-bold text-cream flex items-center justify-center gap-1.5">
+                    <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add colour
+                  </button>
+                </div>
+
+                <!-- Chips container -->
+                <div id="outer-chips-list" class="flex flex-wrap gap-2 pt-2"></div>
+              </div>
+            </div>
+
+            <!-- SECTION 4: Middle Frame (Optional) -->
+            <!-- Collapsed Card -->
+            <div id="middle-frame-collapsed" class="glass-card bg-white border border-sand/60 rounded-3xl p-6 shadow-sm flex items-center justify-between">
+              <div>
+                <h4 class="text-base font-extrabold text-charcoal flex items-center gap-2">
+                  <i data-lucide="layers" class="w-5 h-5 text-slate"></i> Middle Frame <span class="text-xs font-medium text-slate bg-editorbg px-2.5 py-0.5 rounded-full border border-sand/40">Optional</span>
+                </h4>
+                <p class="text-xs font-semibold text-slate mt-1">Configure an additional nested middle layer or linen mat.</p>
+              </div>
+              <button type="button" onclick="window.toggleFrameSection('middle', true)"
+                class="px-4 py-2.5 bg-charcoal text-cream text-xs font-extrabold rounded-xl hover:bg-black transition flex items-center gap-2">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i> Add Middle Frame
+              </button>
+            </div>
+
+            <!-- Expanded Card -->
+            <div id="middle-frame-expanded" class="glass-card bg-white border border-sand/60 rounded-3xl p-6 shadow-sm space-y-4 hidden">
+              <div class="flex items-center justify-between border-b border-sand/40 pb-2">
+                <h3 class="text-lg font-extrabold text-charcoal flex items-center gap-2">
+                  <i data-lucide="layers" class="w-5 h-5 text-slate"></i> Middle Frame Layer
+                </h3>
+                <button type="button" onclick="window.toggleFrameSection('middle', false)"
+                  class="px-3 py-1.5 bg-red-50 text-red-500 text-xs font-bold rounded-lg border border-red-200 hover:bg-red-100 transition flex items-center gap-1.5">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Remove Frame
+                </button>
+              </div>
+
+              <!-- Inputs -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Frame Name</label>
+                  <input type="text" id="product-middle-name" placeholder="Middle Frame Name"
+                    class="w-full px-3 py-2 bg-editorbg border border-sand rounded-xl text-xs font-semibold focus:border-flame focus:outline-none">
+                </div>
+                <div>
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Frame Price</label>
+                  <input type="number" id="product-middle-price" step="0.01" placeholder="Price"
+                    class="w-full px-3 py-2 bg-editorbg border border-sand rounded-xl text-xs font-semibold focus:border-flame focus:outline-none">
+                </div>
+                <div>
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Thickness (cm)</label>
+                  <input type="number" id="product-middle-thickness" step="0.01" placeholder="Thickness in cm"
+                    class="w-full px-3 py-2 bg-editorbg border border-sand rounded-xl text-xs font-semibold focus:border-flame focus:outline-none">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
+                <div class="space-y-3 bg-editorbg/30 p-4 rounded-2xl border border-sand/40">
+                  <div>
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">Upload Frame File</label>
+                    <div class="border-2 border-dashed border-sand/80 hover:border-flame transition rounded-xl p-3 text-center cursor-pointer bg-white relative">
+                      <input type="file" id="product-middle-img" accept="image/*" onchange="window.previewImageFile('middle')"
+                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                      <span id="middle-img-text" class="text-xs font-bold text-charcoal block truncate">Upload Frame Image</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">OR paste Frame Image URL</label>
+                    <input type="url" id="product-middle-url" oninput="window.previewImageUrl('middle')" placeholder="https://..."
+                      class="w-full px-3 py-2 bg-white border border-sand rounded-xl text-xs font-medium focus:border-flame focus:outline-none">
+                  </div>
+                </div>
+                <div class="border border-sand/80 rounded-2xl p-3 bg-editorbg flex flex-col items-center justify-center min-h-[140px] relative overflow-hidden">
+                  <div id="middle-preview-placeholder" class="text-center p-4">
+                    <i data-lucide="layers" class="w-8 h-8 text-slate/60 mx-auto mb-1"></i>
+                    <span class="text-xs font-semibold text-slate block">No frame image preview</span>
+                  </div>
+                  <img id="middle-preview-img" src="" class="max-h-[120px] max-w-full rounded-lg object-contain hidden" alt="Middle Frame Preview">
+                  <button type="button" id="btn-remove-middle-preview" onclick="window.clearImagePreview('middle')"
+                    class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-md hidden" title="Remove image">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Colours mat -->
+              <div class="bg-editorbg/60 border border-sand/50 rounded-2xl p-4 space-y-4">
+                <div class="flex items-center justify-between border-b border-sand/40 pb-2">
+                  <span class="text-xs font-bold text-charcoal uppercase tracking-wider">Available Colours</span>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+                  <div class="col-span-1">
+                    <label class="text-[10px] font-bold text-slate mb-1 block">Colour Name</label>
+                    <input type="text" id="color-name-middle" placeholder="e.g. Silk White"
+                      class="w-full px-3 py-2 bg-white border border-sand rounded-xl text-xs font-medium focus:border-flame focus:outline-none">
+                  </div>
+                  <div class="col-span-1">
+                    <label class="text-[10px] font-bold text-slate mb-1 block">Colour Hex swatch</label>
+                    <div class="flex gap-2">
+                      <input type="text" id="color-hex-text-middle" value="#FFFFFF" placeholder="#FFFFFF" oninput="document.getElementById('color-hex-picker-middle').value = this.value"
+                        class="w-full px-3 py-2 bg-white border border-sand rounded-xl text-xs font-medium focus:border-flame focus:outline-none">
+                      <input type="color" id="color-hex-picker-middle" value="#FFFFFF" oninput="document.getElementById('color-hex-text-middle').value = this.value.toUpperCase()"
+                        class="w-10 h-9 bg-white border border-sand rounded-xl p-0.5 cursor-pointer">
+                    </div>
+                  </div>
+                  <button type="button" onclick="window.addColorChip('middle')"
+                    class="btn-solid-orange py-2 px-4 rounded-xl text-xs font-bold text-cream flex items-center justify-center gap-1.5">
+                    <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add colour
+                  </button>
+                </div>
+
+                <!-- Chips container -->
+                <div id="middle-chips-list" class="flex flex-wrap gap-2 pt-2"></div>
+              </div>
+            </div>
+
+            <!-- SECTION 5: Inner Frame (Optional) -->
+            <!-- Collapsed Card -->
+            <div id="inner-frame-collapsed" class="glass-card bg-white border border-sand/60 rounded-3xl p-6 shadow-sm flex items-center justify-between">
+              <div>
+                <h4 class="text-base font-extrabold text-charcoal flex items-center gap-2">
+                  <i data-lucide="layers" class="w-5 h-5 text-slate"></i> Inner Frame <span class="text-xs font-medium text-slate bg-editorbg px-2.5 py-0.5 rounded-full border border-sand/40">Optional</span>
+                </h4>
+                <p class="text-xs font-semibold text-slate mt-1">Configure an additional internal highlight frame or fillet.</p>
+              </div>
+              <button type="button" onclick="window.toggleFrameSection('inner', true)"
+                class="px-4 py-2.5 bg-charcoal text-cream text-xs font-extrabold rounded-xl hover:bg-black transition flex items-center gap-2">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i> Add Inner Frame
+              </button>
+            </div>
+
+            <!-- Expanded Card -->
+            <div id="inner-frame-expanded" class="glass-card bg-white border border-sand/60 rounded-3xl p-6 shadow-sm space-y-4 hidden">
+              <div class="flex items-center justify-between border-b border-sand/40 pb-2">
+                <h3 class="text-lg font-extrabold text-charcoal flex items-center gap-2">
+                  <i data-lucide="layers" class="w-5 h-5 text-slate"></i> Inner Frame Layer
+                </h3>
+                <button type="button" onclick="window.toggleFrameSection('inner', false)"
+                  class="px-3 py-1.5 bg-red-50 text-red-500 text-xs font-bold rounded-lg border border-red-200 hover:bg-red-100 transition flex items-center gap-1.5">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Remove Frame
+                </button>
+              </div>
+
+              <!-- Inputs -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Frame Name</label>
+                  <input type="text" id="product-inner-name" placeholder="Inner Frame Name"
+                    class="w-full px-3 py-2 bg-editorbg border border-sand rounded-xl text-xs font-semibold focus:border-flame focus:outline-none">
+                </div>
+                <div>
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Frame Price</label>
+                  <input type="number" id="product-inner-price" step="0.01" placeholder="Price"
+                    class="w-full px-3 py-2 bg-editorbg border border-sand rounded-xl text-xs font-semibold focus:border-flame focus:outline-none">
+                </div>
+                <div>
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Thickness (cm)</label>
+                  <input type="number" id="product-inner-thickness" step="0.01" placeholder="Thickness in cm"
+                    class="w-full px-3 py-2 bg-editorbg border border-sand rounded-xl text-xs font-semibold focus:border-flame focus:outline-none">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
+                <div class="space-y-3 bg-editorbg/30 p-4 rounded-2xl border border-sand/40">
+                  <div>
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">Upload Frame File</label>
+                    <div class="border-2 border-dashed border-sand/80 hover:border-flame transition rounded-xl p-3 text-center cursor-pointer bg-white relative">
+                      <input type="file" id="product-inner-img" accept="image/*" onchange="window.previewImageFile('inner')"
+                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                      <span id="inner-img-text" class="text-xs font-bold text-charcoal block truncate">Upload Frame Image</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">OR paste Frame Image URL</label>
+                    <input type="url" id="product-inner-url" oninput="window.previewImageUrl('inner')" placeholder="https://..."
+                      class="w-full px-3 py-2 bg-white border border-sand rounded-xl text-xs font-medium focus:border-flame focus:outline-none">
+                  </div>
+                </div>
+                <div class="border border-sand/80 rounded-2xl p-3 bg-editorbg flex flex-col items-center justify-center min-h-[140px] relative overflow-hidden">
+                  <div id="inner-preview-placeholder" class="text-center p-4">
+                    <i data-lucide="layers" class="w-8 h-8 text-slate/60 mx-auto mb-1"></i>
+                    <span class="text-xs font-semibold text-slate block">No frame image preview</span>
+                  </div>
+                  <img id="inner-preview-img" src="" class="max-h-[120px] max-w-full rounded-lg object-contain hidden" alt="Inner Frame Preview">
+                  <button type="button" id="btn-remove-inner-preview" onclick="window.clearImagePreview('inner')"
+                    class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-md hidden" title="Remove image">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Colours mat -->
+              <div class="bg-editorbg/60 border border-sand/50 rounded-2xl p-4 space-y-4">
+                <div class="flex items-center justify-between border-b border-sand/40 pb-2">
+                  <span class="text-xs font-bold text-charcoal uppercase tracking-wider">Available Colours</span>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+                  <div class="col-span-1">
+                    <label class="text-[10px] font-bold text-slate mb-1 block">Colour Name</label>
+                    <input type="text" id="color-name-inner" placeholder="e.g. Silk Gold"
+                      class="w-full px-3 py-2 bg-white border border-sand rounded-xl text-xs font-medium focus:border-flame focus:outline-none">
+                  </div>
+                  <div class="col-span-1">
+                    <label class="text-[10px] font-bold text-slate mb-1 block">Colour Hex swatch</label>
+                    <div class="flex gap-2">
+                      <input type="text" id="color-hex-text-inner" value="#D4AF37" placeholder="#D4AF37" oninput="document.getElementById('color-hex-picker-inner').value = this.value"
+                        class="w-full px-3 py-2 bg-white border border-sand rounded-xl text-xs font-medium focus:border-flame focus:outline-none">
+                      <input type="color" id="color-hex-picker-inner" value="#D4AF37" oninput="document.getElementById('color-hex-text-inner').value = this.value.toUpperCase()"
+                        class="w-10 h-9 bg-white border border-sand rounded-xl p-0.5 cursor-pointer">
+                    </div>
+                  </div>
+                  <button type="button" onclick="window.addColorChip('inner')"
+                    class="btn-solid-orange py-2 px-4 rounded-xl text-xs font-bold text-cream flex items-center justify-center gap-1.5">
+                    <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add colour
+                  </button>
+                </div>
+
+                <!-- Chips container -->
+                <div id="inner-chips-list" class="flex flex-wrap gap-2 pt-2"></div>
+              </div>
+            </div>
+
+            <!-- SECTION 6: Product Gallery -->
+            <div class="glass-card bg-white border border-sand/60 rounded-3xl p-6 shadow-sm space-y-4">
+              <h3 class="text-lg font-extrabold text-charcoal flex items-center gap-2">
+                <i data-lucide="image" class="w-5 h-5 text-flame"></i> Product Gallery
+              </h3>
               <div class="bg-white p-4 rounded-xl border border-sand/80 space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div>
                     <label class="text-[11px] font-extrabold uppercase tracking-wider text-charcoal block">Product Gallery Images</label>
-                    <span class="text-[10px] text-slate font-medium block">Used for Product Cards, Product Listing, and Product Details gallery</span>
+                    <span class="text-[10px] text-slate font-medium block">Used for Product Cards, listing, and gallery views</span>
                   </div>
                   <span id="product-gallery-text" class="text-xs font-bold text-flame">0 gallery image(s) added</span>
                 </div>
@@ -2212,7 +2527,8 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <!-- Option 1: File Upload -->
                   <div class="border-2 border-dashed border-sand/80 hover:border-flame transition rounded-xl p-3 text-center cursor-pointer bg-editorbg relative">
-                    <input type="file" id="product-gallery-file-input" multiple accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                    <input type="file" id="product-gallery-file-input" multiple accept="image/*"
+                      class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                     <div class="flex items-center justify-center gap-2">
                       <i data-lucide="upload-cloud" class="w-4 h-4 text-slate"></i>
                       <span class="text-xs font-bold text-charcoal">Upload Gallery Files</span>
@@ -2221,8 +2537,10 @@
 
                   <!-- Option 2: Image URL Input -->
                   <div class="flex gap-2">
-                    <input type="url" id="product-gallery-url-input" placeholder="Paste image URL (https://...)" class="flex-1 px-3 py-2 bg-editorbg border border-sand rounded-xl text-xs font-medium focus:border-flame focus:outline-none">
-                    <button type="button" onclick="window.addProductGalleryUrl()" class="px-3 py-2 bg-charcoal text-cream text-xs font-bold rounded-xl hover:bg-black transition whitespace-nowrap">Add URL</button>
+                    <input type="url" id="product-gallery-url-input" placeholder="Paste image URL (https://...)"
+                      class="flex-1 px-3 py-2 bg-editorbg border border-sand rounded-xl text-xs font-medium focus:border-flame focus:outline-none">
+                    <button type="button" onclick="window.addProductGalleryUrl()"
+                      class="px-3 py-2 bg-charcoal text-cream text-xs font-bold rounded-xl hover:bg-black transition whitespace-nowrap">Add URL</button>
                   </div>
                 </div>
 
@@ -2231,75 +2549,123 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              <section class="bg-editorbg/60 border border-sand/50 rounded-2xl p-4">
-                <div class="flex items-center justify-between gap-3 mb-3">
-                  <div>
-                    <h3 class="font-extrabold text-charcoal">Available Sizes</h3>
-                  </div><button type="button" onclick="addProductSizeRow()"
-                    class="px-3 py-1.5 bg-white border border-sand rounded-lg text-xs font-bold text-charcoal hover:border-flame">Add
-                    size</button>
-                </div>
-                <div id="product-sizes-list" class="space-y-2"></div>
-              </section>
-              <section class="bg-editorbg/60 border border-sand/50 rounded-2xl p-4">
-                <div class="flex items-center justify-between gap-3 mb-3">
-                  <div>
-                    <h3 class="font-extrabold text-charcoal">Available Colours</h3>
-                  </div><button type="button" onclick="addProductColourRow()"
-                    class="px-3 py-1.5 bg-white border border-sand rounded-lg text-xs font-bold text-charcoal hover:border-flame">Add
-                    colour</button>
-                </div>
-                <div id="product-colours-list" class="space-y-2"></div>
-              </section>
+            <!-- SECTION 7: Available Sizes -->
+            <div class="glass-card bg-white border border-sand/60 rounded-3xl p-6 shadow-sm space-y-4">
+              <div class="flex items-center justify-between gap-3 mb-1">
+                <h3 class="text-lg font-extrabold text-charcoal flex items-center gap-2">
+                  <i data-lucide="maximize" class="w-5 h-5 text-flame"></i> Available Sizes (cm only)
+                </h3>
+                <button type="button" onclick="addProductSizeRow()"
+                  class="px-3 py-1.5 bg-white border border-sand rounded-lg text-xs font-bold text-charcoal hover:border-flame transition">Add size</button>
+              </div>
+              <div id="product-sizes-list" class="space-y-2"></div>
             </div>
-            <label class="flex items-center gap-3 bg-editorbg/60 border border-sand/50 rounded-xl p-4 cursor-pointer">
-              <input type="checkbox" id="product-dynamic-thickness" class="w-4 h-4 accent-flame">
-              <span><span class="block font-bold text-charcoal text-sm">Enable Dynamic Thickness</span></span>
-            </label>
+
             <button type="submit"
-              class="w-full btn-solid-orange py-3.5 rounded-xl text-cream font-extrabold text-lg shadow-lg flex items-center justify-center gap-2">
-              <i data-lucide="plus-circle" class="w-5 h-5"></i> <span id="product-submit-label">Add Product
-                Template</span>
+              class="w-full btn-solid-orange py-3.5 rounded-xl text-cream font-extrabold text-lg shadow-lg flex items-center justify-center gap-2 hover:bg-flame/90 transition">
+              <i data-lucide="plus-circle" class="w-5 h-5"></i> <span id="product-submit-label">Add Product Template</span>
             </button>
           </form>
         </div>
 
         <!-- Add Element Tab -->
         <div id="view-products-add-element"
-          class="hidden glass-card bg-white p-8 rounded-3xl border border-sand/60 shadow-sm max-w-xl mx-auto">
-          <h2 class="text-2xl font-extrabold text-charcoal mb-6 flex items-center gap-2"><i data-lucide="image-plus"
-              class="w-6 h-6 text-flame"></i> Add Workspace Asset</h2>
-          <form id="admin-upload-form" class="space-y-6" onsubmit="handleAdminAssetUpload(event)">
+          class="hidden glass-card bg-white p-8 rounded-3xl border border-sand/60 shadow-sm max-w-xl mx-auto space-y-4">
+          <h2 class="text-2xl font-extrabold text-charcoal flex items-center gap-2">
+            <i data-lucide="image-plus" class="w-6 h-6 text-flame"></i> Add Workspace Element
+          </h2>
+          <form id="admin-upload-form" class="space-y-5" onsubmit="window.handleAdminAssetUpload(event)">
             <div>
-              <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-2 block">Asset Category</label>
-              <select id="admin-asset-category"
-                class="w-full px-4 py-3 bg-editorbg border border-sand rounded-xl font-bold text-charcoal focus:border-flame focus:outline-none">
+              <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Category</label>
+              <select id="admin-asset-category" onchange="window.handleAssetCategoryChange()"
+                class="w-full px-4 py-2.5 bg-editorbg border border-sand rounded-xl font-bold text-charcoal focus:border-flame focus:outline-none">
+                <option value="outer-frame">Outer Frame</option>
+                <option value="middle-frame">Middle Frame</option>
+                <option value="inner-frame">Inner Frame</option>
                 <option value="decor">Decoration</option>
-                <option value="textures">BG Textures</option>
+                <option value="textures">Background Texture</option>
               </select>
             </div>
-            <div>
-              <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-2 block">Item Price</label>
-              <input type="number" id="admin-asset-cost" placeholder="0.00" step="0.01"
-                class="w-full px-4 py-3 bg-editorbg border border-sand rounded-xl font-medium focus:border-flame focus:outline-none"
-                required>
+
+            <!-- Name Input -->
+            <div id="admin-asset-name-container">
+              <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Element Name</label>
+              <input type="text" id="admin-asset-name" placeholder="e.g. Baroque Gold Finish"
+                class="w-full px-4 py-2.5 bg-editorbg border border-sand rounded-xl font-medium focus:border-flame focus:outline-none">
             </div>
-            <div>
-              <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-2 block">Upload File</label>
-              <div
-                class="border-2 border-dashed border-sand/80 hover:border-flame transition rounded-xl p-10 text-center cursor-pointer bg-editorbg relative">
-                <input type="file" id="admin-asset-file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  required
-                  onchange="document.getElementById('admin-file-name').innerText = this.files[0] ? this.files[0].name : 'Click to Browse'">
-                <i data-lucide="upload-cloud" class="w-10 h-10 mx-auto text-slate mb-3"></i>
-                <span id="admin-file-name" class="text-sm font-extrabold text-charcoal block transition-all">Click to
-                  Browse</span>
+
+            <!-- Price Input -->
+            <div id="admin-asset-cost-container">
+              <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Price</label>
+              <input type="number" id="admin-asset-cost" placeholder="0.00" step="0.01"
+                class="w-full px-4 py-2.5 bg-editorbg border border-sand rounded-xl font-medium focus:border-flame focus:outline-none">
+            </div>
+
+            <!-- Thickness Input -->
+            <div id="admin-asset-thickness-container">
+              <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Thickness (cm)</label>
+              <input type="number" id="admin-asset-thickness" placeholder="e.g. 2.5" step="0.01"
+                class="w-full px-4 py-2.5 bg-editorbg border border-sand rounded-xl font-medium focus:border-flame focus:outline-none">
+            </div>
+
+            <!-- Available Colours (Frames only) -->
+            <div id="admin-asset-colours-container" class="bg-editorbg/40 border border-sand/60 rounded-2xl p-4 space-y-3">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate block border-b border-sand/40 pb-1">Available Colours</span>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 items-end">
+                <div class="col-span-1">
+                  <label class="text-[9px] font-bold text-slate mb-1 block">Name</label>
+                  <input type="text" id="admin-asset-color-name" placeholder="e.g. Royal Gold"
+                    class="w-full px-2.5 py-1.5 bg-white border border-sand rounded-lg text-xs font-medium focus:border-flame focus:outline-none">
+                </div>
+                <div class="col-span-1">
+                  <label class="text-[9px] font-bold text-slate mb-1 block">Hex</label>
+                  <div class="flex gap-1">
+                    <input type="text" id="admin-asset-color-hex-text" value="#000000" placeholder="#000000"
+                      oninput="document.getElementById('admin-asset-color-picker').value = this.value"
+                      class="w-full px-2 py-1.5 bg-white border border-sand rounded-lg text-xs font-medium focus:border-flame focus:outline-none">
+                    <input type="color" id="admin-asset-color-picker" value="#000000"
+                      oninput="document.getElementById('admin-asset-color-hex-text').value = this.value.toUpperCase()"
+                      class="w-8 h-8 bg-white border border-sand rounded-lg p-0.5 cursor-pointer">
+                  </div>
+                </div>
+                <button type="button" onclick="window.addAssetColorChip()"
+                  class="bg-charcoal hover:bg-black text-cream py-1.5 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1">
+                  <i data-lucide="plus" class="w-3 h-3"></i> Add
+                </button>
+              </div>
+              <!-- Colors list chips container -->
+              <div id="admin-asset-chips-list" class="flex flex-wrap gap-1.5 pt-1"></div>
+            </div>
+
+            <!-- Upload File & Preview Container -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+              <div>
+                <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Upload File</label>
+                <div class="border-2 border-dashed border-sand/80 hover:border-flame transition rounded-xl p-4 text-center cursor-pointer bg-editorbg relative">
+                  <input type="file" id="admin-asset-file" accept="image/*" onchange="window.previewAssetImageFile()"
+                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                  <i data-lucide="upload-cloud" class="w-6 h-6 mx-auto text-slate mb-1"></i>
+                  <span id="admin-file-name" class="text-xs font-bold text-charcoal block truncate">Click to Browse</span>
+                </div>
+              </div>
+              <div class="border border-sand/80 rounded-2xl p-2 bg-editorbg flex flex-col items-center justify-center min-h-[90px] relative overflow-hidden">
+                <div id="asset-preview-placeholder" class="text-center p-2">
+                  <i data-lucide="image" class="w-6 h-6 text-slate/50 mx-auto"></i>
+                  <span class="text-[10px] font-semibold text-slate block">No image preview</span>
+                </div>
+                <img id="asset-preview-img" src="" class="max-h-[80px] max-w-full rounded-lg object-contain hidden" alt="Asset Preview">
+                <button type="button" id="btn-remove-asset-preview" onclick="window.clearAssetImagePreview()"
+                  class="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-md hidden" title="Remove image">
+                  <i data-lucide="trash-2" class="w-3 h-3"></i>
+                </button>
               </div>
             </div>
+
             <button type="submit"
-              class="w-full btn-solid-orange py-4 rounded-xl text-cream font-extrabold text-lg shadow-md">Publish
-              Asset</button>
+              class="w-full btn-solid-orange py-3.5 rounded-xl text-cream font-extrabold text-lg shadow-md flex items-center justify-center gap-2 hover:bg-flame/90 transition">
+              <i data-lucide="plus-circle" class="w-5 h-5"></i> Publish Element
+            </button>
           </form>
         </div>
 
@@ -2851,7 +3217,8 @@
                 class="px-4 py-2 bg-editorbg text-slate border border-sand hover:border-flame rounded-lg text-xs font-bold transition">Footer
                 Text</button>
               <button onclick="selectColorTarget('icon_color', this)"
-                class="px-4 py-2 bg-editorbg text-slate border border-sand hover:border-flame rounded-lg text-xs font-bold transition">Social Icons</button>
+                class="px-4 py-2 bg-editorbg text-slate border border-sand hover:border-flame rounded-lg text-xs font-bold transition">Social
+                Icons</button>
             </div>
 
             <div>
@@ -3275,12 +3642,15 @@
       class="w-full py-2.5 px-4 md:px-12 hidden md:flex justify-between items-center text-[13px] z-[1001] relative border-b border-outline-variant/30"
       style="background-color: var(--top-header-bg, #e9e8e6); color: var(--text-header, #000102);">
       <div class="flex items-center gap-8">
-        <a id="header-top-phone" href="tel:+15551234567" class="flex items-center gap-2.5 hover:text-flame transition-colors font-medium">
-          <span class="material-symbols-outlined text-[16px]">call</span> <span class="header-phone-text">+1 (555) 123-4567</span>
+        <a id="header-top-phone" href="tel:+15551234567"
+          class="flex items-center gap-2.5 hover:text-flame transition-colors font-medium">
+          <span class="material-symbols-outlined text-[16px]">call</span> <span class="header-phone-text">+1 (555)
+            123-4567</span>
         </a>
         <a id="header-top-email" href="mailto:hello@framecraft.com"
           class="flex items-center gap-2.5 hover:text-flame transition-colors font-medium">
-          <span class="material-symbols-outlined text-[16px]">mail</span> <span class="header-email-text">hello@framecraft.com</span>
+          <span class="material-symbols-outlined text-[16px]">mail</span> <span
+            class="header-email-text">hello@framecraft.com</span>
         </a>
       </div>
       <div class="flex items-center gap-5" id="top-socials">
@@ -3291,14 +3661,18 @@
     <!-- Main Header -->
     <header class="sticky top-0 z-[1000] border-b border-outline-variant/30"
       style="background-color: var(--header-bg, #ffffff);">
-      <div class="flex justify-between items-center w-full px-2.5 sm:px-6 lg:px-10 max-w-[1440px] mx-auto h-[68px] sm:h-[84px] md:h-[88px] gap-1.5 sm:gap-4 md:gap-6">
+      <div
+        class="flex justify-between items-center w-full px-2.5 sm:px-6 lg:px-10 max-w-[1440px] mx-auto h-[68px] sm:h-[84px] md:h-[88px] gap-1.5 sm:gap-4 md:gap-6">
         <!-- Logo -->
-        <div class="header-branding-container flex items-center cursor-pointer shrink-0 select-none" onclick="scrollToSection('hero')">
-          <div id="logo-light-text" class="text-base min-[360px]:text-lg sm:text-[26px] md:text-[28px] font-bold text-[var(--text-header,#000102)] tracking-tight"
+        <div class="header-branding-container flex items-center cursor-pointer shrink-0 select-none"
+          onclick="scrollToSection('hero')">
+          <div id="logo-light-text"
+            class="text-base min-[360px]:text-lg sm:text-[26px] md:text-[28px] font-bold text-[var(--text-header,#000102)] tracking-tight"
             style="font-family: 'Playfair Display', serif;">
             <span>Frame</span><span class="text-flame">Craft</span>
           </div>
-          <div id="logo-dark-text" class="hidden text-base min-[360px]:text-lg sm:text-[26px] md:text-[28px] font-bold text-[var(--text-header,#000102)] tracking-tight"
+          <div id="logo-dark-text"
+            class="hidden text-base min-[360px]:text-lg sm:text-[26px] md:text-[28px] font-bold text-[var(--text-header,#000102)] tracking-tight"
             style="font-family: 'Playfair Display', serif;">
             <span>Frame</span><span class="text-flame">Craft</span>
           </div>
@@ -3371,11 +3745,14 @@
             </div>
           </div>
 
-          <a href="/order-tracking" onclick="event.preventDefault(); toggleMobileMenu(); window.handlePathRouting('/order-tracking');"
-            class="block text-lg font-bold text-charcoal flex items-center justify-between"><span>ORDER TRACKING</span><span class="material-symbols-outlined text-base">local_shipping</span></a>
+          <a href="/order-tracking"
+            onclick="event.preventDefault(); toggleMobileMenu(); window.handlePathRouting('/order-tracking');"
+            class="block text-lg font-bold text-charcoal flex items-center justify-between"><span>ORDER
+              TRACKING</span><span class="material-symbols-outlined text-base">local_shipping</span></a>
 
           <a href="/cart" onclick="event.preventDefault(); toggleMobileMenu(); toggleModal('cart-modal');"
-            class="block text-lg font-bold text-charcoal flex items-center justify-between"><span>CART</span><span class="material-symbols-outlined text-base">shopping_cart</span></a>
+            class="block text-lg font-bold text-charcoal flex items-center justify-between"><span>CART</span><span
+              class="material-symbols-outlined text-base">shopping_cart</span></a>
 
           <div class="space-y-3">
             <span class="block text-xs font-bold text-slate uppercase tracking-wider">Contact</span>
@@ -3488,7 +3865,8 @@
       <div class="px-4 md:px-margin-desktop max-w-container-max mx-auto overflow-hidden pb-24">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 md:mb-16 gap-3 sm:gap-6">
           <div class="max-w-2xl">
-            <span class="text-secondary font-label-sm text-xs sm:text-label-sm uppercase tracking-widest block mb-1.5 sm:mb-4"
+            <span
+              class="text-secondary font-label-sm text-xs sm:text-label-sm uppercase tracking-widest block mb-1.5 sm:mb-4"
               data-cms="pages.home.sections.products_sec.elements.subtitle">Curated Selections</span>
             <h2 class="text-2xl sm:text-headline-lg font-bold sm:font-headline-lg text-primary"
               data-cms="pages.home.sections.products_sec.elements.title">Featured Frames</h2>
@@ -3510,13 +3888,19 @@
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 !p-0 !outline-none !border-none !aspect-auto">
             </div>
             <div class="flex items-center gap-0.5 sm:gap-1 text-secondary-fixed-dim mb-1 sm:mb-2 text-secondary">
-              <span class="material-symbols-outlined text-xs sm:text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-              <span class="material-symbols-outlined text-xs sm:text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-              <span class="material-symbols-outlined text-xs sm:text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-              <span class="material-symbols-outlined text-xs sm:text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-              <span class="material-symbols-outlined text-xs sm:text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-xs sm:text-sm"
+                style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-xs sm:text-sm"
+                style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-xs sm:text-sm"
+                style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-xs sm:text-sm"
+                style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-xs sm:text-sm"
+                style="font-variation-settings: 'FILL' 1;">star</span>
             </div>
-            <h3 class="font-headline-md text-primary mb-1 sm:mb-2 text-sm sm:text-xl !text-left !normal-case !tracking-normal font-bold line-clamp-1">
+            <h3
+              class="font-headline-md text-primary mb-1 sm:mb-2 text-sm sm:text-xl !text-left !normal-case !tracking-normal font-bold line-clamp-1">
               Classic Wood</h3>
             <p class="text-primary font-bold text-sm sm:text-lg mb-3 sm:mb-6 !text-left !text-primary">$45.00</p>
             <div class="product-actions flex flex-col gap-1.5 sm:gap-3 !mt-0">
@@ -3543,13 +3927,19 @@
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 !p-0 !outline-none !border-none !aspect-auto">
             </div>
             <div class="flex items-center gap-0.5 sm:gap-1 text-secondary-fixed-dim mb-1 sm:mb-2 text-secondary">
-              <span class="material-symbols-outlined text-xs sm:text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-              <span class="material-symbols-outlined text-xs sm:text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-              <span class="material-symbols-outlined text-xs sm:text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-              <span class="material-symbols-outlined text-xs sm:text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-              <span class="material-symbols-outlined text-xs sm:text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-xs sm:text-sm"
+                style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-xs sm:text-sm"
+                style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-xs sm:text-sm"
+                style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-xs sm:text-sm"
+                style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-xs sm:text-sm"
+                style="font-variation-settings: 'FILL' 1;">star</span>
             </div>
-            <h3 class="font-headline-md text-primary mb-1 sm:mb-2 text-sm sm:text-xl !text-left !normal-case !tracking-normal font-bold line-clamp-1">
+            <h3
+              class="font-headline-md text-primary mb-1 sm:mb-2 text-sm sm:text-xl !text-left !normal-case !tracking-normal font-bold line-clamp-1">
               Modern Metal</h3>
             <p class="text-primary font-bold text-sm sm:text-lg mb-3 sm:mb-6 !text-left !text-primary">$55.00</p>
             <div class="product-actions flex flex-col gap-1.5 sm:gap-3 !mt-0">
@@ -3576,13 +3966,19 @@
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 !p-0 !outline-none !border-none !aspect-auto">
             </div>
             <div class="flex items-center gap-0.5 sm:gap-1 text-secondary-fixed-dim mb-1 sm:mb-2 text-secondary">
-              <span class="material-symbols-outlined text-xs sm:text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-              <span class="material-symbols-outlined text-xs sm:text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-              <span class="material-symbols-outlined text-xs sm:text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-              <span class="material-symbols-outlined text-xs sm:text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-              <span class="material-symbols-outlined text-xs sm:text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-xs sm:text-sm"
+                style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-xs sm:text-sm"
+                style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-xs sm:text-sm"
+                style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-xs sm:text-sm"
+                style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-xs sm:text-sm"
+                style="font-variation-settings: 'FILL' 1;">star</span>
             </div>
-            <h3 class="font-headline-md text-primary mb-1 sm:mb-2 text-sm sm:text-xl !text-left !normal-case !tracking-normal font-bold line-clamp-1">
+            <h3
+              class="font-headline-md text-primary mb-1 sm:mb-2 text-sm sm:text-xl !text-left !normal-case !tracking-normal font-bold line-clamp-1">
               Gallery Wrap</h3>
             <p class="text-primary font-bold text-sm sm:text-lg mb-3 sm:mb-6 !text-left !text-primary">$65.00</p>
             <div class="product-actions flex flex-col gap-1.5 sm:gap-3 !mt-0">
@@ -3608,13 +4004,19 @@
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 !p-0 !outline-none !border-none !aspect-auto">
             </div>
             <div class="flex items-center gap-0.5 sm:gap-1 text-secondary-fixed-dim mb-1 sm:mb-2 text-secondary">
-              <span class="material-symbols-outlined text-xs sm:text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-              <span class="material-symbols-outlined text-xs sm:text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-              <span class="material-symbols-outlined text-xs sm:text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-              <span class="material-symbols-outlined text-xs sm:text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-              <span class="material-symbols-outlined text-xs sm:text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-xs sm:text-sm"
+                style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-xs sm:text-sm"
+                style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-xs sm:text-sm"
+                style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-xs sm:text-sm"
+                style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-xs sm:text-sm"
+                style="font-variation-settings: 'FILL' 1;">star</span>
             </div>
-            <h3 class="font-headline-md text-primary mb-1 sm:mb-2 text-sm sm:text-xl !text-left !normal-case !tracking-normal font-bold line-clamp-1">
+            <h3
+              class="font-headline-md text-primary mb-1 sm:mb-2 text-sm sm:text-xl !text-left !normal-case !tracking-normal font-bold line-clamp-1">
               Ornate Gold</h3>
             <p class="text-primary font-bold text-sm sm:text-lg mb-3 sm:mb-6 !text-left !text-primary">$85.00</p>
             <div class="product-actions flex flex-col gap-1.5 sm:gap-3 !mt-0">
@@ -4681,7 +5083,7 @@
       <div class="border-t border-outline-variant/30 py-8 px-4 md:px-12">
         <div
           class="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center text-[13px] text-[var(--text-footer,#45474b)] font-medium">
-          <p data-cms="pages.footer.sections.general.elements.copyright">© 2024 FrameCraft. All rights reserved. |
+          <p data-cms="pages.footer.sections.general.elements.copyright">© 2026 FrameCraft. All rights reserved. |
             Designed by <a href='https://grouperlogic.com/' target='_blank'
               style='text-decoration:underline;'>grouperlogic.com</a></p>
           <div class="flex gap-8 mt-4 md:mt-0 font-bold">
@@ -5251,151 +5653,39 @@
 
         <div id="panel-elements" class="tool-panel-content hidden flex flex-col h-full overflow-hidden">
           <div class="p-4 border-b border-sand/40 flex gap-2 overflow-x-auto no-scrollbar shrink-0" id="elements-tabs">
-            <button onclick="switchElementCategory('frames')"
-              class="elem-tab active px-3 py-1.5 bg-flame/10 text-flame rounded-lg text-[11px] font-bold whitespace-nowrap">Frames
-              & Things</button>
-            <button onclick="switchElementCategory('textures')"
-              class="elem-tab px-3 py-1.5 bg-editorbg text-slate rounded-lg text-[11px] font-bold whitespace-nowrap">BG
-              Textures</button>
+            <button onclick="switchElementCategory('outer-frame')"
+              class="elem-tab active px-3 py-1.5 bg-flame/10 text-flame rounded-lg text-[11px] font-bold whitespace-nowrap">Outer Frame</button>
+            <button onclick="switchElementCategory('middle-frame')"
+              class="elem-tab px-3 py-1.5 bg-editorbg text-slate rounded-lg text-[11px] font-bold whitespace-nowrap">Middle Frame</button>
+            <button onclick="switchElementCategory('inner-frame')"
+              class="elem-tab px-3 py-1.5 bg-editorbg text-slate rounded-lg text-[11px] font-bold whitespace-nowrap">Inner Frame</button>
             <button onclick="switchElementCategory('decor')"
               class="elem-tab px-3 py-1.5 bg-editorbg text-slate rounded-lg text-[11px] font-bold whitespace-nowrap">Decoration</button>
-            <button onclick="switchElementCategory('photo-shapes')"
-              class="elem-tab px-3 py-1.5 bg-editorbg text-slate rounded-lg text-[11px] font-bold whitespace-nowrap">Photo
-              Shapes</button>
-            <button onclick="switchElementCategory('shapes')"
-              class="elem-tab px-3 py-1.5 bg-editorbg text-slate rounded-lg text-[11px] font-bold whitespace-nowrap">Shapes</button>
+            <button onclick="switchElementCategory('textures')"
+              class="elem-tab px-3 py-1.5 bg-editorbg text-slate rounded-lg text-[11px] font-bold whitespace-nowrap">Background Texture</button>
           </div>
           <div id="elements-content" class="p-5 overflow-y-auto no-scrollbar flex-1">
 
-            <div id="cat-frames" class="elem-category">
-              <div id="frame-customization-panel"
-                class="hidden mb-4 p-3 rounded-xl bg-editorbg border border-sand/50 space-y-3">
-                <div>
-                  <p class="text-[10px] font-black text-slate uppercase tracking-wider">Frame Size</p>
-                  <div id="frame-size-options" class="flex flex-wrap gap-2 mt-2"></div>
-                </div>
-                <div>
-                  <p class="text-[10px] font-black text-slate uppercase tracking-wider">Frame Colour</p>
-                  <div id="frame-colour-options" class="flex flex-wrap gap-2 mt-2"></div>
-                </div>
-                <div id="frame-thickness-control" class="hidden">
-                  <div class="flex justify-between text-[10px] font-black text-slate uppercase tracking-wider">
-                    <span>Frame Thickness</span><span id="frame-thickness-value">100%</span>
-                  </div><input id="frame-thickness-slider" type="range" min="70" max="150" value="100"
-                    class="w-full accent-flame mt-2" oninput="applyFrameThickness(this.value)">
-                </div>
-              </div>
-              <p class="text-xs font-bold text-slate text-center mt-4">Product frame templates will appear here.</p>
+            <div id="cat-outer-frame" class="elem-category">
+              <p class="text-xs font-bold text-slate text-center mt-4">Outer Frame elements will appear here.</p>
             </div>
 
-            <div id="cat-textures" class="elem-category hidden">
-              <p class="text-xs font-bold text-slate text-center mt-4">Background textures added by admin will appear
-                here.</p>
+            <div id="cat-middle-frame" class="elem-category hidden">
+              <p class="text-xs font-bold text-slate text-center mt-4">Middle Frame elements will appear here.</p>
             </div>
 
-            <div id="cat-photo-shapes" class="elem-category hidden">
-              <p class="text-[10px] font-bold uppercase text-slate tracking-wider mb-3">Drag images into these</p>
-              <div class="grid grid-cols-2 gap-3">
-                <button onclick="addMaskShape('square')"
-                  class="aspect-square bg-editorbg rounded-xl border-2 border-dashed border-sand hover:border-flame flex flex-col items-center justify-center text-slate hover:text-flame transition"><i
-                    data-lucide="square" class="w-5 h-5 mb-1"></i><span
-                    class="text-[9px] font-bold">Square</span></button>
-                <button onclick="addMaskShape('rect')"
-                  class="aspect-[4/3] bg-editorbg rounded-xl border-2 border-dashed border-sand hover:border-flame flex flex-col items-center justify-center text-slate hover:text-flame transition">
-                  <div class="w-6 h-4 border-2 border-current rounded-sm mb-1"></div><span
-                    class="text-[9px] font-bold">Rectangle</span>
-                </button>
-                <button onclick="addMaskShape('triangle')"
-                  class="aspect-square bg-editorbg rounded-xl border-2 border-dashed border-sand hover:border-flame flex flex-col items-center justify-center text-slate hover:text-flame transition"><i
-                    data-lucide="triangle" class="w-5 h-5 mb-1"></i><span
-                    class="text-[9px] font-bold">Triangle</span></button>
-                <button onclick="addMaskShape('star')"
-                  class="aspect-square bg-editorbg rounded-xl border-2 border-dashed border-sand hover:border-flame flex flex-col items-center justify-center text-slate hover:text-flame transition"><i
-                    data-lucide="star" class="w-5 h-5 mb-1"></i><span class="text-[9px] font-bold">Star</span></button>
-                <button onclick="addMaskShape('kite')"
-                  class="aspect-square bg-editorbg rounded-xl border-2 border-dashed border-sand hover:border-flame flex flex-col items-center justify-center text-slate hover:text-flame transition"><svg
-                    class="w-5 h-5 mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="12,2 22,10 12,22 2,10" />
-                  </svg><span class="text-[9px] font-bold">Kite</span></button>
-                <button onclick="addMaskShape('pentagon')"
-                  class="aspect-square bg-editorbg rounded-xl border-2 border-dashed border-sand hover:border-flame flex flex-col items-center justify-center text-slate hover:text-flame transition"><i
-                    data-lucide="hexagon" class="w-5 h-5 mb-1"></i><span
-                    class="text-[9px] font-bold">Pentagon</span></button>
-                <button onclick="addMaskShape('liquid')"
-                  class="aspect-square bg-editorbg rounded-xl border-2 border-dashed border-sand hover:border-flame flex flex-col items-center justify-center text-slate hover:text-flame transition"
-                  style="border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;"><i data-lucide="droplet"
-                    class="w-5 h-5 mb-1"></i><span class="text-[9px] font-bold">Liquid</span></button>
-              </div>
+            <div id="cat-inner-frame" class="elem-category hidden">
+              <p class="text-xs font-bold text-slate text-center mt-4">Inner Frame elements will appear here.</p>
             </div>
 
             <div id="cat-decor" class="elem-category hidden">
-              <p class="text-xs font-bold text-slate text-center mt-4">Decoration items added by admin will appear here.
-              </p>
+              <p class="text-xs font-bold text-slate text-center mt-4">Decoration items will appear here.</p>
             </div>
 
-            <div id="cat-shapes" class="elem-category hidden">
-              <p class="text-[10px] font-bold uppercase text-slate tracking-wider mb-2">Filled Shapes</p>
-              <div class="grid grid-cols-4 gap-2 mb-6">
-                <button onclick="addVectorShape('square')"
-                  class="aspect-square bg-editorbg rounded-lg border border-sand hover:border-flame flex items-center justify-center text-charcoal"><i
-                    data-lucide="square" class="w-5 h-5"></i></button>
-                <button onclick="addVectorShape('rounded-square')"
-                  class="aspect-square bg-editorbg rounded-lg border border-sand hover:border-flame flex items-center justify-center text-charcoal"><svg
-                    width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect width="18" height="18" x="3" y="3" rx="4" />
-                  </svg></button>
-                <button onclick="addVectorShape('circle')"
-                  class="aspect-square bg-editorbg rounded-lg border border-sand hover:border-flame flex items-center justify-center text-charcoal"><i
-                    data-lucide="circle" class="w-5 h-5"></i></button>
-                <button onclick="addVectorShape('triangle')"
-                  class="aspect-square bg-editorbg rounded-lg border border-sand hover:border-flame flex items-center justify-center text-charcoal"><i
-                    data-lucide="triangle" class="w-5 h-5"></i></button>
-                <button onclick="addVectorShape('pentagon')"
-                  class="aspect-square bg-editorbg rounded-lg border border-sand hover:border-flame flex items-center justify-center text-charcoal"><i
-                    data-lucide="hexagon" class="w-5 h-5"></i></button>
-                <button onclick="addVectorShape('kite')"
-                  class="aspect-square bg-editorbg rounded-lg border border-sand hover:border-flame flex items-center justify-center text-charcoal"><svg
-                    width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="12,2 22,10 12,22 2,10" />
-                  </svg></button>
-                <button onclick="addVectorShape('star')"
-                  class="aspect-square bg-editorbg rounded-lg border border-sand hover:border-flame flex items-center justify-center text-charcoal"><i
-                    data-lucide="star" class="w-5 h-5"></i></button>
-                <button onclick="addVectorShape('heart')"
-                  class="aspect-square bg-editorbg rounded-lg border border-sand hover:border-flame flex items-center justify-center text-charcoal"><i
-                    data-lucide="heart" class="w-5 h-5"></i></button>
-                <button onclick="addVectorShape('cloud')"
-                  class="aspect-square bg-editorbg rounded-lg border border-sand hover:border-flame flex items-center justify-center text-charcoal"><i
-                    data-lucide="cloud" class="w-5 h-5"></i></button>
-                <button onclick="addVectorShape('zap')"
-                  class="aspect-square bg-editorbg rounded-lg border border-sand hover:border-flame flex items-center justify-center text-charcoal"><i
-                    data-lucide="zap" class="w-5 h-5"></i></button>
-              </div>
-
-              <p class="text-[10px] font-bold uppercase text-slate tracking-wider mb-2">Hollow Shapes</p>
-              <div class="grid grid-cols-4 gap-2">
-                <button onclick="addVectorShape('hollow-square')"
-                  class="aspect-square bg-editorbg rounded-lg border border-sand hover:border-flame flex items-center justify-center text-charcoal"><svg
-                    width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect width="18" height="18" x="3" y="3" />
-                  </svg></button>
-                <button onclick="addVectorShape('hollow-rounded')"
-                  class="aspect-square bg-editorbg rounded-lg border border-sand hover:border-flame flex items-center justify-center text-charcoal"><svg
-                    width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect width="18" height="18" x="3" y="3" rx="4" />
-                  </svg></button>
-                <button onclick="addVectorShape('hollow-circle')"
-                  class="aspect-square bg-editorbg rounded-lg border border-sand hover:border-flame flex items-center justify-center text-charcoal"><svg
-                    width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10" />
-                  </svg></button>
-                <button onclick="addVectorShape('hollow-pill')"
-                  class="aspect-square bg-editorbg rounded-lg border border-sand hover:border-flame flex items-center justify-center text-charcoal"><svg
-                    width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect width="20" height="10" x="2" y="7" rx="5" />
-                  </svg></button>
-              </div>
+            <div id="cat-textures" class="elem-category hidden">
+              <p class="text-xs font-bold text-slate text-center mt-4">Background textures will appear here.</p>
             </div>
+
           </div>
         </div>
 
@@ -5717,6 +6007,345 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+
+    window.frameColoursState = {
+      outer: [],
+      middle: [],
+      inner: []
+    };
+
+    window.addColorChip = (frameType) => {
+      const nameInput = document.getElementById(`color-name-${frameType}`);
+      const hexInput = document.getElementById(`color-hex-text-${frameType}`);
+      if (!nameInput || !hexInput) return;
+
+      const name = nameInput.value.trim();
+      const hex = hexInput.value.trim().toUpperCase();
+
+      if (!name) return showToast('Please enter a colour name.');
+      if (!/^#[0-9A-F]{6}$/.test(hex)) return showToast('Please enter a valid Hex colour code (e.g. #FF5733).');
+
+      const existsVal = window.frameColoursState[frameType].some(c => c.value === hex);
+      const existsName = window.frameColoursState[frameType].some(c => c.name.toLowerCase() === name.toLowerCase());
+
+      if (existsVal) return showToast('This colour swatch value is already added.');
+      if (existsName) return showToast('This colour name is already added.');
+
+      window.frameColoursState[frameType].push({ name, value: hex });
+      nameInput.value = '';
+      hexInput.value = '#000000';
+      if (document.getElementById(`color-hex-picker-${frameType}`)) {
+        document.getElementById(`color-hex-picker-${frameType}`).value = '#000000';
+      }
+
+      window.renderColourChips(frameType);
+    };
+
+    window.removeColorChip = (frameType, index) => {
+      window.frameColoursState[frameType].splice(index, 1);
+      window.renderColourChips(frameType);
+    };
+
+    window.renderColourChips = (frameType) => {
+      const container = document.getElementById(`${frameType}-chips-list`);
+      if (!container) return;
+      container.innerHTML = window.frameColoursState[frameType].map((c, idx) => `
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-editorbg border border-sand rounded-full text-xs font-bold shadow-sm">
+          <span class="w-3.5 h-3.5 rounded-full border border-sand shadow-inner" style="background-color: ${c.value};"></span>
+          <span class="text-charcoal">${c.name}</span>
+          <button type="button" onclick="window.removeColorChip('${frameType}', ${idx})" class="text-slate hover:text-red-500 font-extrabold focus:outline-none ml-1 text-sm">&times;</button>
+        </span>
+      `).join('');
+    };
+
+    window.previewImageFile = (type) => {
+      const input = document.getElementById(`product-${type}-img`);
+      const img = document.getElementById(`${type}-preview-img`);
+      const placeholder = document.getElementById(`${type}-preview-placeholder`);
+      const btnRemove = document.getElementById(`btn-remove-${type}-preview`);
+      if (!input || !img || !placeholder) return;
+
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          img.src = e.target.result;
+          img.classList.remove('hidden');
+          placeholder.classList.add('hidden');
+          if (btnRemove) btnRemove.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+
+    window.previewImageUrl = (type) => {
+      const input = document.getElementById(`product-${type}-url`);
+      const img = document.getElementById(`${type}-preview-img`);
+      const placeholder = document.getElementById(`${type}-preview-placeholder`);
+      const btnRemove = document.getElementById(`btn-remove-${type}-preview`);
+      if (!input || !img || !placeholder) return;
+
+      const url = input.value.trim();
+      if (url) {
+        img.src = url;
+        img.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+        if (btnRemove) btnRemove.classList.remove('hidden');
+      } else {
+        window.clearImagePreview(type);
+      }
+    };
+
+    window.clearImagePreview = (type) => {
+      const fileInput = document.getElementById(`product-${type}-img`);
+      const urlInput = document.getElementById(`product-${type}-url`);
+      const img = document.getElementById(`${type}-preview-img`);
+      const placeholder = document.getElementById(`${type}-preview-placeholder`);
+      const btnRemove = document.getElementById(`btn-remove-${type}-preview`);
+      const fileText = document.getElementById(`${type}-img-text`);
+
+      if (fileInput) fileInput.value = '';
+      if (urlInput) urlInput.value = '';
+      if (img) {
+        img.src = '';
+        img.classList.add('hidden');
+      }
+      if (placeholder) placeholder.classList.remove('hidden');
+      if (btnRemove) btnRemove.classList.add('hidden');
+      if (fileText) {
+        fileText.textContent = `Upload ${type === 'bg' ? 'Background' : type.charAt(0).toUpperCase() + type.slice(1) + ' Frame'} Image File`;
+      }
+    };
+
+    window.toggleFrameSection = (frameType, show) => {
+      const collapsed = document.getElementById(`${frameType}-frame-collapsed`);
+      const expanded = document.getElementById(`${frameType}-frame-expanded`);
+      if (!collapsed || !expanded) return;
+
+      if (show) {
+        collapsed.classList.add('hidden');
+        expanded.classList.remove('hidden');
+      } else {
+        document.getElementById(`product-${frameType}-name`).value = '';
+        document.getElementById(`product-${frameType}-price`).value = '';
+        document.getElementById(`product-${frameType}-thickness`).value = '';
+        document.getElementById(`product-${frameType}-url`).value = '';
+        const imgInput = document.getElementById(`product-${frameType}-img`);
+        if (imgInput) imgInput.value = '';
+        document.getElementById(`${frameType}-img-text`).textContent = `Upload ${frameType.charAt(0).toUpperCase() + frameType.slice(1)} Frame Image`;
+        window.clearImagePreview(frameType);
+        window.frameColoursState[frameType] = [];
+        window.renderColourChips(frameType);
+
+        collapsed.classList.remove('hidden');
+        expanded.classList.add('hidden');
+      }
+    };
+
+    window.getAssetCategoryDisplayName = (category) => {
+      if (category === 'decor') return 'Decoration';
+      if (category === 'textures' || category === 'texture') return 'Background Texture';
+      if (category === 'outer-frame') return 'Outer Frame';
+      if (category === 'middle-frame') return 'Middle Frame';
+      if (category === 'inner-frame') return 'Inner Frame';
+      return category;
+    };
+
+    window.assetColoursState = [];
+
+    window.handleAssetCategoryChange = () => {
+      const category = document.getElementById('admin-asset-category').value;
+      const isFrame = ['outer-frame', 'middle-frame', 'inner-frame'].includes(category);
+      const isDecor = category === 'decor';
+      const isTexture = category === 'textures';
+
+      const nameContainer = document.getElementById('admin-asset-name-container');
+      const costContainer = document.getElementById('admin-asset-cost-container');
+      const thicknessContainer = document.getElementById('admin-asset-thickness-container');
+      const coloursContainer = document.getElementById('admin-asset-colours-container');
+
+      if (isFrame) {
+        if (nameContainer) nameContainer.classList.remove('hidden');
+        if (costContainer) costContainer.classList.remove('hidden');
+        if (thicknessContainer) thicknessContainer.classList.remove('hidden');
+        if (coloursContainer) coloursContainer.classList.remove('hidden');
+      } else if (isDecor) {
+        if (nameContainer) nameContainer.classList.remove('hidden');
+        if (costContainer) costContainer.classList.remove('hidden');
+        if (thicknessContainer) thicknessContainer.classList.add('hidden');
+        if (coloursContainer) coloursContainer.classList.add('hidden');
+      } else if (isTexture) {
+        if (nameContainer) nameContainer.classList.remove('hidden');
+        if (costContainer) costContainer.classList.add('hidden');
+        if (thicknessContainer) thicknessContainer.classList.add('hidden');
+        if (coloursContainer) coloursContainer.classList.add('hidden');
+      }
+    };
+
+    window.addAssetColorChip = () => {
+      const nameInput = document.getElementById('admin-asset-color-name');
+      const hexInput = document.getElementById('admin-asset-color-hex-text');
+      if (!nameInput || !hexInput) return;
+
+      const name = nameInput.value.trim();
+      const hex = hexInput.value.trim().toUpperCase();
+
+      if (!name) return showToast('Please enter a colour name.');
+      if (!/^#[0-9A-F]{6}$/.test(hex)) return showToast('Please enter a valid Hex colour code (e.g. #FF5733).');
+
+      const existsVal = window.assetColoursState.some(c => c.value === hex);
+      const existsName = window.assetColoursState.some(c => c.name.toLowerCase() === name.toLowerCase());
+
+      if (existsVal) return showToast('This colour swatch value is already added.');
+      if (existsName) return showToast('This colour name is already added.');
+
+      window.assetColoursState.push({ name, value: hex });
+      nameInput.value = '';
+      hexInput.value = '#000000';
+      if (document.getElementById('admin-asset-color-picker')) {
+        document.getElementById('admin-asset-color-picker').value = '#000000';
+      }
+
+      window.renderAssetColourChips();
+    };
+
+    window.removeAssetColorChip = (index) => {
+      window.assetColoursState.splice(index, 1);
+      window.renderAssetColourChips();
+    };
+
+    window.renderAssetColourChips = () => {
+      const container = document.getElementById('admin-asset-chips-list');
+      if (!container) return;
+      container.innerHTML = window.assetColoursState.map((c, idx) => `
+        <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-sand rounded-full text-[10px] font-bold shadow-sm">
+          <span class="w-3 h-3 rounded-full border border-sand shadow-inner" style="background-color: ${c.value};"></span>
+          <span class="text-charcoal truncate max-w-[80px]">${c.name}</span>
+          <button type="button" onclick="window.removeAssetColorChip(${idx})" class="text-slate hover:text-red-500 font-extrabold focus:outline-none ml-1 text-xs">&times;</button>
+        </span>
+      `).join('');
+    };
+
+    window.previewAssetImageFile = () => {
+      const input = document.getElementById('admin-asset-file');
+      const img = document.getElementById('asset-preview-img');
+      const placeholder = document.getElementById('asset-preview-placeholder');
+      const btnRemove = document.getElementById('btn-remove-asset-preview');
+      const fileText = document.getElementById('admin-file-name');
+
+      if (!input || !img || !placeholder) return;
+
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        fileText.textContent = file.name;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          img.src = e.target.result;
+          img.classList.remove('hidden');
+          placeholder.classList.add('hidden');
+          if (btnRemove) btnRemove.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+
+    window.clearAssetImagePreview = () => {
+      const fileInput = document.getElementById('admin-asset-file');
+      const img = document.getElementById('asset-preview-img');
+      const placeholder = document.getElementById('asset-preview-placeholder');
+      const btnRemove = document.getElementById('btn-remove-asset-preview');
+      const fileText = document.getElementById('admin-file-name');
+
+      if (fileInput) fileInput.value = '';
+      if (img) {
+        img.src = '';
+        img.classList.add('hidden');
+      }
+      if (placeholder) placeholder.classList.remove('hidden');
+      if (btnRemove) btnRemove.classList.add('hidden');
+      if (fileText) {
+        fileText.textContent = 'Click to Browse';
+      }
+    };
+
+    window.normalizeProductData = (product) => {
+      if (!product) return null;
+
+      const config = product.frameConfiguration || {};
+      const sizes = Array.isArray(config.sizes) ? config.sizes : (Array.isArray(product.sizes) ? product.sizes : defaultFrameSizes);
+      const colours = Array.isArray(config.colours) ? config.colours : (Array.isArray(product.colours) ? product.colours : defaultFrameColours);
+      const isDynamicThickness = Boolean(config.dynamicThickness);
+
+      const hasOuterFrame = product.outerFrame && typeof product.outerFrame === 'object';
+      
+      let outerFrame = null;
+      let middleFrame = null;
+      let innerFrame = null;
+
+      if (hasOuterFrame) {
+        outerFrame = {
+          name: product.outerFrame.name || product.name || 'Outer Frame',
+          image: product.outerFrame.image || product.frameImage || '',
+          price: typeof product.outerFrame.price === 'number' ? product.outerFrame.price : (product.price || 0),
+          colors: Array.isArray(product.outerFrame.colors) ? product.outerFrame.colors : colours,
+          thickness: typeof product.outerFrame.thickness === 'number' ? product.outerFrame.thickness : 2.0
+        };
+        middleFrame = product.middleFrame || null;
+        innerFrame = product.innerFrame || null;
+      } else {
+        outerFrame = {
+          name: product.name || 'Outer Frame',
+          image: product.frameImage || '',
+          price: product.price || 0,
+          colors: colours,
+          thickness: 2.0
+        };
+        middleFrame = null;
+        innerFrame = null;
+      }
+
+      const normalized = {
+        ...product,
+        description: product.description || "Precision-cut artisan frame crafted for a clean, natural look.",
+        categoryId: product.categoryId || null,
+        taxRate: typeof product.taxRate === 'number' ? product.taxRate : 0,
+        bgImage: product.bgImage || '',
+        galleryImages: Array.isArray(product.galleryImages) ? product.galleryImages : (Array.isArray(product.images) ? product.images : []),
+        images: Array.isArray(product.images) ? product.images : (Array.isArray(product.galleryImages) ? product.galleryImages : []),
+        sizes: sizes.map(s => {
+          const w = typeof s.width === 'number' ? s.width : parseFloat(s.width || 0);
+          const h = typeof s.height === 'number' ? s.height : parseFloat(s.height || 0);
+          return {
+            width: w,
+            height: h,
+            name: s.name || `${w} × ${h}`
+          };
+        }),
+        outerFrame,
+        middleFrame,
+        innerFrame
+      };
+
+      Object.defineProperty(normalized, 'price', {
+        get: function() {
+          const outerPrice = this.outerFrame ? this.outerFrame.price : 0;
+          const middlePrice = this.middleFrame ? this.middleFrame.price : 0;
+          const innerPrice = this.innerFrame ? this.innerFrame.price : 0;
+          return outerPrice + middlePrice + innerPrice;
+        },
+        enumerable: true,
+        configurable: true
+      });
+
+      normalized.frameImage = outerFrame.image;
+      normalized.frameConfiguration = {
+        sizes: normalized.sizes,
+        colours: outerFrame.colors,
+        dynamicThickness: isDynamicThickness
+      };
+
+      return normalized;
+    };
 
     // Auto-initialize CMS Customization and render to DOM on startup
     if (window.initCms) {
@@ -6115,6 +6744,13 @@
         if (tab === 'manage-elements') loadAdminManageElementsTable();
         if (tab === 'manage-category') loadCategoriesTable();
         if (tab === 'add-product') populateProductCategoryDropdown();
+        if (tab === 'add-element') {
+          document.getElementById('admin-upload-form').reset();
+          window.assetColoursState = [];
+          window.renderAssetColourChips();
+          window.clearAssetImagePreview();
+          window.handleAssetCategoryChange();
+        }
       }
       if (parent === 'sales') {
         if (tab === 'product') populateSalesProductsDropdown();
@@ -6429,7 +7065,7 @@
 
       try {
         const snapshot = await db.collection('products').orderBy('createdAt', 'desc').get();
-        productTemplates = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        productTemplates = snapshot.docs.map(doc => normalizeProductData({ id: doc.id, ...doc.data() }));
 
         if (globalCategories.length === 0) await loadCategoriesData();
 
@@ -6437,9 +7073,9 @@
           const cat = globalCategories.find(c => c.id === p.categoryId);
           const catName = cat ? cat.name : 'Uncategorized';
           const displayImg = (Array.isArray(p.galleryImages) && p.galleryImages[0]) ||
-                             (Array.isArray(p.images) && p.images[0]) ||
-                             p.frameImage ||
-                             'https://via.placeholder.com/150?text=No+Image';
+            (Array.isArray(p.images) && p.images[0]) ||
+            p.frameImage ||
+            'https://via.placeholder.com/150?text=No+Image';
 
           let statusBadge = p.outOfStock ? `<span class="px-2 py-1 rounded bg-red-100 text-red-800 text-[10px] font-black uppercase tracking-wider block mb-1">Out of Stock</span>` : `<span class="px-2 py-1 rounded bg-green-100 text-green-800 text-[10px] font-black uppercase tracking-wider block mb-1">In Stock</span>`;
           let priceString = p.saleActive ? `<span class="line-through text-slate text-xs">${window.appCurrency || '$'}${p.price.toFixed(2)}</span> <span class="text-flame font-bold">${window.appCurrency || '$'}${p.salePrice.toFixed(2)}</span>` : `<span class="text-flame font-bold">${window.appCurrency || '$'}${p.price.toFixed(2)}</span>`;
@@ -6507,7 +7143,7 @@
         return `
         <tr class="hover:bg-sand/10 transition border-b border-sand/30">
           <td class="px-6 py-4"><img src="${a.imageURL}" class="w-10 h-10 object-contain rounded border border-sand bg-white p-1"></td>
-          <td class="px-6 py-4 font-bold uppercase text-[10px] text-slate">${a.category}</td>
+          <td class="px-6 py-4 font-bold uppercase text-[10px] text-slate">${window.getAssetCategoryDisplayName(a.category)}</td>
           <td class="px-6 py-4">${statusBadge} ${priceString}</td>
           <td class="px-6 py-4 text-right">
             <button onclick="toggleElementStock('${a.id}', ${!!a.outOfStock})" class="px-3 py-1.5 ${a.outOfStock ? 'bg-green-50 text-green-600 border-green-200 hover:bg-green-100' : 'bg-orange-50 text-orange-600 border-orange-200 hover:bg-orange-100'} border rounded-lg text-xs font-bold transition mr-1 mb-1 sm:mb-0 w-24">
@@ -7007,20 +7643,38 @@
       row.innerHTML = `<input class="product-size-width px-2 py-2 text-xs bg-white border border-sand rounded-lg" type="number" min="0.01" step="0.01" placeholder="Width" value="${size.width || ''}" required><input class="product-size-height px-2 py-2 text-xs bg-white border border-sand rounded-lg" type="number" min="0.01" step="0.01" placeholder="Height" value="${size.height || ''}" required><input class="product-size-name px-2 py-2 text-xs bg-white border border-sand rounded-lg" placeholder="Display name" value="${size.name || ''}"><button type="button" onclick="this.parentElement.remove()" class="w-8 rounded-lg text-red-500 hover:bg-red-50" aria-label="Remove size"><i data-lucide="x" class="w-4 h-4 mx-auto"></i></button>`;
       document.getElementById('product-sizes-list').appendChild(row); lucide.createIcons();
     };
-    window.addProductColourRow = (colour = {}) => {
-      const row = document.createElement('div');
-      row.className = 'grid grid-cols-[1.2fr_1fr_auto] gap-2 product-colour-row';
-      row.innerHTML = `<input class="product-colour-name px-2 py-2 text-xs bg-white border border-sand rounded-lg" placeholder="Colour name" value="${colour.name || ''}" required><input class="product-colour-value h-9 bg-white border border-sand rounded-lg" type="color" value="${/^#[0-9a-f]{6}$/i.test(colour.value || '') ? colour.value : '#000000'}" required><button type="button" onclick="this.parentElement.remove()" class="w-8 rounded-lg text-red-500 hover:bg-red-50" aria-label="Remove colour"><i data-lucide="x" class="w-4 h-4 mx-auto"></i></button>`;
-      document.getElementById('product-colours-list').appendChild(row); lucide.createIcons();
-    };
+
+
+    function readFrameColours(frameType) {
+      const colours = window.frameColoursState[frameType] || [];
+      return colours;
+    }
+
     function readProductFrameConfiguration() {
-      const sizes = Array.from(document.querySelectorAll('.product-size-row')).map(row => ({ width: Number(row.querySelector('.product-size-width').value), height: Number(row.querySelector('.product-size-height').value), name: row.querySelector('.product-size-name').value.trim() })).filter(size => size.width > 0 && size.height > 0);
-      const colours = Array.from(document.querySelectorAll('.product-colour-row')).map(row => ({ name: row.querySelector('.product-colour-name').value.trim(), value: row.querySelector('.product-colour-value').value.toUpperCase() })).filter(colour => colour.name && /^#[0-9A-F]{6}$/.test(colour.value));
+      const sizes = Array.from(document.querySelectorAll('.product-size-row')).map(row => {
+        const width = Number(row.querySelector('.product-size-width').value);
+        const height = Number(row.querySelector('.product-size-height').value);
+        let name = row.querySelector('.product-size-name').value.trim();
+        if (name && !name.toLowerCase().endsWith('cm')) {
+          name = name + ' cm';
+        } else if (!name) {
+          name = `${width} × ${height} cm`;
+        }
+        return { width, height, name };
+      }).filter(size => size.width > 0 && size.height > 0);
       if (!sizes.length) throw new Error('Add at least one valid frame size.');
-      if (!colours.length) throw new Error('Add at least one named frame colour.');
-      if (new Set(colours.map(c => c.value)).size !== colours.length) throw new Error('Each frame colour must use a unique colour value.');
-      if (new Set(colours.map(c => c.name.toLowerCase())).size !== colours.length) throw new Error('Each frame colour must have a unique name.');
-      return { sizes, colours, dynamicThickness: document.getElementById('product-dynamic-thickness').checked };
+
+      // Prevent duplicate sizes
+      const uniqueKeys = new Set();
+      for (let size of sizes) {
+        const key = `${size.width}x${size.height}`;
+        if (uniqueKeys.has(key)) {
+          throw new Error(`Size duplicate detected: ${size.width} × ${size.height} cm has been added more than once.`);
+        }
+        uniqueKeys.add(key);
+      }
+
+      return { sizes };
     }
     let adminGalleryImages = [];
 
@@ -7073,14 +7727,27 @@
       editingProductId = null;
       document.getElementById('editing-product-id').value = '';
       document.getElementById('add-product-form').reset();
+      if (document.getElementById('product-description')) document.getElementById('product-description').value = '';
+      
+      // Clear sizes list
       document.getElementById('product-sizes-list').innerHTML = '';
-      document.getElementById('product-colours-list').innerHTML = '';
       defaultFrameSizes.forEach(addProductSizeRow);
-      defaultFrameColours.forEach(addProductColourRow);
-      if (document.getElementById('frame-img-text')) document.getElementById('frame-img-text').textContent = 'Upload Frame Image File';
-      if (document.getElementById('bg-img-text')) document.getElementById('bg-img-text').textContent = 'Upload Background Image File';
-      if (document.getElementById('product-frame-url')) document.getElementById('product-frame-url').value = '';
-      if (document.getElementById('product-bg-url')) document.getElementById('product-bg-url').value = '';
+
+      // Reset color chips state and lists
+      window.frameColoursState = {
+        outer: JSON.parse(JSON.stringify(defaultFrameColours)),
+        middle: [],
+        inner: []
+      };
+      ['outer', 'middle', 'inner'].forEach(type => window.renderColourChips(type));
+
+      // Reset image previews and file text labels
+      ['bg', 'outer', 'middle', 'inner'].forEach(type => window.clearImagePreview(type));
+
+      // Collapse optional frame sections by default
+      window.toggleFrameSection('middle', false);
+      window.toggleFrameSection('inner', false);
+
       if (document.getElementById('product-submit-label')) document.getElementById('product-submit-label').textContent = 'Add Product Template';
       adminGalleryImages = [];
       window.renderAdminGalleryPreview();
@@ -7195,8 +7862,14 @@
       });
 
       // File Input Text Updaters
-      document.getElementById('product-frame-img')?.addEventListener('change', function (e) {
-        if (e.target.files.length) document.getElementById('frame-img-text').textContent = e.target.files[0].name;
+      document.getElementById('product-outer-img')?.addEventListener('change', function (e) {
+        if (e.target.files.length) document.getElementById('outer-img-text').textContent = e.target.files[0].name;
+      });
+      document.getElementById('product-middle-img')?.addEventListener('change', function (e) {
+        if (e.target.files.length) document.getElementById('middle-img-text').textContent = e.target.files[0].name;
+      });
+      document.getElementById('product-inner-img')?.addEventListener('change', function (e) {
+        if (e.target.files.length) document.getElementById('inner-img-text').textContent = e.target.files[0].name;
       });
       document.getElementById('product-bg-img')?.addEventListener('change', function (e) {
         if (e.target.files.length) document.getElementById('bg-img-text').textContent = e.target.files[0].name;
@@ -7210,18 +7883,14 @@
           e.preventDefault();
 
           const name = document.getElementById('product-name').value;
-          const price = parseFloat(document.getElementById('product-price').value);
+          const description = document.getElementById('product-description').value;
           const tax = parseFloat(document.getElementById('product-tax').value || 0);
           const categoryId = document.getElementById('product-category').value;
 
-          const frameFile = document.getElementById('product-frame-img')?.files[0];
-          const frameUrlInput = document.getElementById('product-frame-url')?.value.trim();
           const bgFile = document.getElementById('product-bg-img')?.files[0];
           const bgUrlInput = document.getElementById('product-bg-url')?.value.trim();
 
           const currentProduct = editingProductId ? productTemplates.find(p => p.id === editingProductId) : null;
-          let frameConfiguration;
-          try { frameConfiguration = readProductFrameConfiguration(); } catch (configurationError) { showToast(configurationError.message); return; }
 
           const btn = e.target.querySelector('button[type="submit"]');
           const originalBtnHtml = btn.innerHTML;
@@ -7230,32 +7899,121 @@
           lucide.createIcons();
 
           try {
-            // 1. Resolve Frame Image (Customization Only)
-            let frameUrl = currentProduct?.frameImage || '';
-            if (frameFile) {
-              showToast('Processing frame image...');
+            // 1. Core General Validations
+            if (!name.trim()) throw new Error('Product Name is required.');
+            if (!description.trim()) throw new Error('Description is required.');
+            if (!categoryId) throw new Error('Category is required.');
+            if (isNaN(tax) || tax < 0) throw new Error('Tax Rate is required and must be non-negative.');
+
+            let frameConfiguration;
+            try { frameConfiguration = readProductFrameConfiguration(); } catch (configurationError) { throw configurationError; }
+
+            // Active flags based on collapse/expand panel visibility
+            const isMiddleActive = !document.getElementById('middle-frame-expanded').classList.contains('hidden');
+            const isInnerActive = !document.getElementById('inner-frame-expanded').classList.contains('hidden');
+
+            // Helper to extract frame inputs
+            const getFrameInputData = (frameType) => {
+              const nameVal = document.getElementById(`product-${frameType}-name`)?.value.trim() || '';
+              const priceVal = document.getElementById(`product-${frameType}-price`)?.value.trim() || '';
+              const thicknessVal = document.getElementById(`product-${frameType}-thickness`)?.value.trim() || '';
+              const file = document.getElementById(`product-${frameType}-img`)?.files[0] || null;
+              const url = document.getElementById(`product-${frameType}-url`)?.value.trim() || '';
+              const colors = readFrameColours(frameType);
+
+              return {
+                name: nameVal,
+                price: priceVal !== '' ? parseFloat(priceVal) : NaN,
+                thickness: thicknessVal !== '' ? parseFloat(thicknessVal) : NaN,
+                file,
+                url,
+                colors
+              };
+            };
+
+            // Parse Frames
+            const outer = getFrameInputData('outer');
+            const middle = getFrameInputData('middle');
+            const inner = getFrameInputData('inner');
+
+            // Enforce Outer Frame (Required)
+            if (!outer.name) throw new Error('Outer Frame name is required.');
+            if (isNaN(outer.price) || outer.price <= 0) throw new Error('Outer Frame price must be greater than zero.');
+            if (isNaN(outer.thickness) || outer.thickness <= 0) throw new Error('Outer Frame thickness must be entered in centimeters and greater than zero.');
+            if (!outer.colors.length) throw new Error('Please add at least one Outer Frame colour.');
+
+            // Validate Middle Frame (If Active)
+            if (isMiddleActive) {
+              if (!middle.name) throw new Error('Middle Frame name is required.');
+              if (isNaN(middle.price) || middle.price <= 0) throw new Error('Middle Frame price must be greater than zero.');
+              if (isNaN(middle.thickness) || middle.thickness <= 0) throw new Error('Middle Frame thickness must be entered in centimeters and greater than zero.');
+              if (!middle.colors.length) throw new Error('Please add at least one Middle Frame colour.');
+            }
+
+            // Validate Inner Frame (If Active)
+            if (isInnerActive) {
+              if (!inner.name) throw new Error('Inner Frame name is required.');
+              if (isNaN(inner.price) || inner.price <= 0) throw new Error('Inner Frame price must be greater than zero.');
+              if (isNaN(inner.thickness) || inner.thickness <= 0) throw new Error('Inner Frame thickness must be entered in centimeters and greater than zero.');
+              if (!inner.colors.length) throw new Error('Please add at least one Inner Frame colour.');
+            }
+
+            // Background transparency/upload helper
+            const uploadFrameImage = async (file, label) => {
+              showToast(`Processing transparency for ${label} image...`);
               try {
                 const apiKey = "MVqFJ98Cdkzs8viUodmvdnZw";
                 const formData = new FormData();
-                formData.append('image_file', frameFile);
+                formData.append('image_file', file);
                 formData.append('size', 'auto');
                 const removeBgRes = await fetch('https://api.remove.bg/v1.0/removebg', {
                   method: 'POST', headers: { 'X-Api-Key': apiKey }, body: formData
                 });
                 if (removeBgRes.ok) {
                   const transparentFrameBlob = await removeBgRes.blob();
-                  frameUrl = await uploadToCloudinary(transparentFrameBlob);
+                  return await uploadToCloudinary(transparentFrameBlob);
                 } else {
-                  frameUrl = await uploadToCloudinary(frameFile);
+                  return await uploadToCloudinary(file);
                 }
               } catch (e) {
-                frameUrl = await uploadToCloudinary(frameFile);
+                return await uploadToCloudinary(file);
               }
-            } else if (frameUrlInput) {
-              frameUrl = frameUrlInput;
+            };
+
+            // Resolve images
+            let outerImg = outer.url || (currentProduct?.outerFrame?.image || currentProduct?.frameImage || '');
+            if (outer.file) outerImg = await uploadFrameImage(outer.file, 'Outer Frame');
+            if (!outerImg) throw new Error('Outer Frame image is required.');
+
+            let middleFramePayload = null;
+            if (isMiddleActive) {
+              let middleImg = middle.url || (currentProduct?.middleFrame?.image || '');
+              if (middle.file) middleImg = await uploadFrameImage(middle.file, 'Middle Frame');
+              if (!middleImg) throw new Error('Middle Frame image is required.');
+              middleFramePayload = {
+                name: middle.name,
+                image: middleImg,
+                price: middle.price,
+                thickness: middle.thickness,
+                colors: middle.colors
+              };
             }
 
-            // 2. Resolve Background Image (Customization Only)
+            let innerFramePayload = null;
+            if (isInnerActive) {
+              let innerImg = inner.url || (currentProduct?.innerFrame?.image || '');
+              if (inner.file) innerImg = await uploadFrameImage(inner.file, 'Inner Frame');
+              if (!innerImg) throw new Error('Inner Frame image is required.');
+              innerFramePayload = {
+                name: inner.name,
+                image: innerImg,
+                price: inner.price,
+                thickness: inner.thickness,
+                colors: inner.colors
+              };
+            }
+
+            // 2. Resolve Background Image
             let bgUrl = currentProduct?.bgImage || '';
             if (bgFile) {
               showToast('Uploading background image...');
@@ -7263,8 +8021,9 @@
             } else if (bgUrlInput) {
               bgUrl = bgUrlInput;
             }
+            if (!bgUrl) throw new Error('Background image is required.');
 
-            // 3. Resolve Gallery Images (Product Cards & Product Details View Only)
+            // 3. Resolve Gallery Images
             const resolvedGalleryUrls = [];
             for (let item of adminGalleryImages) {
               if (item.type === 'file' && item.file) {
@@ -7277,19 +8036,38 @@
             }
 
             const savedGallery = resolvedGalleryUrls;
+            if (!savedGallery.length) throw new Error('At least one gallery image is required.');
 
+            // Build Payload
             const productPayload = {
               name,
-              price,
-              taxRate: tax,
+              description,
               categoryId: categoryId || null,
-              frameImage: frameUrl,
+              taxRate: tax,
               bgImage: bgUrl,
               images: savedGallery,
               galleryImages: savedGallery,
-              frameConfiguration,
+              sizes: frameConfiguration.sizes,
+              outerFrame: {
+                name: outer.name,
+                image: outerImg,
+                price: outer.price,
+                colors: outer.colors,
+                thickness: outer.thickness
+              },
+              middleFrame: middleFramePayload,
+              innerFrame: innerFramePayload,
               updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
+
+            // Layer limit enforcement check
+            let layerCount = 0;
+            if (productPayload.outerFrame) layerCount++;
+            if (productPayload.middleFrame) layerCount++;
+            if (productPayload.innerFrame) layerCount++;
+            if (layerCount < 1 || layerCount > 3) {
+              throw new Error('Product must contain between 1 and 3 frame layers.');
+            }
 
             let productId = editingProductId;
             if (productId) {
@@ -7299,8 +8077,22 @@
               productId = (await db.collection('products').add(productPayload)).id;
             }
 
+            const totalPriceCombined = outer.price + (middleFramePayload ? middle.price : 0) + (innerFramePayload ? inner.price : 0);
             await db.collection('assets').doc(productId).set({
-              category: 'frames', productId, frameManaged: true, cost: price, imageURL: frameUrl || (savedGallery[0] || ''), name, frameConfiguration, type: 'product-frame', createdAt: firebase.firestore.FieldValue.serverTimestamp(), updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+              category: 'frames',
+              productId,
+              frameManaged: true,
+              cost: totalPriceCombined,
+              imageURL: outerImg || (savedGallery[0] || ''),
+              name,
+              frameConfiguration: {
+                sizes: frameConfiguration.sizes,
+                colours: outer.colors,
+                dynamicThickness: true
+              },
+              type: 'product-frame',
+              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+              updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             }, { merge: true });
 
             showToast(editingProductId ? 'Product template updated successfully!' : 'Product template created successfully!');
@@ -7350,14 +8142,14 @@
 
       try {
         const snapshot = await db.collection('products').orderBy('createdAt', 'desc').get();
-        productTemplates = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        productTemplates = snapshot.docs.map(doc => normalizeProductData({ id: doc.id, ...doc.data() }));
 
         if (grid) {
           grid.innerHTML = productTemplates.map(product => {
             const displayImg = (Array.isArray(product.galleryImages) && product.galleryImages[0]) ||
-                               (Array.isArray(product.images) && product.images[0]) ||
-                               product.frameImage ||
-                               'https://via.placeholder.com/400x400?text=No+Gallery+Image';
+              (Array.isArray(product.images) && product.images[0]) ||
+              product.frameImage ||
+              'https://via.placeholder.com/400x400?text=No+Gallery+Image';
             return `
             <div class="bg-editorbg p-4 rounded-2xl border border-sand/50 shadow-sm">
               <div class="product-preview-container aspect-square rounded-xl overflow-hidden bg-white mb-4 p-2 relative flex items-center justify-center">
@@ -7400,15 +8192,15 @@
     // Realtime Listener for Products Collection
     try {
       db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
-        productTemplates = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        productTemplates = snapshot.docs.map(doc => normalizeProductData({ id: doc.id, ...doc.data() }));
 
         const grid = document.getElementById('products-grid');
         if (grid) {
           grid.innerHTML = productTemplates.map(product => {
             const displayImg = (Array.isArray(product.galleryImages) && product.galleryImages[0]) ||
-                               (Array.isArray(product.images) && product.images[0]) ||
-                               product.frameImage ||
-                               'https://via.placeholder.com/400x400?text=No+Gallery+Image';
+              (Array.isArray(product.images) && product.images[0]) ||
+              product.frameImage ||
+              'https://via.placeholder.com/400x400?text=No+Gallery+Image';
             return `
             <div class="bg-editorbg p-4 rounded-2xl border border-sand/50 shadow-sm">
               <div class="product-preview-container aspect-square rounded-xl overflow-hidden bg-white mb-4 p-2 relative flex items-center justify-center">
@@ -7446,9 +8238,9 @@
             const cat = catList.find(c => c.id === p.categoryId);
             const catName = cat ? cat.name : 'Uncategorized';
             const displayImg = (Array.isArray(p.galleryImages) && p.galleryImages[0]) ||
-                               (Array.isArray(p.images) && p.images[0]) ||
-                               p.frameImage ||
-                               'https://via.placeholder.com/150?text=No+Image';
+              (Array.isArray(p.images) && p.images[0]) ||
+              p.frameImage ||
+              'https://via.placeholder.com/150?text=No+Image';
 
             let statusBadge = p.outOfStock ? `<span class="px-2 py-1 rounded bg-red-100 text-red-800 text-[10px] font-black uppercase tracking-wider block mb-1">Out of Stock</span>` : `<span class="px-2 py-1 rounded bg-green-100 text-green-800 text-[10px] font-black uppercase tracking-wider block mb-1">In Stock</span>`;
             let priceString = p.saleActive ? `<span class="line-through text-slate text-xs">${window.appCurrency || '$'}${p.price.toFixed(2)}</span> <span class="text-flame font-bold">${window.appCurrency || '$'}${p.salePrice.toFixed(2)}</span>` : `<span class="text-flame font-bold">${window.appCurrency || '$'}${p.price.toFixed(2)}</span>`;
@@ -7511,19 +8303,82 @@
       editingProductId = productId;
       document.getElementById('editing-product-id').value = productId;
       document.getElementById('product-name').value = product.name || '';
-      document.getElementById('product-price').value = product.price || 0;
+      if (document.getElementById('product-description')) document.getElementById('product-description').value = product.description || '';
       document.getElementById('product-tax').value = product.taxRate || 0;
       document.getElementById('product-sizes-list').innerHTML = '';
-      document.getElementById('product-colours-list').innerHTML = '';
-      const configuration = product.frameConfiguration || { sizes: defaultFrameSizes, colours: defaultFrameColours, dynamicThickness: false };
-      (configuration.sizes?.length ? configuration.sizes : defaultFrameSizes).forEach(addProductSizeRow);
-      (configuration.colours?.length ? configuration.colours : defaultFrameColours).forEach(addProductColourRow);
-      document.getElementById('product-dynamic-thickness').checked = Boolean(configuration.dynamicThickness);
+      
+      // Map sizes
+      const sizesToLoad = product.sizes || product.frameConfiguration?.sizes || defaultFrameSizes;
+      sizesToLoad.forEach(addProductSizeRow);
 
-      if (document.getElementById('product-frame-url')) document.getElementById('product-frame-url').value = product.frameImage || '';
+      // Populate Outer Frame (Required)
+      document.getElementById('product-outer-name').value = product.outerFrame?.name || product.name || '';
+      document.getElementById('product-outer-price').value = typeof product.outerFrame?.price === 'number' ? product.outerFrame.price : (product.price || 0);
+      document.getElementById('product-outer-thickness').value = product.outerFrame?.thickness || 2.0;
+      document.getElementById('product-outer-url').value = product.outerFrame?.image || product.frameImage || '';
+
+      // Populate Middle Frame (Optional)
+      document.getElementById('product-middle-name').value = product.middleFrame?.name || '';
+      document.getElementById('product-middle-price').value = typeof product.middleFrame?.price === 'number' ? product.middleFrame.price : '';
+      document.getElementById('product-middle-thickness').value = product.middleFrame?.thickness || '';
+      document.getElementById('product-middle-url').value = product.middleFrame?.image || '';
+
+      // Populate Inner Frame (Optional)
+      document.getElementById('product-inner-name').value = product.innerFrame?.name || '';
+      document.getElementById('product-inner-price').value = typeof product.innerFrame?.price === 'number' ? product.innerFrame.price : '';
+      document.getElementById('product-inner-thickness').value = product.innerFrame?.thickness || '';
+      document.getElementById('product-inner-url').value = product.innerFrame?.image || '';
+
       if (document.getElementById('product-bg-url')) document.getElementById('product-bg-url').value = product.bgImage || '';
-      if (document.getElementById('frame-img-text')) document.getElementById('frame-img-text').textContent = product.frameImage ? 'Current Frame Image Set' : 'Upload Frame Image File';
-      if (document.getElementById('bg-img-text')) document.getElementById('bg-img-text').textContent = product.bgImage ? 'Current BG Image Set' : 'Upload Background Image File';
+
+      // Map color chips states
+      const outerColors = product.outerFrame?.colors || product.frameConfiguration?.colours || defaultFrameColours;
+      window.frameColoursState = {
+        outer: JSON.parse(JSON.stringify(outerColors)),
+        middle: product.middleFrame?.colors ? JSON.parse(JSON.stringify(product.middleFrame.colors)) : [],
+        inner: product.innerFrame?.colors ? JSON.parse(JSON.stringify(product.innerFrame.colors)) : []
+      };
+      ['outer', 'middle', 'inner'].forEach(type => window.renderColourChips(type));
+
+      // Collapse or expand Middle/Inner optional frame layers
+      if (product.middleFrame) {
+        window.toggleFrameSection('middle', true);
+      } else {
+        window.toggleFrameSection('middle', false);
+      }
+
+      if (product.innerFrame) {
+        window.toggleFrameSection('inner', true);
+      } else {
+        window.toggleFrameSection('inner', false);
+      }
+
+      // Render previews for existing image URLs or fallbacks
+      ['bg', 'outer', 'middle', 'inner'].forEach(type => {
+        let imageUrl = '';
+        if (type === 'bg') imageUrl = product.bgImage;
+        else if (type === 'outer') imageUrl = product.outerFrame?.image || product.frameImage;
+        else if (type === 'middle') imageUrl = product.middleFrame?.image;
+        else if (type === 'inner') imageUrl = product.innerFrame?.image;
+
+        const img = document.getElementById(`${type}-preview-img`);
+        const placeholder = document.getElementById(`${type}-preview-placeholder`);
+        const btnRemove = document.getElementById(`btn-remove-${type}-preview`);
+        const fileText = document.getElementById(`${type}-img-text`);
+
+        if (imageUrl && img && placeholder) {
+          img.src = imageUrl;
+          img.classList.remove('hidden');
+          placeholder.classList.add('hidden');
+          if (btnRemove) btnRemove.classList.remove('hidden');
+          if (fileText) {
+            fileText.textContent = `Current ${type === 'bg' ? 'BG' : type.charAt(0).toUpperCase() + type.slice(1) + ' Frame'} Image Set`;
+          }
+        } else {
+          window.clearImagePreview(type);
+        }
+      });
+
       if (document.getElementById('product-submit-label')) document.getElementById('product-submit-label').textContent = 'Save Product Changes';
 
       // Load Gallery Images into adminGalleryImages
@@ -7840,7 +8695,7 @@
     async function loadProductsForLanding() {
       try {
         const snapshot = await db.collection('products').orderBy('createdAt', 'desc').get();
-        productTemplates = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        productTemplates = snapshot.docs.map(doc => normalizeProductData({ id: doc.id, ...doc.data() }));
         const products = productTemplates;
 
         const productsGrid = document.querySelector('#frames-section .products-grid');
@@ -7861,9 +8716,9 @@
             // Using the description or a fallback, matching line-clamp-2
             const desc = product.description || "Precision-cut artisan frame crafted for a clean, natural look.";
             const galleryImg = (Array.isArray(product.galleryImages) && product.galleryImages[0]) ||
-                               (Array.isArray(product.images) && product.images[0]) ||
-                               product.frameImage ||
-                               'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=400&h=400';
+              (Array.isArray(product.images) && product.images[0]) ||
+              product.frameImage ||
+              'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=400&h=400';
 
             return `
              <div class="reveal bg-surface-container-lowest p-4 group active" ${delayStyle}>
@@ -8348,7 +9203,7 @@
 
     window.selectManagedFrame = async (productId) => {
       let product = productTemplates.find(p => p.id === productId);
-      if (!product) { const doc = await db.collection('products').doc(productId).get(); if (doc.exists) product = { id: doc.id, ...doc.data() }; }
+      if (!product) { const doc = await db.collection('products').doc(productId).get(); if (doc.exists) product = normalizeProductData({ id: doc.id, ...doc.data() }); }
       if (!product) return showToast('This frame is no longer available.');
       window.loadProductIntoEditor(product);
     };
@@ -11093,17 +11948,71 @@
       return Math.random().toString(36).substr(2, 9);
     }
 
+    window.selectFrameElement = (id, layerType) => {
+      console.log(`[Placeholder] Selected frame element: ${id} of layer type: ${layerType}`);
+      showToast(`Selected Frame ${layerType.toUpperCase()}: Ready for Phase 5 integration!`);
+    };
+
     async function loadGlobalAssets() {
       const snapshot = await db.collection('assets').orderBy('createdAt', 'desc').get();
       const assets = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-      const framesContainer = document.getElementById('cat-frames');
+      // Backward compatibility auto-migration for textures -> Background Texture
+      assets.forEach(async a => {
+        if (a.category === 'texture') {
+          try {
+            await db.collection('assets').doc(a.id).update({ category: 'textures' });
+            a.category = 'textures';
+          } catch (e) {
+            console.error('Error migrating texture element:', e);
+          }
+        }
+      });
+
+      const outerContainer = document.getElementById('cat-outer-frame');
+      const middleContainer = document.getElementById('cat-middle-frame');
+      const innerContainer = document.getElementById('cat-inner-frame');
       const decorContainer = document.getElementById('cat-decor');
       const textureContainer = document.getElementById('cat-textures');
 
-      const frames = assets.filter(a => a.category === 'frames');
+      const outerFrames = assets.filter(a => a.category === 'outer-frame');
+      const middleFrames = assets.filter(a => a.category === 'middle-frame');
+      const innerFrames = assets.filter(a => a.category === 'inner-frame');
       const decor = assets.filter(a => a.category === 'decor');
-      const textures = assets.filter(a => a.category === 'textures');
+      const textures = assets.filter(a => a.category === 'textures' || a.category === 'texture');
+
+      if (outerContainer) {
+        outerContainer.innerHTML = outerFrames.length > 0
+          ? `<div class="grid grid-cols-2 gap-3">` + outerFrames.map(f => `
+              <button onclick="window.selectFrameElement('${f.id}', 'outer')" class="aspect-square bg-editorbg rounded-xl border border-sand/50 overflow-hidden cursor-pointer hover:border-flame transition p-2 flex flex-col items-center justify-center">
+                <img src="${f.imageURL}" class="max-w-full max-h-[70%] object-contain pointer-events-none">
+                <span class="text-[9px] font-bold text-charcoal mt-1 truncate max-w-full">${f.name || 'Outer Frame'}</span>
+              </button>
+            `).join('') + `</div>`
+          : `<p class="text-xs font-bold text-slate text-center mt-4">Outer Frame elements added by admin will appear here.</p>`;
+      }
+
+      if (middleContainer) {
+        middleContainer.innerHTML = middleFrames.length > 0
+          ? `<div class="grid grid-cols-2 gap-3">` + middleFrames.map(f => `
+              <button onclick="window.selectFrameElement('${f.id}', 'middle')" class="aspect-square bg-editorbg rounded-xl border border-sand/50 overflow-hidden cursor-pointer hover:border-flame transition p-2 flex flex-col items-center justify-center">
+                <img src="${f.imageURL}" class="max-w-full max-h-[70%] object-contain pointer-events-none">
+                <span class="text-[9px] font-bold text-charcoal mt-1 truncate max-w-full">${f.name || 'Middle Frame'}</span>
+              </button>
+            `).join('') + `</div>`
+          : `<p class="text-xs font-bold text-slate text-center mt-4">Middle Frame elements added by admin will appear here.</p>`;
+      }
+
+      if (innerContainer) {
+        innerContainer.innerHTML = innerFrames.length > 0
+          ? `<div class="grid grid-cols-2 gap-3">` + innerFrames.map(f => `
+              <button onclick="window.selectFrameElement('${f.id}', 'inner')" class="aspect-square bg-editorbg rounded-xl border border-sand/50 overflow-hidden cursor-pointer hover:border-flame transition p-2 flex flex-col items-center justify-center">
+                <img src="${f.imageURL}" class="max-w-full max-h-[70%] object-contain pointer-events-none">
+                <span class="text-[9px] font-bold text-charcoal mt-1 truncate max-w-full">${f.name || 'Inner Frame'}</span>
+              </button>
+            `).join('') + `</div>`
+          : `<p class="text-xs font-bold text-slate text-center mt-4">Inner Frame elements added by admin will appear here.</p>`;
+      }
 
       if (textureContainer) {
         textureContainer.innerHTML = textures.length > 0
@@ -11111,11 +12020,6 @@
           : `<p class="text-xs font-bold text-slate text-center mt-4">Background textures added by admin will appear here.</p>`;
       }
 
-      if (framesContainer) {
-        framesContainer.innerHTML = frames.length > 0
-          ? `<div id="frame-customization-panel" class="hidden mb-4 p-3 rounded-xl bg-editorbg border border-sand/50 space-y-3"><div><p class="text-[10px] font-black text-slate uppercase tracking-wider">Frame Size</p><div id="frame-size-options" class="flex flex-wrap gap-2 mt-2"></div></div><div><p class="text-[10px] font-black text-slate uppercase tracking-wider">Frame Colour</p><div id="frame-colour-options" class="flex flex-wrap gap-2 mt-2"></div></div><div id="frame-thickness-control" class="hidden"><div class="flex justify-between text-[10px] font-black text-slate uppercase tracking-wider"><span>Frame Thickness</span><span id="frame-thickness-value">100%</span></div><input id="frame-thickness-slider" type="range" min="70" max="150" value="100" class="w-full accent-flame mt-2" oninput="applyFrameThickness(this.value)"></div></div><div class="grid grid-cols-2 gap-3">` + frames.map(f => `<button onclick="selectManagedFrame('${f.productId || f.id}')" class="aspect-square bg-editorbg rounded-xl border border-sand/50 overflow-hidden cursor-pointer hover:border-flame transition p-2 flex flex-col items-center justify-center"><img src="${f.imageURL}" class="max-w-full max-h-full object-contain pointer-events-none"><span class="text-[9px] font-bold text-charcoal mt-1 truncate max-w-full">${f.name || 'Custom Frame'}</span></button>`).join('') + `</div>`
-          : `<p class="text-xs font-bold text-slate text-center mt-4">Product frame templates will appear here.</p>`;
-      }
       if (decorContainer) {
         decorContainer.innerHTML = decor.length > 0
           ? `<div class="grid grid-cols-2 gap-3">` + decor.map(d => `<button onclick="addGalleryImageToCanvas('${d.imageURL}', ${d.cost || 0}, '${d.name || 'Decor Item'}')" class="aspect-square bg-editorbg rounded-xl border border-sand/50 overflow-hidden cursor-pointer hover:border-flame transition p-2 flex items-center justify-center"><img src="${d.imageURL}" class="max-w-full max-h-full object-contain pointer-events-none"></button>`).join('') + `</div>`
@@ -11594,73 +12498,101 @@
     async function handleAddToCart() {
       if (!currentUser) { toggleModal('login-modal'); return; }
       showToast("Adding to Cart...");
-        const title = document.getElementById('editor-project-title').innerText;
-        const canvasHtml = document.getElementById('artwork-layer').innerHTML;
-        const bgColor = document.getElementById('design-canvas').style.backgroundColor || '#ffffff';
+      const title = document.getElementById('editor-project-title').innerText;
+      const canvasHtml = document.getElementById('artwork-layer').innerHTML;
+      const bgColor = document.getElementById('design-canvas').style.backgroundColor || '#ffffff';
 
-        const newItem = {
-          id: generateId(),
-          title: title,
-          cost: calculateCanvasCost().total,
-          customization: getCurrentCustomizationSummary(),
-          canvasData: canvasHtml,
-          backgroundColor: bgColor,
-          dateAdded: firebase.firestore.FieldValue.serverTimestamp()
-        };
+      const newItem = {
+        id: generateId(),
+        title: title,
+        cost: calculateCanvasCost().total,
+        customization: getCurrentCustomizationSummary(),
+        canvasData: canvasHtml,
+        backgroundColor: bgColor,
+        dateAdded: firebase.firestore.FieldValue.serverTimestamp()
+      };
 
-        await db.collection('users').doc(currentUser.uid).collection('cart').doc(newItem.id).set(newItem);
-        cartItems.push(newItem);
-        updateCartUI();
-        showToast("Design added to your studio cart!");
+      await db.collection('users').doc(currentUser.uid).collection('cart').doc(newItem.id).set(newItem);
+      cartItems.push(newItem);
+      updateCartUI();
+      showToast("Design added to your studio cart!");
     }
 
     window.handleAdminAssetUpload = async (e) => {
       e.preventDefault();
 
       const category = document.getElementById('admin-asset-category').value;
-      const cost = document.getElementById('admin-asset-cost').value;
+      const name = document.getElementById('admin-asset-name').value.trim();
+      const costVal = document.getElementById('admin-asset-cost').value;
+      const thicknessVal = document.getElementById('admin-asset-thickness').value;
       const fileInput = document.getElementById('admin-asset-file');
       const file = fileInput.files[0];
 
-      if (!file) {
-        showToast("Please select a file first!");
-        return;
-      }
-
-      const btn = e.target.querySelector('button[type="submit"]');
-      const originalHtml = btn.innerHTML;
-      btn.innerHTML = `<i data-lucide="loader" class="w-5 h-5 animate-spin"></i> Publishing...`;
-      btn.disabled = true;
-      lucide.createIcons();
+      const isFrame = ['outer-frame', 'middle-frame', 'inner-frame'].includes(category);
+      const isDecor = category === 'decor';
 
       try {
-        showToast("Uploading to Cloudinary...");
-        const secureUrl = await uploadToCloudinary(file);
+        if (!name) throw new Error("Name is required.");
+        if (!file) throw new Error("Please select an image file first!");
 
-        showToast("Saving Asset Data to Firestore...");
-        await db.collection('assets').add({
+        const assetPayload = {
           category: category,
-          cost: parseFloat(cost) || 0,
-          imageURL: secureUrl,
+          name: name,
           type: file.type,
-          name: file.name,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        };
 
-        showToast("Asset published successfully!");
-        document.getElementById('admin-upload-form').reset();
-        document.getElementById('admin-file-name').innerText = 'Drag & Drop or Click to Browse';
-        toggleAdminSection('orders');
-        // Note: loadGlobalAssets() will need to be refactored separately to fetch from Firestore
-        loadGlobalAssets();
+        if (isFrame) {
+          const cost = parseFloat(costVal);
+          const thickness = parseFloat(thicknessVal);
+          if (isNaN(cost) || cost < 0) throw new Error("Price must be a valid non-negative number.");
+          if (isNaN(thickness) || thickness <= 0) throw new Error("Thickness must be entered in centimeters and greater than zero.");
+          if (!window.assetColoursState.length) throw new Error("Please add at least one available colour chip.");
 
-      } catch (err) {
-        console.error("Admin Upload Error:", err);
-        showToast("Upload failed: " + (err.message || "Unknown error"));
-      } finally {
-        btn.innerHTML = originalHtml;
-        btn.disabled = false;
-        setTimeout(() => lucide.createIcons(), 10);
+          assetPayload.cost = cost;
+          assetPayload.thickness = thickness;
+          assetPayload.colours = window.assetColoursState;
+        } else if (isDecor) {
+          const cost = parseFloat(costVal);
+          if (isNaN(cost) || cost < 0) throw new Error("Price must be a valid non-negative number.");
+          assetPayload.cost = cost;
+        }
+
+        const btn = e.target.querySelector('button[type="submit"]');
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = `<i data-lucide="loader" class="w-5 h-5 animate-spin"></i> Publishing...`;
+        btn.disabled = true;
+        lucide.createIcons();
+
+        try {
+          showToast("Uploading element to Cloudinary...");
+          const secureUrl = await uploadToCloudinary(file);
+          assetPayload.imageURL = secureUrl;
+
+          showToast("Saving Asset to Firestore...");
+          await db.collection('assets').add(assetPayload);
+
+          showToast("Element published successfully!");
+          document.getElementById('admin-upload-form').reset();
+          window.assetColoursState = [];
+          window.renderAssetColourChips();
+          window.clearAssetImagePreview();
+          window.handleAssetCategoryChange();
+          
+          toggleAdminSection('orders');
+          loadGlobalAssets();
+          if (window.loadAdminManageElementsTable) window.loadAdminManageElementsTable();
+          if (window.loadAdminManageAssets) window.loadAdminManageAssets();
+        } catch (err) {
+          console.error("Admin Upload Error:", err);
+          showToast("Upload failed: " + (err.message || "Unknown error"));
+        } finally {
+          btn.innerHTML = originalHtml;
+          btn.disabled = false;
+          setTimeout(() => lucide.createIcons(), 10);
+        }
+      } catch (validationErr) {
+        showToast(validationErr.message);
       }
     };
 
@@ -12239,162 +13171,7 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    window.downloadLastOrderPdf = () => {
-      if (!window.lastOrderPdf?.blob) return showToast('Your order PDF is not available yet.');
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(window.lastOrderPdf.blob);
-      link.download = window.lastOrderPdf.filename;
-      link.click();
-      setTimeout(() => URL.revokeObjectURL(link.href), 1000);
-    };
 
-    async function processFinalCheckoutOrderCreation(method, paymentStatus, meta) {
-      const name = document.getElementById('chk-name').value || "Guest User";
-      const email = document.getElementById('chk-email').value || "processing@studio.com";
-      const phone = document.getElementById('chk-phone').value || "N/A";
-      const province = document.getElementById('chk-province').value || "";
-      const city = document.getElementById('chk-city').value || "";
-      const street = document.getElementById('chk-address').value || "";
-      const address = `${street}, ${city}, ${province}`;
-      const title = document.getElementById('editor-project-title').innerText;
-
-      const basePriceRaw = parseFloat(document.getElementById('chk-total').innerText.replace(/[^0-9.]/g, '')) || 0;
-      const shippingRateValue = method === 'CARD' ? (basePriceRaw > 150 ? 0 : 15.00) : 0;
-      const structuralGrandTotal = basePriceRaw + shippingRateValue;
-
-      const orderId = 'ORD-' + Math.floor(10000 + Math.random() * 90000);
-      const estDeliveryTimestampString = new Date(Date.now() + 5 * 86400000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-
-      // Automatically capture the user's live editor workspace if they are purchasing from the builder
-      let activePreviewUrl = 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=400';
-      if (window.isDirectBuyCheckout) {
-        try {
-          const editorCanvas = document.getElementById('design-canvas');
-          const canvasShot = await html2canvas(editorCanvas, { scale: 1, useCORS: true });
-          activePreviewUrl = canvasShot.toDataURL('image/jpeg', 0.8);
-        } catch (e) { }
-      } else if (cartItems.length > 0) {
-        activePreviewUrl = cartItems[0].imageURL || activePreviewUrl;
-      }
-
-      const structuredDatabaseOrderRecordPayload = {
-        id: orderId,
-        uid: currentUser ? currentUser.uid : 'GUEST-AUTHENTICATION-CONTEXT',
-        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        status: 'Pending',
-        customer: name,
-        email: email,
-        phone: phone,
-        address: address,
-        previewImageURL: activePreviewUrl,
-
-        orderedProducts: cartItems.length > 0 ? cartItems.map(i => ({ title: i.title, cost: parseFloat(i.cost) || 0, qty: 1 })) : [{ title: title, cost: basePriceRaw, qty: 1 }],
-        baseAmount: basePriceRaw,
-        shippingCharges: shippingRateValue,
-        total: `${window.appCurrency || '$'}${structuralGrandTotal.toFixed(2)}`,
-
-        paymentMethod: method,
-        paymentStatus: paymentStatus,
-        paymentProvider: method === 'CARD' ? 'StripeEngineAbstractionAdapter' : 'None',
-        paymentIntentId: meta.intentId,
-        transactionId: meta.transactionId,
-        cardBrand: meta.brand,
-        cardLast4: meta.last4,
-        paidAt: method === 'CARD' ? firebase.firestore.FieldValue.serverTimestamp() : null,
-        estimatedDelivery: estDeliveryTimestampString
-      };
-
-      const orderPdf = await generateOrderConfirmationPdf(structuredDatabaseOrderRecordPayload);
-      structuredDatabaseOrderRecordPayload.pdfFileName = `FrameCraft-Invoice-${orderId}.pdf`;
-
-      await db.collection('orders').doc(orderId).set(structuredDatabaseOrderRecordPayload);
-
-      let emailTemplateAggregationOutputBlock = `
-            <h3>Order Confirmation - #${orderId}</h3>
-            <p>Thank you for choosing FrameCraft Studio! Your order metrics have been validated successfully.</p>
-            <hr style="border:none; border-top:1px solid #dae5eb; margin:15px 0;">
-            <b>Customer:</b> ${name}<br>
-            <b>Email:</b> ${email}<br>
-            <b>Phone:</b> ${phone}<br>
-            <b>Shipping Destination Address:</b> ${address}<br>
-            <b>Estimated Handcrafted Delivery:</b> ${estDeliveryTimestampString}<br>
-            <hr style="border:none; border-top:1px solid #dae5eb; margin:15px 0;">
-            <h4>Items Ordered Parameters:</h4>
-            ${structuredDatabaseOrderRecordPayload.orderedProducts.map(p => `• ${p.title} (x${p.qty}) — ${window.appCurrency || '$'}${p.cost.toFixed(2)}<br>`).join('')}
-            <br>
-            <b>Subtotal:</b> ${window.appCurrency || '$'}${basePriceRaw.toFixed(2)}<br>
-            <b>Shipping Charge:</b> ${window.appCurrency || '$'}${shippingRateValue.toFixed(2)}<br>
-            <b>Grand Total:</b> ${window.appCurrency || '$'}${structuralGrandTotal.toFixed(2)}<br>
-            <hr style="border:none; border-top:1px solid #dae5eb; margin:15px 0;">
-            <b>Payment Architecture Method:</b> ${method}<br>
-            <b>Downstream Payment Status:</b> ${paymentStatus}<br>
-            <b>Downstream System Transaction ID:</b> ${meta.transactionId}<br>
-        `;
-
-      try {
-        await emailjs.send('service_ia6xjfs', 'template_72upsy8', {
-          customer_email: email,
-          to_name: name,
-          title: `Order Validation Summary Confirmation - #${orderId}`,
-          message: emailTemplateAggregationOutputBlock,
-          pdf_filename: structuredDatabaseOrderRecordPayload.pdfFileName,
-          pdf_attachment: orderPdf ? orderPdf.dataUri : ''
-        });
-
-        await emailjs.send('service_ia6xjfs', 'template_72upsy8', {
-          customer_email: 'admin@framecraft.com',
-          to_name: 'Studio Management Admin',
-          title: `ALERT: New Order Received - #${orderId}`,
-          message: emailTemplateAggregationOutputBlock,
-          pdf_filename: structuredDatabaseOrderRecordPayload.pdfFileName,
-          pdf_attachment: orderPdf ? orderPdf.dataUri : ''
-        });
-      } catch (e) { console.warn("Outbound SMTP relay dropped payload packet.", e); }
-
-      const batch = db.batch();
-      if (currentUser) {
-        const cartDocs = await db.collection('users').doc(currentUser.uid).collection('cart').get();
-        cartDocs.forEach(d => batch.delete(d.ref));
-        await batch.commit();
-      }
-
-      cartItems = [];
-      if (orderPdf) {
-        window.lastOrderPdf = { blob: orderPdf.blob, filename: structuredDatabaseOrderRecordPayload.pdfFileName };
-      }
-      updateCartUI();
-      window.hideGlobalLoader();
-
-      const screen = document.getElementById('secure-payment-screen');
-      if (screen && !screen.classList.contains('hidden')) closeSecurePaymentScreen();
-
-      document.getElementById('checkout-view').innerHTML = `
-            <div class="max-w-2xl mx-auto text-center py-16 bg-white rounded-3xl shadow-xl border border-sand p-10 mt-10">
-                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <i data-lucide="check-circle" class="w-12 h-12 text-green-600"></i>
-                </div>
-                <h2 class="text-3xl font-black text-charcoal mb-4">Order Validated & Confirmed</h2>
-                <p class="text-sm font-semibold text-slate mb-6">Bespoke Reference Code: <span class="font-bold text-flame">${orderId}</span></p>
-                
-                <div class="bg-editorbg rounded-2xl p-6 text-left text-xs font-bold text-slate space-y-3 mb-8 max-w-md mx-auto border border-sand/40">
-                    <div class="flex justify-between"><span>Customer Name:</span><span class="text-charcoal">${name}</span></div>
-                    <div class="flex justify-between"><span>Delivery Destination:</span><span class="text-charcoal text-right max-w-[60%] truncate">${address}</span></div>
-                    <div class="flex justify-between"><span>Handcrafted Estimated Arrival:</span><span class="text-charcoal">${estDeliveryTimestampString}</span></div>
-                    <hr style="border:none; border-top:1px solid #ccc5b9; opacity:0.4;">
-                    <div class="flex justify-between"><span>Payment Method Selected:</span><span class="text-charcoal">${method}</span></div>
-                    <div class="flex justify-between"><span>Downstream Processing Status:</span><span class="text-green-600">${paymentStatus}</span></div>
-                    <div class="flex justify-between"><span>Gateway Network ID:</span><span class="text-charcoal font-mono truncate max-w-[50%]">${meta.transactionId}</span></div>
-                    <hr style="border:none; border-top:1px solid #ccc5b9; opacity:0.4;">
-                    <div class="flex justify-between text-sm font-black"><span>Total Volume Authorized:</span><span class="text-flame">${window.appCurrency || '$'}${structuralGrandTotal.toFixed(2)}</span></div>
-                </div>
-
-                <div class="flex flex-wrap justify-center gap-3"><button onclick="downloadLastOrderPdf()" class="bg-charcoal px-6 py-3.5 rounded-xl text-cream font-extrabold text-sm shadow-lg"><i data-lucide="file-down" class="w-4 h-4 inline mr-1"></i> Download Order PDF</button><button onclick="window.location.reload()" class="btn-solid-orange px-8 py-3.5 rounded-xl text-cream font-extrabold text-sm shadow-lg">Return to Studio Workspace</button></div>
-            </div>
-        `;
-      lucide.createIcons();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
 
     let cityChartInstance = null;
     let revenueChartInstance = null;
@@ -12688,90 +13465,7 @@
       }
     }
 
-    async function loadAdminManageAssets() {
-      const grid = document.getElementById('admin-manage-grid');
-      grid.innerHTML = `<div class="col-span-full text-center py-10"><i data-lucide="loader" class="w-8 h-8 animate-spin mx-auto text-flame mb-2"></i></div>`;
-      lucide.createIcons();
 
-      const snapshot = await db.collection('assets').orderBy('createdAt', 'desc').get();
-      const assets = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-      if (!assets.length) {
-        grid.innerHTML = `<div class="col-span-full text-center text-slate font-bold">No assets found.</div>`;
-        return;
-      }
-
-      grid.innerHTML = assets.map(a => `
-        <div class="border border-sand rounded-xl p-4 flex flex-col items-center bg-editorbg shadow-sm">
-          <div class="h-24 w-full flex items-center justify-center mb-4">
-            <img src="${a.imageURL}" class="max-h-full max-w-full object-contain">
-          </div>
-          <div class="flex gap-2 mb-4">
-            <span class="text-[10px] font-bold text-slate uppercase bg-white px-2 py-1 rounded border border-sand/50">${a.category}</span>
-            <span class="text-[10px] font-bold text-flame uppercase bg-white px-2 py-1 rounded border border-sand/50">${window.appCurrency}${a.cost || 0}</span>
-          </div>
-          <div class="flex w-full gap-2 mt-auto mb-2">
-            <button onclick="editAdminAssetCost('${a.id}', ${a.cost || 0})" class="flex-1 py-1.5 bg-white hover:bg-sand/30 text-charcoal border border-sand rounded text-xs font-bold transition">Edit Price</button>
-          </div>
-          <div class="flex w-full gap-2">
-            <button onclick="deleteAdminAsset('${a.id}')" class="flex-1 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded text-xs font-bold transition">Delete</button>
-            <button onclick="triggerReplaceAsset('${a.id}')" class="flex-1 py-1.5 bg-white hover:bg-sand/30 text-charcoal border border-sand rounded text-xs font-bold transition">Replace</button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    window.editAdminAssetCost = async (id, currentCost) => {
-      const newCost = prompt("Enter new price:", currentCost);
-      if (newCost !== null && !isNaN(parseFloat(newCost))) {
-        try {
-          await db.collection('assets').doc(id).update({ cost: parseFloat(newCost) });
-          showToast("Price updated.");
-          loadAdminManageAssets();
-        } catch (e) {
-          alert("Error: " + e.message);
-        }
-      }
-    };
-
-    window.deleteAdminAsset = async (id) => {
-      if (confirm("Delete this asset permanently?")) {
-        try {
-          await db.collection('assets').doc(id).delete();
-          showToast("Asset deleted.");
-          loadAdminManageAssets();
-          loadGlobalAssets();
-        } catch (e) {
-          alert("Error: " + e.message);
-        }
-      }
-    };
-
-    window.triggerReplaceAsset = (id) => {
-      currentReplaceId = id;
-      document.getElementById('admin-replace-file').click();
-    };
-
-    document.getElementById('admin-replace-file').addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      if (!file || !currentReplaceId) return;
-
-      showToast("Uploading new file...");
-      try {
-        const secureUrl = await uploadToCloudinary(file);
-        await db.collection('assets').doc(currentReplaceId).update({
-          imageURL: secureUrl,
-          type: file.type,
-          name: file.name
-        });
-        showToast("Asset replaced successfully.");
-        loadAdminManageAssets();
-        loadGlobalAssets();
-      } catch (err) {
-        alert("Upload failed: " + err.message);
-      }
-      e.target.value = '';
-    });
 
     function renderAdminOrders() {
       const tbody = document.getElementById('admin-orders-table-body');
@@ -12862,7 +13556,7 @@
       lucide.createIcons();
 
       const snapshot = await db.collection('assets').orderBy('createdAt', 'desc').get();
-      const assets = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const assets = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).filter(a => a.category !== 'frames');
 
       if (!assets.length) {
         grid.innerHTML = `<div class="col-span-full text-center text-slate font-bold">No assets found.</div>`;
@@ -12875,7 +13569,7 @@
             <img src="${a.imageURL}" class="max-h-full max-w-full object-contain">
           </div>
           <div class="flex gap-2 mb-4">
-            <span class="text-[10px] font-bold text-slate uppercase bg-white px-2 py-1 rounded border border-sand/50">${a.category}</span>
+            <span class="text-[10px] font-bold text-slate uppercase bg-white px-2 py-1 rounded border border-sand/50">${window.getAssetCategoryDisplayName(a.category)}</span>
             <span class="text-[10px] font-bold text-flame uppercase bg-white px-2 py-1 rounded border border-sand/50">${window.appCurrency}${a.cost || 0}</span>
           </div>
           <div class="flex w-full gap-2 mt-auto mb-2">
@@ -14565,31 +15259,31 @@
       }
       showToast("Adding to Cart...");
 
-        // Dynamically find the product image on the page
-        let imageSrc = "https://via.placeholder.com/400x500?text=" + encodeURIComponent(title);
-        const cards = document.querySelectorAll('.product-card');
-        cards.forEach(card => {
-          const h3 = card.querySelector('h3');
-          if (h3 && h3.innerText.trim() === title.trim()) {
-            const img = card.querySelector('img');
-            if (img) imageSrc = img.src;
-          }
-        });
+      // Dynamically find the product image on the page
+      let imageSrc = "https://via.placeholder.com/400x500?text=" + encodeURIComponent(title);
+      const cards = document.querySelectorAll('.product-card');
+      cards.forEach(card => {
+        const h3 = card.querySelector('h3');
+        if (h3 && h3.innerText.trim() === title.trim()) {
+          const img = card.querySelector('img');
+          if (img) imageSrc = img.src;
+        }
+      });
 
-        const newItem = {
-          id: generateId(),
-          title: title,
-          cost: cost,
-          canvasData: '<div class="w-full h-full flex items-center justify-center text-slate font-bold bg-white">' + title + ' Frame Ready</div>',
-          backgroundColor: '#ffffff',
-          imageURL: imageSrc, // Store the preview image
-          dateAdded: firebase.firestore.FieldValue.serverTimestamp()
-        };
-        await db.collection('users').doc(currentUser.uid).collection('cart').doc(newItem.id).set(newItem);
-        cartItems.push(newItem);
-        updateCartUI();
-        showToast(title + " added to your cart!");
-        toggleModal('cart-modal');
+      const newItem = {
+        id: generateId(),
+        title: title,
+        cost: cost,
+        canvasData: '<div class="w-full h-full flex items-center justify-center text-slate font-bold bg-white">' + title + ' Frame Ready</div>',
+        backgroundColor: '#ffffff',
+        imageURL: imageSrc, // Store the preview image
+        dateAdded: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      await db.collection('users').doc(currentUser.uid).collection('cart').doc(newItem.id).set(newItem);
+      cartItems.push(newItem);
+      updateCartUI();
+      showToast(title + " added to your cart!");
+      toggleModal('cart-modal');
     };
 
     // Consolidated Loader Animation and Smooth Scrolling Engine inside primary DOMContentLoaded handler
