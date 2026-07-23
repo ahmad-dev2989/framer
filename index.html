@@ -6167,7 +6167,9 @@
     // --- FIREBASE FIRESTORE CONFIGURATION ---
     const firebaseConfig = {
       apiKey: "AIzaSyD2PC-U5tSOHfpSv4DK27LS1QKTzD3avmE",
-      authDomain: "framer-327a4.firebaseapp.com",
+      authDomain: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? "framer-327a4.firebaseapp.com"
+        : window.location.hostname,
       projectId: "framer-327a4",
       storageBucket: "framer-327a4.firebasestorage.app",
       messagingSenderId: "470071342956",
