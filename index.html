@@ -9202,7 +9202,12 @@
           resolve(result);
         };
         img.onerror = (err) => reject(err);
-        img.src = imageSrc;
+        
+        // Append cache buster to prevent cached CORS header bugs in browser
+        const loaderSrc = imageSrc.includes('?') 
+          ? `${imageSrc}&_cb=${Date.now()}` 
+          : `${imageSrc}?_cb=${Date.now()}`;
+        img.src = loaderSrc;
       });
     };
 
@@ -12400,7 +12405,6 @@
       // Recalculate layers and pricing estimates immediately
       await window.rebuildEditorCanvasLayers(false);
       window.syncFrameCustomizationPanels();
-      window.showPricePreview();
     };
 
     window.updateElementsTabsVisibility = () => {
