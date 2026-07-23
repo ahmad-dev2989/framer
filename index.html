@@ -5527,6 +5527,11 @@
           data-panel="tools">
           <i data-lucide="pen-tool" class="w-6 h-6"></i> <span class="text-[10px] font-bold">Tools</span>
         </button>
+        <button
+          class="editor-tool-btn flex flex-col items-center gap-1.5 w-16 h-16 justify-center rounded-xl text-slate cursor-pointer shrink-0"
+          data-panel="frame-customization">
+          <i data-lucide="sliders" class="w-6 h-6"></i> <span class="text-[10px] font-bold">Customize</span>
+        </button>
       </aside>
 
       <aside id="flyout-panel"
@@ -5859,6 +5864,43 @@
             <div class="flex items-center justify-between">
               <span class="text-[11px] font-bold text-slate">Brush Size</span>
               <input type="range" id="brush-size-slider" min="1" max="40" value="3" class="w-24 accent-flame">
+            </div>
+          </div>
+        </div>
+
+        <!-- FRAME CUSTOMIZATION PROPERTIES PANEL -->
+        <div id="panel-frame-customization" class="tool-panel-content hidden p-5 flex flex-col h-full overflow-y-auto no-scrollbar">
+          <h3 class="text-charcoal font-extrabold text-lg mb-6 flex items-center gap-2">
+            <i data-lucide="sliders" class="w-5 h-5 text-flame"></i> Customize Layer
+          </h3>
+
+          <div id="frame-customization-panel" class="space-y-6">
+            <!-- Selected Layer Metadata -->
+            <div class="bg-editorbg p-4 rounded-xl border border-sand/60">
+              <span class="text-[9px] font-black uppercase text-slate tracking-wider block mb-1">Selected Layer</span>
+              <span id="selected-frame-layer-name" class="text-xs font-black text-flame uppercase">Outer Frame</span>
+            </div>
+
+            <!-- Frame Sizes (Outer frame only) -->
+            <div id="properties-frame-size-wrapper" class="space-y-3">
+              <span class="text-xs font-black uppercase tracking-wider text-charcoal block">Sizes</span>
+              <div id="frame-size-options" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <!-- Frame Color Finish choices -->
+            <div id="properties-frame-color-wrapper" class="space-y-3">
+              <span class="text-xs font-black uppercase tracking-wider text-charcoal block">Finish options</span>
+              <div id="frame-colour-options" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <!-- Thickness Control -->
+            <div id="frame-thickness-control" class="hidden bg-editorbg p-4 rounded-xl border border-sand/60 space-y-3">
+              <div class="flex justify-between items-center text-xs font-bold text-slate uppercase tracking-wider">
+                <span>Thickness Scale</span>
+                <span id="frame-thickness-value" class="font-extrabold text-flame">100%</span>
+              </div>
+              <input type="range" id="frame-thickness-slider" min="70" max="150" value="100" class="w-full accent-flame"
+                oninput="applyFrameThickness(this.value)">
             </div>
           </div>
         </div>
@@ -9200,18 +9242,7 @@
 
           window.scanGeometryCache[imageSrc] = result;
           resolve(result);
-        };
-        img.onerror = (err) => reject(err);
-        
-        // Append cache buster to prevent cached CORS header bugs in browser
-        const loaderSrc = imageSrc.includes('?') 
-          ? `${imageSrc}&_cb=${Date.now()}` 
-          : `${imageSrc}?_cb=${Date.now()}`;
-        img.src = loaderSrc;
-      });
-    };
-
-    window.rebuildEditorCanvasLayers = async (isInit = false) => {
+window.rebuildEditorCanvasLayers = async (isInit = false) => {
       const product = window.activeFrameProduct;
       if (!product) return;
 
@@ -9284,16 +9315,17 @@
         const outerScaleX = canvasW / outer.visibleW;
         const outerScaleY = canvasH / outer.visibleH;
 
-        const outerFinalW = outer.imgW * outerScaleX;
-        const outerFinalH = outer.imgH * outerScaleY;
-        const outerLeft = -(outer.minX * outerScaleX);
-        const outerTop = -(outer.minY * outerScaleY);
+        // Apply outer thickness scale:
+        const outerMult = (config.thickness || 100) / 100;
+        const outerLeftBorder = (outer.holeMinX - outer.minX) * outerMult;
+        const outerRightBorder = (outer.visibleW - (outer.holeMaxX - outer.minX)) * outerMult;
+        const outerTopBorder = (outer.holeMinY - outer.minY) * outerMult;
+        const outerBottomBorder = (outer.visibleH - (outer.holeMaxY - outer.minY)) * outerMult;
 
-        // Outer Frame opening relative to design-canvas
-        const outerHoleLeft = (outer.holeMinX - outer.minX) * outerScaleX;
-        const outerHoleTop = (outer.holeMinY - outer.minY) * outerScaleY;
-        const outerHoleWidth = (outer.holeMaxX - outer.holeMinX) * outerScaleX;
-        const outerHoleHeight = (outer.holeMaxY - outer.holeMinY) * outerScaleY;
+        const outerHoleLeft = outerLeftBorder * outerScaleX;
+        const outerHoleTop = outerTopBorder * outerScaleY;
+        const outerHoleWidth = (outer.visibleW - outerLeftBorder - outerRightBorder) * outerScaleX;
+        const outerHoleHeight = (outer.visibleH - outerTopBorder - outerBottomBorder) * outerScaleY;
 
         let lastHoleLeft = outerHoleLeft;
         let lastHoleTop = outerHoleTop;
@@ -9308,22 +9340,29 @@
           const midScaleX = lastHoleWidth / middle.visibleW;
           const midScaleY = lastHoleHeight / middle.visibleH;
 
-          const midFinalW = middle.imgW * midScaleX;
-          const midFinalH = middle.imgH * midScaleY;
-          const midLeft = lastHoleLeft - middle.minX * midScaleX;
-          const midTop = lastHoleTop - middle.minY * midScaleY;
+          // Apply middle thickness scale:
+          const middleMult = (config.middleThickness || 100) / 100;
+          const middleLeftBorder = (middle.holeMinX - middle.minX) * middleMult;
+          const middleRightBorder = (middle.visibleW - (middle.holeMaxX - middle.minX)) * middleMult;
+          const middleTopBorder = (middle.holeMinY - middle.minY) * middleMult;
+          const middleBottomBorder = (middle.visibleH - (middle.holeMaxY - middle.minY)) * middleMult;
+
+          const midHoleLeft = middleLeftBorder * midScaleX;
+          const midHoleTop = middleTopBorder * midScaleY;
+          const midHoleWidth = (middle.visibleW - middleLeftBorder - middleRightBorder) * midScaleX;
+          const midHoleHeight = (middle.visibleH - middleTopBorder - middleBottomBorder) * midScaleY;
 
           middleElement = document.createElement('div');
           middleElement.className = 'canvas-item absolute select-none bg-transparent';
-          middleElement.style.width = midFinalW + 'px';
-          middleElement.style.height = midFinalH + 'px';
-          middleElement.style.left = midLeft + 'px';
-          middleElement.style.top = midTop + 'px';
+          middleElement.style.width = lastHoleWidth + 'px';
+          middleElement.style.height = lastHoleHeight + 'px';
+          middleElement.style.left = lastHoleLeft + 'px';
+          middleElement.style.top = lastHoleTop + 'px';
           middleElement.dataset.type = 'image';
           middleElement.dataset.frameRole = 'middle-frame';
           middleElement.dataset.cost = middleFrameData.price || 0;
           middleElement.dataset.itemName = middleFrameData.name || 'Middle Frame';
-          middleElement.dataset.frameBounds = JSON.stringify({ imgW: middle.imgW, imgH: middle.imgH, minX: middle.minX, minY: middle.minY, maxX: middle.maxX, maxY: middle.maxY });
+          middleElement.dataset.frameBounds = JSON.stringify({ imgW: middle.visibleW, imgH: middle.visibleH, minX: 0, minY: 0, maxX: middle.visibleW, maxY: middle.visibleH });
           middleElement.style.isolation = 'isolate';
 
           let croppedMidSrc = null;
@@ -9344,12 +9383,12 @@
             middleElement.dataset.frameSlices = JSON.stringify({ sliceLeft, sliceTop, sliceRight, sliceBottom, srcW: middle.visibleW, srcH: middle.visibleH });
           }
 
-          middleElement.innerHTML = `<img src="${croppedMidSrc || middleFrameData.image}" crossorigin="anonymous" style="position: absolute; left: ${middle.minX * midScaleX}px; top: ${middle.minY * midScaleY}px; width: ${middle.visibleW * midScaleX}px; height: ${middle.visibleH * midScaleY}px;" class="pointer-events-none block drop-shadow-lg">`;
+          middleElement.innerHTML = `<img src="${croppedMidSrc || middleFrameData.image}" crossorigin="anonymous" style="position: absolute; left: 0px; top: 0px; width: 100%; height: 100%;" class="pointer-events-none block drop-shadow-lg">`;
 
-          lastHoleLeft = lastHoleLeft + (middle.holeMinX - middle.minX) * midScaleX;
-          lastHoleTop = lastHoleTop + (middle.holeMinY - middle.minY) * midScaleY;
-          lastHoleWidth = (middle.holeMaxX - middle.holeMinX) * midScaleX;
-          lastHoleHeight = (middle.holeMaxY - middle.holeMinY) * midScaleY;
+          lastHoleLeft = lastHoleLeft + midHoleLeft;
+          lastHoleTop = lastHoleTop + midHoleTop;
+          lastHoleWidth = midHoleWidth;
+          lastHoleHeight = midHoleHeight;
         }
 
         // Inner Frame fits inside Middle Frame opening (or Outer Frame opening if no Middle Frame)
@@ -9357,22 +9396,29 @@
           const innerScaleX = lastHoleWidth / inner.visibleW;
           const innerScaleY = lastHoleHeight / inner.visibleH;
 
-          const innerFinalW = inner.imgW * innerScaleX;
-          const innerFinalH = inner.imgH * innerScaleY;
-          const innerLeft = lastHoleLeft - inner.minX * innerScaleX;
-          const innerTop = lastHoleTop - inner.minY * innerScaleY;
+          // Apply inner thickness scale:
+          const innerMult = (config.innerThickness || 100) / 100;
+          const innerLeftBorder = (inner.holeMinX - inner.minX) * innerMult;
+          const innerRightBorder = (inner.visibleW - (inner.holeMaxX - inner.minX)) * innerMult;
+          const innerTopBorder = (inner.holeMinY - inner.minY) * innerMult;
+          const innerBottomBorder = (inner.visibleH - (inner.holeMaxY - inner.minY)) * innerMult;
+
+          const innerHoleLeft = innerLeftBorder * innerScaleX;
+          const innerHoleTop = innerTopBorder * innerScaleY;
+          const innerHoleWidth = (inner.visibleW - innerLeftBorder - innerRightBorder) * innerScaleX;
+          const innerHoleHeight = (inner.visibleH - innerTopBorder - innerBottomBorder) * innerScaleY;
 
           innerElement = document.createElement('div');
           innerElement.className = 'canvas-item absolute select-none bg-transparent';
-          innerElement.style.width = innerFinalW + 'px';
-          innerElement.style.height = innerFinalH + 'px';
-          innerElement.style.left = innerLeft + 'px';
-          innerElement.style.top = innerTop + 'px';
+          innerElement.style.width = lastHoleWidth + 'px';
+          innerElement.style.height = lastHoleHeight + 'px';
+          innerElement.style.left = lastHoleLeft + 'px';
+          innerElement.style.top = lastHoleTop + 'px';
           innerElement.dataset.type = 'image';
           innerElement.dataset.frameRole = 'inner-frame';
           innerElement.dataset.cost = innerFrameData.price || 0;
           innerElement.dataset.itemName = innerFrameData.name || 'Inner Frame';
-          innerElement.dataset.frameBounds = JSON.stringify({ imgW: inner.imgW, imgH: inner.imgH, minX: inner.minX, minY: inner.minY, maxX: inner.maxX, maxY: inner.maxY });
+          innerElement.dataset.frameBounds = JSON.stringify({ imgW: inner.visibleW, imgH: inner.visibleH, minX: 0, minY: 0, maxX: inner.visibleW, maxY: inner.visibleH });
           innerElement.style.isolation = 'isolate';
 
           let croppedInnerSrc = null;
@@ -9393,12 +9439,12 @@
             innerElement.dataset.frameSlices = JSON.stringify({ sliceLeft, sliceTop, sliceRight, sliceBottom, srcW: inner.visibleW, srcH: inner.visibleH });
           }
 
-          innerElement.innerHTML = `<img src="${croppedInnerSrc || innerFrameData.image}" crossorigin="anonymous" style="position: absolute; left: ${inner.minX * innerScaleX}px; top: ${inner.minY * innerScaleY}px; width: ${inner.visibleW * innerScaleX}px; height: ${inner.visibleH * innerScaleY}px;" class="pointer-events-none block drop-shadow-md">`;
+          innerElement.innerHTML = `<img src="${croppedInnerSrc || innerFrameData.image}" crossorigin="anonymous" style="position: absolute; left: 0px; top: 0px; width: 100%; height: 100%;" class="pointer-events-none block drop-shadow-md">`;
 
-          lastHoleLeft = lastHoleLeft + (inner.holeMinX - inner.minX) * innerScaleX;
-          lastHoleTop = lastHoleTop + (inner.holeMinY - inner.minY) * innerScaleY;
-          lastHoleWidth = (inner.holeMaxX - inner.holeMinX) * innerScaleX;
-          lastHoleHeight = (inner.holeMaxY - inner.holeMinY) * innerScaleY;
+          lastHoleLeft = lastHoleLeft + innerHoleLeft;
+          lastHoleTop = lastHoleTop + innerHoleTop;
+          lastHoleWidth = innerHoleWidth;
+          lastHoleHeight = innerHoleHeight;
         }
 
         // Background Artwork fits innermost opening
@@ -9419,14 +9465,14 @@
         frameWrap.className = 'canvas-item absolute cursor-move select-none bg-transparent';
         frameWrap.style.isolation = 'isolate';
         frameWrap.dataset.type = 'image';
-        frameWrap.style.width = outerFinalW + 'px';
-        frameWrap.style.height = outerFinalH + 'px';
-        frameWrap.style.left = outerLeft + 'px';
-        frameWrap.style.top = outerTop + 'px';
+        frameWrap.style.width = canvasW + 'px';
+        frameWrap.style.height = canvasH + 'px';
+        frameWrap.style.left = '0px';
+        frameWrap.style.top = '0px';
         frameWrap.dataset.cost = (normProduct.saleActive && normProduct.salePrice != null) ? normProduct.salePrice : (outerFrameData.price || 0);
         frameWrap.dataset.itemName = outerFrameData.name;
         frameWrap.dataset.frameRole = 'frame';
-        frameWrap.dataset.frameBounds = JSON.stringify({ imgW: outer.imgW, imgH: outer.imgH, minX: outer.minX, minY: outer.minY, maxX: outer.maxX, maxY: outer.maxY });
+        frameWrap.dataset.frameBounds = JSON.stringify({ imgW: outer.visibleW, imgH: outer.visibleH, minX: 0, minY: 0, maxX: outer.visibleW, maxY: outer.visibleH });
 
         let croppedFrameSrc = null;
         try {
@@ -9446,7 +9492,7 @@
           const sliceBottom = Math.max(1, outer.visibleH - (outer.holeMaxY - outer.minY));
           frameWrap.dataset.frameSlices = JSON.stringify({ sliceLeft, sliceTop, sliceRight, sliceBottom, srcW: outer.visibleW, srcH: outer.visibleH });
         }
-        frameWrap.innerHTML = `<img src="${croppedFrameSrc || outerFrameData.image}" crossorigin="anonymous" style="position: absolute; left: ${outer.minX * outerScaleX}px; top: ${outer.minY * outerScaleY}px; width: ${outer.visibleW * outerScaleX}px; height: ${outer.visibleH * outerScaleY}px;" class="pointer-events-none block drop-shadow-xl">`;
+        frameWrap.innerHTML = `<img src="${croppedFrameSrc || outerFrameData.image}" crossorigin="anonymous" style="position: absolute; left: 0px; top: 0px; width: 100%; height: 100%;" class="pointer-events-none block drop-shadow-xl">`;
 
         // Append in bottom-to-top order
         artLayer.appendChild(bgWrap);
@@ -9458,10 +9504,16 @@
           selectElement(bgWrap, 'image');
         }
 
-        // Run hooks for active frame thickness & colour overlay (outer frame only)
-        if (config?.dynamicThickness) {
-          window.applyFrameThickness(config.thickness || 100, false);
-        }
+        // Apply dynamic thickness to each active layer
+        const outerFrame = document.querySelector('#artwork-layer [data-frame-role="frame"]');
+        window.applySingleFrameThickness(outerFrame, config.thickness || 100, config);
+
+        const middleFrame = document.querySelector('#artwork-layer [data-frame-role="middle-frame"]');
+        window.applySingleFrameThickness(middleFrame, config.middleThickness || 100, config);
+
+        const innerFrame = document.querySelector('#artwork-layer [data-frame-role="inner-frame"]');
+        window.applySingleFrameThickness(innerFrame, config.innerThickness || 100, config);
+
         window.updateFrameColourOverlay();
 
         window.updateCanvasScale();
@@ -9482,6 +9534,11 @@
         size: null,
         colour: null,
         thickness: 100,
+        middleThickness: 100,
+        innerThickness: 100,
+        dynamicThickness: normProduct.dynamicThickness || false,
+        colours: normProduct.outerFrame?.colors || [],
+        sizes: normProduct.sizes || [],
         ...(normProduct.frameConfiguration || {})
       };
       const configuredSizes = window.activeFrameConfiguration.sizes || defaultFrameSizes;
@@ -9529,19 +9586,32 @@
         return;
       }
 
+      // Update active layer label on Left properties panel
+      const layerLabel = document.getElementById('selected-frame-layer-name');
+      if (layerLabel) {
+        let niceName = 'Outer Frame';
+        if (role === 'middle-frame') niceName = 'Middle Frame';
+        else if (role === 'inner-frame') niceName = 'Inner Frame';
+        layerLabel.textContent = niceName;
+      }
+
       // Fetch colors for the selected layer
       let layerColors = [];
       let currentLayerColor = null;
+      let layerThickness = 100;
 
       if (role === 'frame') {
         layerColors = window.activeFrameProduct?.outerFrame?.colors || window.activeFrameProduct?.outerFrame?.colours || config.colours || defaultFrameColours;
         currentLayerColor = config.outerColour || config.colour;
+        layerThickness = config.thickness || 100;
       } else if (role === 'middle-frame') {
         layerColors = window.activeFrameProduct?.middleFrame?.colors || window.activeFrameProduct?.middleFrame?.colours || [];
         currentLayerColor = config.middleColour;
+        layerThickness = config.middleThickness || 100;
       } else if (role === 'inner-frame') {
         layerColors = window.activeFrameProduct?.innerFrame?.colors || window.activeFrameProduct?.innerFrame?.colours || [];
         currentLayerColor = config.innerColour;
+        layerThickness = config.innerThickness || 100;
       }
 
       const processedColours = [];
@@ -9569,10 +9639,10 @@
 
         const thicknessWrapper = document.getElementById('desktop-frame-thickness-wrapper');
         if (thicknessWrapper) {
-          if (role === 'frame' && config.dynamicThickness) {
+          if (config.dynamicThickness) {
             thicknessWrapper.classList.remove('hidden');
-            document.getElementById('dt-thickness-slider').value = config.thickness || 100;
-            document.getElementById('dt-thickness-val').textContent = `${config.thickness || 100}%`;
+            document.getElementById('dt-thickness-slider').value = layerThickness;
+            document.getElementById('dt-thickness-val').textContent = `${layerThickness}%`;
           } else {
             thicknessWrapper.classList.add('hidden');
           }
@@ -9590,11 +9660,11 @@
           `).join('');
         mobileHtml += `</div>`;
 
-        if (role === 'frame' && config.dynamicThickness) {
+        if (config.dynamicThickness) {
           mobileHtml += `
                  <div class="h-4 w-px bg-sand mx-1 shrink-0"></div>
                  <i data-lucide="move-horizontal" class="w-3 h-3 text-slate shrink-0"></i>
-                 <input type="range" id="mob-thickness-slider" min="70" max="150" value="${config.thickness || 100}" class="w-12 accent-flame shrink-0" oninput="applyFrameThickness(this.value)">
+                 <input type="range" id="mob-thickness-slider" min="70" max="150" value="${layerThickness}" class="w-12 accent-flame shrink-0" oninput="applyFrameThickness(this.value)">
               `;
         }
         mobileControls.innerHTML = mobileHtml;
@@ -9626,18 +9696,53 @@
               `).join('');
         }
 
-        // Thickness control (Outer frame only)
+        // Thickness control
         const thicknessControl = document.getElementById('frame-thickness-control');
         if (thicknessControl) {
-          if (role === 'frame' && config.dynamicThickness) {
+          if (config.dynamicThickness) {
             thicknessControl.classList.remove('hidden');
-            document.getElementById('frame-thickness-value').textContent = `${config.thickness || 100}%`;
-            document.getElementById('frame-thickness-slider').value = config.thickness || 100;
+            document.getElementById('frame-thickness-value').textContent = `${layerThickness}%`;
+            document.getElementById('frame-thickness-slider').value = layerThickness;
           } else {
             thicknessControl.classList.add('hidden');
           }
         }
       }
+        }
+      }
+    };
+
+    window.openFrameCustomizationPanel = () => {
+      const config = window.activeFrameConfiguration;
+      if (!config) return;
+
+      const role = selectedItem?.dataset?.frameRole;
+      if (role !== 'frame' && role !== 'middle-frame' && role !== 'inner-frame') return;
+
+      const toolBtns = document.querySelectorAll('.editor-tool-btn');
+      const toolPanels = document.querySelectorAll('.tool-panel-content');
+      const flyoutPanel = document.getElementById('flyout-panel');
+
+      if (toolBtns && toolPanels && flyoutPanel) {
+        toolBtns.forEach(b => {
+          if (b.getAttribute('data-panel') === 'frame-customization') {
+            b.classList.add('active');
+          } else {
+            b.classList.remove('active');
+          }
+        });
+
+        flyoutPanel.classList.remove('hidden');
+        toolPanels.forEach(panel => {
+          if (panel.id === 'panel-frame-customization') {
+            panel.classList.remove('hidden');
+          } else {
+            panel.classList.add('hidden');
+          }
+        });
+      }
+
+      window.syncFrameCustomizationPanels();
     };
 
     window.selectFrameColourByValue = (value) => {
@@ -9729,11 +9834,7 @@
 
       overlay.style.borderLeftWidth = `${leftPx}px`;
       overlay.style.borderRightWidth = `${rightPx}px`;
-      overlay.style.borderTopWidth = `${topPx}px`;
-      overlay.style.borderBottomWidth = `${bottomPx}px`;
-    };
-
-    window.updateFrameColourOverlay = () => {
+      over    window.updateFrameColourOverlay = () => {
       const config = window.activeFrameConfiguration;
       if (!config) return;
 
@@ -9741,10 +9842,10 @@
       window.updateSingleFrameColourOverlay(outerFrame, config.outerColour || config.colour, config.thickness || 100);
 
       const middleFrame = document.querySelector('#artwork-layer [data-frame-role="middle-frame"]');
-      window.updateSingleFrameColourOverlay(middleFrame, config.middleColour, 100);
+      window.updateSingleFrameColourOverlay(middleFrame, config.middleColour, config.middleThickness || 100);
 
       const innerFrame = document.querySelector('#artwork-layer [data-frame-role="inner-frame"]');
-      window.updateSingleFrameColourOverlay(innerFrame, config.innerColour, 100);
+      window.updateSingleFrameColourOverlay(innerFrame, config.innerColour, config.innerThickness || 100);
     };
 
     window.renderFrameCustomizationPanel = () => {
@@ -9797,9 +9898,84 @@
       }
     };
 
+    window.applySingleFrameThickness = (frameEl, thicknessVal, config) => {
+      if (!frameEl) return;
+      const img = frameEl.querySelector('img');
+      const croppedSrc = frameEl.dataset.frameCroppedSrc;
+      const slices = JSON.parse(frameEl.dataset.frameSlices || 'null');
+      const bounds = JSON.parse(frameEl.dataset.frameBounds || '{}');
+
+      if (config.dynamicThickness && croppedSrc && slices && bounds && bounds.imgW && bounds.imgH) {
+        if (img) { img.style.transform = ''; img.style.visibility = 'hidden'; }
+        let borderEl = frameEl.querySelector('.dynamic-frame-border');
+        if (!borderEl) {
+          borderEl = document.createElement('div');
+          borderEl.className = 'dynamic-frame-border pointer-events-none absolute drop-shadow-xl';
+          borderEl.style.boxSizing = 'border-box';
+          borderEl.style.borderStyle = 'solid';
+          borderEl.style.borderColor = 'transparent';
+          borderEl.style.zIndex = '1';
+          borderEl.style.borderImageSource = `url("${croppedSrc}")`;
+          borderEl.style.borderImageSlice = `${slices.sliceTop} ${slices.sliceRight} ${slices.sliceBottom} ${slices.sliceLeft}`;
+          borderEl.style.borderImageRepeat = 'round';
+          frameEl.appendChild(borderEl);
+        } else {
+          borderEl.style.borderImageSource = `url("${croppedSrc}")`;
+          borderEl.style.borderImageSlice = `${slices.sliceTop} ${slices.sliceRight} ${slices.sliceBottom} ${slices.sliceLeft}`;
+        }
+
+        const sx = frameEl.offsetWidth / bounds.imgW;
+        const sy = frameEl.offsetHeight / bounds.imgH;
+        const visibleW = (bounds.maxX - bounds.minX) || bounds.imgW;
+        const visibleH = (bounds.maxY - bounds.minY) || bounds.imgH;
+
+        const visLeft = (bounds.minX || 0) * sx;
+        const visTop = (bounds.minY || 0) * sy;
+        const visW = visibleW * sx;
+        const visH = visibleH * sy;
+        borderEl.style.left = `${visLeft}px`;
+        borderEl.style.top = `${visTop}px`;
+        borderEl.style.width = `${visW}px`;
+        borderEl.style.height = `${visH}px`;
+
+        const scaleX = visW / (slices.srcW || visibleW || 1);
+        const scaleY = visH / (slices.srcH || visibleH || 1);
+
+        const mult = Number(thicknessVal) / 100;
+        const maxXInset = Math.max(1, (visW / 2) - 1);
+        const maxYInset = Math.max(1, (visH / 2) - 1);
+
+        const leftPx = Math.min(maxXInset, Math.max(1, slices.sliceLeft * scaleX * mult));
+        const rightPx = Math.min(maxXInset, Math.max(1, slices.sliceRight * scaleX * mult));
+        const topPx = Math.min(maxYInset, Math.max(1, slices.sliceTop * scaleY * mult));
+        const bottomPx = Math.min(maxYInset, Math.max(1, slices.sliceBottom * scaleY * mult));
+
+        borderEl.style.borderLeftWidth = `${leftPx}px`;
+        borderEl.style.borderRightWidth = `${rightPx}px`;
+        borderEl.style.borderTopWidth = `${topPx}px`;
+        borderEl.style.borderBottomWidth = `${bottomPx}px`;
+      } else {
+        if (img) { img.style.visibility = ''; }
+        const borderEl = frameEl.querySelector('.dynamic-frame-border');
+        if (borderEl) borderEl.remove();
+      }
+    };
+
     window.applyFrameThickness = (value, shouldRecord = true) => {
       const config = window.activeFrameConfiguration; if (!config) return;
-      config.thickness = Number(value);
+
+      const role = selectedItem?.dataset?.frameRole;
+      const numVal = Number(value);
+
+      if (role === 'frame') {
+        config.thickness = numVal;
+      } else if (role === 'middle-frame') {
+        config.middleThickness = numVal;
+      } else if (role === 'inner-frame') {
+        config.innerThickness = numVal;
+      } else {
+        config.thickness = numVal;
+      }
 
       const dtVal = document.getElementById('dt-thickness-val');
       const dtSlider = document.getElementById('dt-thickness-slider');
@@ -9813,66 +9989,7 @@
       if (frameThicknessVal) frameThicknessVal.textContent = `${value}%`;
       if (frameThicknessSlider && frameThicknessSlider.value !== value) frameThicknessSlider.value = value;
 
-      const frame = document.querySelector('#artwork-layer [data-frame-role="frame"]');
-      if (frame) {
-        const img = frame.querySelector('img');
-        const croppedSrc = frame.dataset.frameCroppedSrc;
-        const slices = JSON.parse(frame.dataset.frameSlices || 'null');
-        const bounds = JSON.parse(frame.dataset.frameBounds || '{}');
-        if (config.dynamicThickness && croppedSrc && slices && bounds && bounds.imgW && bounds.imgH) {
-          if (img) { img.style.transform = ''; img.style.visibility = 'hidden'; }
-          let borderEl = frame.querySelector('.dynamic-frame-border');
-          if (!borderEl) {
-            borderEl = document.createElement('div');
-            borderEl.className = 'dynamic-frame-border pointer-events-none absolute drop-shadow-xl';
-            borderEl.style.boxSizing = 'border-box';
-            borderEl.style.borderStyle = 'solid';
-            borderEl.style.borderColor = 'transparent';
-            borderEl.style.zIndex = '1';
-            borderEl.style.borderImageSource = `url("${croppedSrc}")`;
-            borderEl.style.borderImageSlice = `${slices.sliceTop} ${slices.sliceRight} ${slices.sliceBottom} ${slices.sliceLeft}`;
-            borderEl.style.borderImageRepeat = 'round';
-            frame.appendChild(borderEl);
-          } else {
-            borderEl.style.borderImageSource = `url("${croppedSrc}")`;
-            borderEl.style.borderImageSlice = `${slices.sliceTop} ${slices.sliceRight} ${slices.sliceBottom} ${slices.sliceLeft}`;
-          }
-
-          const sx = frame.offsetWidth / bounds.imgW;
-          const sy = frame.offsetHeight / bounds.imgH;
-          const visibleW = (bounds.maxX - bounds.minX) || bounds.imgW;
-          const visibleH = (bounds.maxY - bounds.minY) || bounds.imgH;
-
-          const visLeft = (bounds.minX || 0) * sx;
-          const visTop = (bounds.minY || 0) * sy;
-          const visW = visibleW * sx;
-          const visH = visibleH * sy;
-          borderEl.style.left = `${visLeft}px`;
-          borderEl.style.top = `${visTop}px`;
-          borderEl.style.width = `${visW}px`;
-          borderEl.style.height = `${visH}px`;
-
-          const scaleX = visW / (slices.srcW || visibleW || 1);
-          const scaleY = visH / (slices.srcH || visibleH || 1);
-
-          const mult = Number(value) / 100;
-          const maxXInset = Math.max(1, (visW / 2) - 1);
-          const maxYInset = Math.max(1, (visH / 2) - 1);
-
-          const leftPx = Math.min(maxXInset, Math.max(1, slices.sliceLeft * scaleX * mult));
-          const rightPx = Math.min(maxXInset, Math.max(1, slices.sliceRight * scaleX * mult));
-          const topPx = Math.min(maxYInset, Math.max(1, slices.sliceTop * scaleY * mult));
-          const bottomPx = Math.min(maxYInset, Math.max(1, slices.sliceBottom * scaleY * mult));
-
-          borderEl.style.borderLeftWidth = `${leftPx}px`;
-          borderEl.style.borderRightWidth = `${rightPx}px`;
-          borderEl.style.borderTopWidth = `${topPx}px`;
-          borderEl.style.borderBottomWidth = `${bottomPx}px`;
-          if (config.colour) window.updateFrameColourOverlay();
-        } else if (img) {
-          img.style.visibility = '';
-        }
-      }
+      window.rebuildEditorCanvasLayers(false);
       if (shouldRecord) recordState();
     };
     window.refitActiveFrameForSize = async () => {
@@ -14535,6 +14652,10 @@
         }
         syncRing();
         if (window.syncFrameCustomizationPanels) window.syncFrameCustomizationPanels();
+        const role = el.dataset.frameRole;
+        if ((role === 'frame' || role === 'middle-frame' || role === 'inner-frame') && window.openFrameCustomizationPanel) {
+          window.openFrameCustomizationPanel();
+        }
       }
       else if (type === 'text') {
         el.classList.add('ring-1', 'ring-dashed', 'ring-flame');
