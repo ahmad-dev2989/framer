@@ -9242,7 +9242,13 @@
 
           window.scanGeometryCache[imageSrc] = result;
           resolve(result);
-window.rebuildEditorCanvasLayers = async (isInit = false) => {
+        };
+        img.onerror = (e) => reject(e);
+        img.src = imageSrc;
+      });
+    };
+
+    window.rebuildEditorCanvasLayers = async (isInit = false) => {
       const product = window.activeFrameProduct;
       if (!product) return;
 
