@@ -13052,17 +13052,32 @@
 
     async function handleGoogleAuth() {
       try {
+        window.playGlobalLoader("Connecting to Google...", null, false);
         const provider = new firebase.auth.GoogleAuthProvider();
-        await firebase.auth().signInWithPopup(provider);
 
-        document.getElementById('login-modal').classList.add('hidden');
-        document.getElementById('signup-modal').classList.add('hidden');
-        showToast("Logged in with Google successfully!");
+        // Forces the account chooser to appear so it feels like a fresh, official login
+        provider.setCustomParameters({ prompt: 'select_account' });
+
+        // Use redirect instead of popup for the full-page Google experience
+        await firebase.auth().signInWithRedirect(provider);
       } catch (error) {
+        window.hideGlobalLoader();
         console.error(error);
-        showToast("Google Auth failed: " + error.message);
+        showToast("Google Auth redirect failed: " + error.message);
       }
     }
+
+    // Handle the return from Google's full-page login
+    firebase.auth().getRedirectResult().then((result) => {
+      if (result.credential) {
+        document.getElementById('login-modal')?.classList.add('hidden');
+        document.getElementById('signup-modal')?.classList.add('hidden');
+        showToast("Logged in with Google successfully!");
+      }
+    }).catch((error) => {
+      console.error(error);
+      showToast("Google Auth failed: " + error.message);
+    });
 
     function showToast(message) {
       const container = document.getElementById('toast-container');
