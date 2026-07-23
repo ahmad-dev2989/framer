@@ -6001,6 +6001,19 @@
               <input type="range" id="frame-thickness-slider" min="70" max="150" value="100" class="w-full accent-flame"
                 oninput="applyFrameThickness(this.value)">
             </div>
+
+            <!-- NEW: Live Frame Preview Section -->
+            <div id="live-frame-preview-section"
+              class="hidden md:block bg-white p-4 rounded-xl border border-sand/60 space-y-3 mt-4 shadow-sm">
+              <span
+                class="text-[11px] font-black uppercase tracking-wider text-charcoal block border-b border-sand/60 pb-2 flex items-center gap-2">
+                <i data-lucide="eye" class="w-4 h-4 text-flame"></i> Live Design Summary
+              </span>
+              <div id="live-frame-preview-content" class="space-y-3 pt-1">
+                <!-- Populated dynamically by JS -->
+              </div>
+            </div>
+
           </div>
         </div>
       </aside>
@@ -6140,6 +6153,18 @@
         </div>
         <input type="range" id="dt-thickness-slider" min="70" max="150" value="100" class="w-full accent-flame"
           oninput="applyFrameThickness(this.value)">
+      </div>
+    </div>
+
+    <!-- PERMANENT Live Frame Preview Section (Desktop Bottom Right) -->
+    <div id="live-frame-preview-section"
+      class="hidden md:flex absolute bottom-[76px] right-6 bg-white shadow-xl border border-sand/60 rounded-2xl p-5 w-64 z-30 flex-col">
+      <span
+        class="text-[11px] font-black uppercase tracking-wider text-charcoal block border-b border-sand/60 pb-3 mb-2 flex items-center gap-2">
+        <i data-lucide="eye" class="w-4 h-4 text-flame"></i> Live Design Summary
+      </span>
+      <div id="live-frame-preview-content" class="space-y-1">
+        <p class="text-xs text-slate font-medium py-2">Select a template to view details.</p>
       </div>
     </div>
 
@@ -9544,6 +9569,7 @@
 
       setTimeout(() => {
         window.rebuildEditorCanvasLayers(true);
+        if (window.updateLiveFramePreview) window.updateLiveFramePreview();
       }, 50);
     };
 
@@ -9701,7 +9727,162 @@
           }
         }
       }
+      window.updateLiveFramePreview();
     };
+
+    // NEW: Live Preview Updates & Tooltip Mouse Tracking Engine
+    window.updateLiveFramePreview = () => {
+      const config = window.activeFrameConfiguration;
+      const product = window.activeFrameProduct;
+      const container = document.getElementById('live-frame-preview-content');
+      if (!config || !product || !container) return;
+
+      let html = '';
+      let totalPrice = 0;
+
+      const renderLayer = (name, baseThick, currentPct, colorObj, role, price) => {
+        const finalThick = (baseThick * (currentPct / 100)).toFixed(1);
+        const colorDisplay = colorObj ? `<span class="inline-block w-2.5 h-2.5 rounded-full border border-sand align-middle mr-1 shadow-inner" style="background-color:${colorObj.value};"></span>${colorObj.name}` : '<span class="text-slate italic">Original</span>';
+        const priceVal = parseFloat(price) || 0;
+        totalPrice += priceVal;
+
+        return `
+          <div class="flex flex-col gap-0.5 border-b border-sand/30 pb-2 last:border-0 last:pb-0 mt-1.5">
+            <div class="flex justify-between items-start">
+              <div class="flex flex-col">
+                <span class="text-[9px] font-bold uppercase tracking-wider text-slate leading-tight">${role}</span>
+                <span class="text-xs font-black text-charcoal truncate max-w-[120px] leading-tight" title="${name}">${name}</span>
+              </div>
+              <span class="text-xs font-bold text-flame">${window.appCurrency || '$'}${priceVal.toFixed(2)}</span>
+            </div>
+            <div class="flex justify-between items-center text-[10px] font-medium text-slate mt-0.5">
+              <span>Profile: <strong class="text-charcoal">${finalThick} cm</strong></span>
+              <span class="flex items-center">${colorDisplay}</span>
+            </div>
+          </div>
+        `;
+      };
+
+      if (product.outerFrame && product.outerFrame.name) {
+        html += renderLayer(product.outerFrame.name, product.outerFrame.thickness || 2.0, config.thickness || 100, config.outerColour || config.colour, 'Outer Frame', product.outerFrame.price);
+      }
+      if (product.middleFrame && product.middleFrame.name) {
+        html += renderLayer(product.middleFrame.name, product.middleFrame.thickness || 2.0, config.middleThickness || 100, config.middleColour, 'Middle Frame', product.middleFrame.price);
+      }
+      if (product.innerFrame && product.innerFrame.name) {
+        html += renderLayer(product.innerFrame.name, product.innerFrame.thickness || 2.0, config.innerThickness || 100, config.innerColour, 'Inner Frame', product.innerFrame.price);
+      }
+
+      html += `
+        <div class="flex justify-between items-center pt-2 mt-1 border-t border-sand">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-charcoal">Frames Total</span>
+          <span class="text-sm font-black text-flame">${window.appCurrency || '$'}${totalPrice.toFixed(2)}</span>
+        </div>
+      `;
+
+      container.innerHTML = html;
+    };
+
+    // Frame Thickness Hover Tooltip Brain (Resolves strict geometry so overlapping works flawlessly)
+    let tooltipThrottle = false;
+    document.addEventListener('mousemove', (e) => {
+      const tooltip = document.getElementById('frame-thickness-tooltip');
+      if (!tooltip) return;
+
+      const workspace = document.getElementById('editor-workspace-main');
+      if (!workspace || !workspace.contains(e.target)) {
+        tooltip.classList.add('hidden');
+        return;
+      }
+
+      if (tooltipThrottle) return;
+      tooltipThrottle = true;
+      setTimeout(() => tooltipThrottle = false, 50);
+
+      // Check purely based on exact bounding rects
+      let hoveredRole = null;
+      const artNode = document.querySelector('#artwork-layer [data-frame-role="artwork"]');
+      const innerNode = document.querySelector('#artwork-layer [data-frame-role="inner-frame"]');
+      const middleNode = document.querySelector('#artwork-layer [data-frame-role="middle-frame"]');
+      const outerNode = document.querySelector('#artwork-layer [data-frame-role="frame"]');
+
+      const isInside = (node, x, y) => {
+        if (!node) return false;
+        const rect = node.getBoundingClientRect();
+        return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+      };
+
+      // Check innermost to outermost
+      if (isInside(artNode, e.clientX, e.clientY)) {
+        hoveredRole = 'artwork'; // Don't show tooltip on artwork
+      } else if (isInside(innerNode, e.clientX, e.clientY)) {
+        hoveredRole = 'inner-frame';
+      } else if (isInside(middleNode, e.clientX, e.clientY)) {
+        hoveredRole = 'middle-frame';
+      } else if (isInside(outerNode, e.clientX, e.clientY)) {
+        hoveredRole = 'frame';
+      }
+
+      if (hoveredRole && ['frame', 'middle-frame', 'inner-frame'].includes(hoveredRole)) {
+        const config = window.activeFrameConfiguration;
+        const product = window.activeFrameProduct;
+
+        if (config && product) {
+          let baseThick = 2.0, pct = 100, name = '';
+          if (hoveredRole === 'frame') { baseThick = product.outerFrame?.thickness || 2.0; pct = config.thickness || 100; name = 'Outer Frame'; }
+          else if (hoveredRole === 'middle-frame') { baseThick = product.middleFrame?.thickness || 2.0; pct = config.middleThickness || 100; name = 'Middle Frame'; }
+          else if (hoveredRole === 'inner-frame') { baseThick = product.innerFrame?.thickness || 2.0; pct = config.innerThickness || 100; name = 'Inner Frame'; }
+
+          const finalThick = (baseThick * (pct / 100)).toFixed(1);
+          tooltip.innerHTML = `<span class="text-sand/80">${name}:</span> <span class="text-flame ml-1">${finalThick} cm</span>`;
+
+          tooltip.style.left = (e.clientX + 15) + 'px';
+          tooltip.style.top = (e.clientY + 15) + 'px';
+          tooltip.classList.remove('hidden');
+          return;
+        }
+      }
+
+      // Hide if artwork is hovered or out of bounds
+      tooltip.classList.add('hidden');
+    });
+
+    // Triggers the UI update whenever the panel states change
+    const originalSyncPanels = window.syncFrameCustomizationPanels;
+    window.syncFrameCustomizationPanels = () => {
+      originalSyncPanels();
+      if (window.updateLiveFramePreview) window.updateLiveFramePreview();
+    };
+
+    // Frame Thickness Hover Tooltip Brain
+    document.addEventListener('mousemove', (e) => {
+      const tooltip = document.getElementById('frame-thickness-tooltip');
+      if (!tooltip) return;
+
+      const item = e.target.closest('.canvas-item');
+      if (item && ['frame', 'middle-frame', 'inner-frame'].includes(item.dataset.frameRole)) {
+        const role = item.dataset.frameRole;
+        const config = window.activeFrameConfiguration;
+        const product = window.activeFrameProduct;
+
+        if (config && product) {
+          let baseThick = 2.0, pct = 100, name = '';
+          if (role === 'frame') { baseThick = product.outerFrame?.thickness || 2.0; pct = config.thickness || 100; name = product.outerFrame?.name || 'Outer'; }
+          else if (role === 'middle-frame') { baseThick = product.middleFrame?.thickness || 2.0; pct = config.middleThickness || 100; name = product.middleFrame?.name || 'Middle'; }
+          else if (role === 'inner-frame') { baseThick = product.innerFrame?.thickness || 2.0; pct = config.innerThickness || 100; name = product.innerFrame?.name || 'Inner'; }
+
+          const finalThick = (baseThick * (pct / 100)).toFixed(1);
+          tooltip.innerHTML = `${name}: <span class="text-flame">${finalThick} cm</span>`;
+
+          // Position slightly offset from cursor
+          tooltip.style.left = (e.clientX + 15) + 'px';
+          tooltip.style.top = (e.clientY + 15) + 'px';
+          tooltip.classList.remove('hidden');
+          return;
+        }
+      }
+      tooltip.classList.add('hidden');
+    });
 
     window.openFrameCustomizationPanel = () => {
       const config = window.activeFrameConfiguration;
@@ -10036,6 +10217,7 @@
       if (frameThicknessSlider && frameThicknessSlider.value !== value) frameThicknessSlider.value = value;
 
       window.rebuildEditorCanvasLayers(false);
+      window.updateLiveFramePreview();
       if (shouldRecord) recordState();
     };
     window.refitActiveFrameForSize = async () => {
@@ -17506,6 +17688,11 @@
         class="px-5 py-1.5 bg-flame hover:bg-flame/90 text-cream text-[10px] font-black rounded-lg transition shadow-md">Save
         Changes</button>
     </div>
+  </div>
+
+  <!-- Frame Thickness Hover Tooltip -->
+  <div id="frame-thickness-tooltip"
+    class="hidden fixed z-[10000] bg-charcoal text-cream text-[10px] font-bold px-3 py-1.5 rounded-lg pointer-events-none shadow-md transition-opacity duration-150 border border-sand/40 backdrop-blur-md">
   </div>
 </body>
 
