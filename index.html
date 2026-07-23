@@ -1624,79 +1624,125 @@
     </div>
   </div>
 
-  <div id="signup-modal"
-    class="hidden fixed inset-0 z-[3000] flex items-center justify-center cinematic-bg transition-opacity px-4">
+  <div id="signup-modal" class="hidden fixed inset-0 z-[3000] flex cinematic-bg transition-opacity">
+    <!-- Close Button -->
     <button onclick="toggleModal('signup-modal')" class="absolute top-6 right-6 text-white hover:text-gray-300 z-50">
       <span class="material-symbols-outlined text-4xl">close</span>
     </button>
 
-    <section class="form-glass rounded-2xl w-full max-w-md p-8 md:p-12 shadow-2xl relative z-10">
-      <div class="text-center mb-8">
-        <h1 class="font-[Playfair_Display] text-4xl md:text-5xl font-bold text-[#000102] mb-2"
-          data-cms="pages.login_signup.sections.signup.elements.title">Create Account</h1>
-        <p class="font-[Inter] text-base text-[#45474b]">Start framing your memories today.</p>
+    <!-- Split Screen Layout Container -->
+    <div
+      class="w-full h-full max-w-7xl mx-auto px-6 sm:px-12 md:px-16 flex flex-col md:flex-row items-center justify-center gap-12 md:gap-24 lg:gap-32 relative z-10 overflow-y-auto">
+
+      <!-- Left Column: Welcome Text -->
+      <div class="flex-1 text-white space-y-6 max-w-lg hidden md:block">
+        <h1 class="font-[Inter] text-5xl md:text-7xl font-extrabold leading-tight tracking-tight drop-shadow-md"
+          data-cms="pages.login_signup.sections.signup.elements.title">Join<br>FrameCraft</h1>
+        <p class="font-[Inter] text-sm md:text-base text-gray-200 leading-relaxed font-medium drop-shadow-sm">Start
+          framing your memories today. Experience museum-grade quality and artisanal craftsmanship delivered straight to
+          your door.</p>
+
+        <!-- Minimalist Social Icons -->
+        <div class="flex items-center gap-3 pt-4">
+          <a href="#"
+            class="w-8 h-8 rounded-full flex items-center justify-center text-white hover:text-[#eb5e28] transition"><i
+              class="fa-brands fa-facebook-f text-lg"></i></a>
+          <a href="#"
+            class="w-8 h-8 rounded-full flex items-center justify-center text-white hover:text-[#eb5e28] transition"><i
+              class="fa-brands fa-twitter text-lg"></i></a>
+          <a href="#"
+            class="w-8 h-8 rounded-full flex items-center justify-center text-white hover:text-[#eb5e28] transition"><i
+              class="fa-brands fa-instagram text-lg"></i></a>
+          <a href="#"
+            class="w-8 h-8 rounded-full flex items-center justify-center text-white hover:text-[#eb5e28] transition"><i
+              class="fa-brands fa-youtube text-lg"></i></a>
+        </div>
       </div>
-      <form class="space-y-6" id="signupForm" onsubmit="event.preventDefault(); handleSignup();">
-        <div class="relative text-left">
-          <label class="font-[Inter] text-[13px] font-semibold text-[#76777b] uppercase tracking-wider block mb-1">Full
-            Name</label>
-          <input class="w-full input-underlined font-[Inter] text-base text-[#000102]" id="signup-name"
-            placeholder="Enter your full name" type="text" required />
-        </div>
-        <div class="relative text-left">
-          <label class="font-[Inter] text-[13px] font-semibold text-[#76777b] uppercase tracking-wider block mb-1">Email
-            Address</label>
-          <input class="w-full input-underlined font-[Inter] text-base text-[#000102]" id="signup-email"
-            placeholder="Enter your email" type="email" required />
-        </div>
-        <div class="relative text-left">
-          <label
-            class="font-[Inter] text-[13px] font-semibold text-[#76777b] uppercase tracking-wider block mb-1">Password</label>
-          <input class="w-full input-underlined font-[Inter] text-base text-[#000102]" id="signup-pass"
-            placeholder="Create a password" type="password" required />
-        </div>
 
-        <div id="signup-action-buttons" class="space-y-4 pt-4">
-          <button type="button" onclick="handleSignup()"
-            class="w-full h-14 bg-[#000102] text-[#ffffff] font-[Inter] text-[13px] font-semibold uppercase tracking-widest rounded-lg hover:bg-[#775a19] active:scale-95 transition-all flex items-center justify-center shadow-lg"
-            data-cms="pages.login_signup.sections.signup.elements.btn_text">
-            Sign Up
-          </button>
-          <button type="button" onclick="handleGoogleAuth()"
-            class="w-full h-14 bg-white border border-[#c6c6cb] text-[#000102] font-[Inter] text-[13px] font-semibold uppercase tracking-widest rounded-lg hover:bg-[#f4f3f1] active:scale-95 transition-all flex items-center justify-center gap-3">
-            <svg class="w-5 h-5" viewBox="0 0 24 24">
-              <path fill="#4285F4"
-                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-              <path fill="#34A853"
-                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-              <path fill="#FBBC05"
-                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-              <path fill="#EA4335"
-                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-            </svg>
-            Continue with Google
-          </button>
+      <!-- Right Column: Form -->
+      <div class="flex-1 w-full max-w-md my-auto pb-10 md:pb-0">
+        <div class="text-white mb-8 md:hidden">
+          <h1 class="font-[Inter] text-4xl font-extrabold mb-2 drop-shadow-md">Join FrameCraft</h1>
         </div>
+        <h2 class="font-[Inter] text-3xl md:text-4xl font-extrabold text-white mb-6 drop-shadow-md">Create Account</h2>
 
-        <div id="signup-pending-container" class="hidden flex-col items-center justify-center pt-2 text-center">
-          <i data-lucide="loader-2" class="w-10 h-10 text-[#775a19] animate-spin mb-3"></i>
-          <h3 class="text-lg font-bold text-[#000102] mb-1">Pending...</h3>
-          <p class="text-xs font-medium text-[#76777b] mb-5">We've sent a verification link to your email. Please click
-            it to verify your account. Waiting for confirmation...</p>
-          <button id="signup-pending-login-btn" disabled
-            class="w-full bg-[#e3e2e0] text-[#76777b] py-3.5 rounded-xl font-extrabold text-lg transition cursor-not-allowed">Log
-            In</button>
-        </div>
-      </form>
+        <form class="space-y-4" id="signupForm" onsubmit="event.preventDefault(); handleSignup();">
+          <div id="signup-action-buttons" class="space-y-4">
+            <!-- Name Field -->
+            <div class="text-left">
+              <label class="font-[Inter] text-[13px] font-medium text-white block mb-1.5 drop-shadow-sm">Full
+                Name</label>
+              <input
+                class="w-full bg-white border-none rounded px-4 py-3 font-[Inter] text-base text-black focus:ring-2 focus:ring-[#eb5e28] outline-none shadow-md"
+                id="signup-name" type="text" required />
+            </div>
 
-      <div class="mt-8 text-center border-t border-[#c6c6cb] pt-6">
-        <p class="font-[Inter] text-base text-[#45474b]">
-          Already have an account?
-          <button onclick="toggleModal('signup-modal'); toggleModal('login-modal')"
-            class="text-[#775a19] font-semibold hover:underline transition-all">Log in</button>
-        </p>
+            <!-- Email Field -->
+            <div class="text-left">
+              <label class="font-[Inter] text-[13px] font-medium text-white block mb-1.5 drop-shadow-sm">Email
+                Address</label>
+              <input
+                class="w-full bg-white border-none rounded px-4 py-3 font-[Inter] text-base text-black focus:ring-2 focus:ring-[#eb5e28] outline-none shadow-md"
+                id="signup-email" type="email" required />
+            </div>
+
+            <!-- Password Field -->
+            <div class="text-left">
+              <label
+                class="font-[Inter] text-[13px] font-medium text-white block mb-1.5 drop-shadow-sm">Password</label>
+              <input
+                class="w-full bg-white border-none rounded px-4 py-3 font-[Inter] text-base text-black focus:ring-2 focus:ring-[#eb5e28] outline-none shadow-md"
+                id="signup-pass" type="password" required />
+            </div>
+
+            <!-- Primary Action -->
+            <div class="pt-3">
+              <button type="button" onclick="handleSignup()"
+                class="w-full px-8 py-3 bg-[#eb5e28] text-white font-[Inter] text-sm font-semibold rounded hover:bg-[#d14f1c] transition-all shadow-lg"
+                data-cms="pages.login_signup.sections.signup.elements.btn_text">
+                Sign Up
+              </button>
+              <!-- Social Login -->
+              <button type="button" onclick="handleGoogleAuth()"
+                class="w-full mt-4 h-12 bg-white text-gray-900 font-[Inter] text-sm font-bold rounded hover:bg-gray-100 transition-all flex items-center justify-center gap-3 shadow-md">
+                <svg class="w-5 h-5" viewBox="0 0 24 24">
+                  <path fill="#4285F4"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                  <path fill="#34A853"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                  <path fill="#FBBC05"
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                  <path fill="#EA4335"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                </svg>
+                Continue with Google
+              </button>
+            </div>
+          </div>
+
+          <!-- Pending State -->
+          <div id="signup-pending-container"
+            class="hidden flex-col items-center justify-center pt-6 text-center bg-white/10 p-6 rounded-xl backdrop-blur-sm border border-white/20">
+            <i data-lucide="loader-2" class="w-10 h-10 text-[#eb5e28] animate-spin mb-3"></i>
+            <h3 class="text-lg font-bold text-white mb-1">Pending...</h3>
+            <p class="text-xs font-medium text-gray-200 mb-5">We've sent a verification link to your email. Please click
+              it to verify your account.</p>
+            <button id="signup-pending-login-btn" disabled
+              class="w-full bg-white/20 text-white/50 py-3.5 rounded-xl font-extrabold text-sm transition cursor-not-allowed">Waiting
+              for confirmation...</button>
+          </div>
+
+          <!-- Login link -->
+          <div class="pt-5 text-center">
+            <p class="text-[13px] font-medium text-gray-300 drop-shadow-sm">
+              Already have an account? <button type="button"
+                onclick="toggleModal('signup-modal'); toggleModal('login-modal')"
+                class="text-[#eb5e28] hover:text-white font-semibold transition">Log in</button>
+            </p>
+          </div>
+        </form>
       </div>
-    </section>
+    </div>
   </div>
 
 
@@ -6018,62 +6064,7 @@
             0°</div>
         </div>
 
-        <div id="canva-context-menu"
-          class="hidden fixed w-56 bg-white rounded-2xl shadow-[0_10px_38px_rgba(0,0,0,0.18)] border border-sand/60 py-2 z-[10000] text-xs font-bold text-charcoal select-none">
-          <button onclick="doCopy(); hideMenu();"
-            class="w-full px-4 py-2.5 hover:bg-sand/20 flex justify-between items-center transition"><span>Copy</span>
-            <span class="text-[10px] text-slate font-medium">Ctrl+C</span></button>
-          <button onclick="doPaste(); hideMenu();"
-            class="w-full px-4 py-2.5 hover:bg-sand/20 flex justify-between items-center transition"><span>Paste</span>
-            <span class="text-[10px] text-slate font-medium">Ctrl+V</span></button>
-          <button onclick="doCut(); hideMenu();"
-            class="w-full px-4 py-2.5 hover:bg-sand/20 flex justify-between items-center transition"><span>Cut</span>
-            <span class="text-[10px] text-slate font-medium">Ctrl+X</span></button>
-          <button onclick="deleteActive(); hideMenu();"
-            class="w-full px-4 py-2.5 hover:bg-red-50 text-red-600 flex justify-between items-center transition"><span>Delete</span>
-            <span class="text-[10px] font-medium">Del</span></button>
 
-          <div class="h-px bg-sand/40 my-1"></div>
-
-          <div class="relative group/sub">
-            <button class="w-full px-4 py-2.5 hover:bg-sand/20 flex justify-between items-center transition">
-              <span class="flex items-center gap-2"><i data-lucide="layers" class="w-3.5 h-3.5 text-flame"></i>
-                Layering</span>
-              <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate"></i>
-            </button>
-            <div
-              class="hidden group-hover/sub:block absolute left-full top-0 ml-1 w-48 bg-white rounded-2xl shadow-xl border border-sand/60 py-2 z-[10001]">
-              <button onclick="moveLayer('front'); hideMenu();"
-                class="w-full px-4 py-2 hover:bg-sand/20 flex justify-between items-center"><span>Bring to front</span>
-                <span class="text-[10px] text-slate">Ctrl+]</span></button>
-              <button onclick="moveLayer('forward'); hideMenu();"
-                class="w-full px-4 py-2 hover:bg-sand/20 flex justify-between items-center"><span>Bring forward</span>
-                <span class="text-[10px] text-slate">Ctrl+↑</span></button>
-              <button onclick="moveLayer('backward'); hideMenu();"
-                class="w-full px-4 py-2 hover:bg-sand/20 flex justify-between items-center"><span>Send backward</span>
-                <span class="text-[10px] text-slate">Ctrl+↓</span></button>
-              <button onclick="moveLayer('back'); hideMenu();"
-                class="w-full px-4 py-2 hover:bg-sand/20 flex justify-between items-center"><span>Send to back</span>
-                <span class="text-[10px] text-slate">Ctrl+[</span></button>
-            </div>
-          </div>
-
-          <button onclick="toggleLayersModal(); hideMenu();"
-            class="w-full px-4 py-2 hover:bg-flame/10 text-flame flex items-center gap-2 transition mt-1">
-            <i data-lucide="list-tree" class="w-3.5 h-3.5"></i> <span>Show Layers Panel</span>
-          </button>
-        </div>
-
-        <div id="layers-modal"
-          class="hidden fixed right-8 top-24 w-72 bg-white rounded-3xl shadow-2xl border border-sand p-4 z-[9000] flex flex-col max-h-[70vh]">
-          <div class="flex justify-between items-center pb-3 border-b border-sand/40">
-            <span class="font-extrabold text-sm flex items-center gap-2 text-charcoal"><i data-lucide="layers"
-                class="w-4 h-4 text-flame"></i> Canvas Layers</span>
-            <button onclick="toggleLayersModal()" class="text-slate hover:text-charcoal p-1"><i data-lucide="x"
-                class="w-4 h-4"></i></button>
-          </div>
-          <div id="layers-list-container" class="overflow-y-auto flex-1 py-2 space-y-1.5 no-scrollbar"></div>
-        </div>
 
         <div id="canva-context-menu"
           class="hidden fixed w-56 bg-white rounded-2xl shadow-[0_10px_38px_rgba(0,0,0,0.18)] border border-sand/60 py-2 z-[10000] text-xs font-bold text-charcoal select-none">
@@ -7048,65 +7039,6 @@
       }
     };
 
-    // --- Initialize Category Slider Logic ---
-    window.initCategorySlider = () => {
-      const categoryContainer = document.getElementById('category-container');
-      const prevBtn = document.getElementById('cat-prev');
-      const nextBtn = document.getElementById('cat-next');
-      const dotsContainer = document.getElementById('cat-dots');
-
-      if (categoryContainer && dotsContainer) {
-        const items = categoryContainer.children;
-        const itemCount = items.length;
-
-        dotsContainer.innerHTML = ''; // clear existing dots
-        if (itemCount === 0) return;
-
-        // Create dots
-        for (let i = 0; i < itemCount; i++) {
-          const dot = document.createElement('button');
-          dot.className = `h-1.5 rounded-full transition-all duration-300 ${i === 0 ? 'w-8 bg-primary' : 'w-2 bg-outline-variant'}`;
-          dot.onclick = () => {
-            const itemWidth = items[0].offsetWidth + 24; // item + gap
-            categoryContainer.scrollTo({
-              left: i * itemWidth,
-              behavior: 'smooth'
-            });
-          };
-          dotsContainer.appendChild(dot);
-        }
-
-        // Scroll buttons
-        if (prevBtn) {
-          prevBtn.onclick = () => {
-            const itemWidth = items[0].offsetWidth + 24;
-            categoryContainer.scrollBy({ left: -itemWidth, behavior: 'smooth' });
-          };
-        }
-        if (nextBtn) {
-          nextBtn.onclick = () => {
-            const itemWidth = items[0].offsetWidth + 24;
-            categoryContainer.scrollBy({ left: itemWidth, behavior: 'smooth' });
-          };
-        }
-
-        // Update dots on scroll
-        categoryContainer.onscroll = () => {
-          const itemWidth = items[0].offsetWidth + 24;
-          const activeIndex = Math.round(categoryContainer.scrollLeft / itemWidth);
-
-          Array.from(dotsContainer.children).forEach((dot, idx) => {
-            if (idx === activeIndex) {
-              dot.classList.add('w-8', 'bg-primary');
-              dot.classList.remove('w-2', 'bg-outline-variant');
-            } else {
-              dot.classList.remove('w-8', 'bg-primary');
-              dot.classList.add('w-2', 'bg-outline-variant');
-            }
-          });
-        };
-      }
-    };
 
     // --- Load dynamic categories to landing page ---
     window.renderLandingCategories = async () => {
@@ -8846,34 +8778,7 @@
       }
     };
 
-    // --- Load dynamic categories to landing page ---
-    window.renderLandingCategories = async () => {
-      if (globalCategories.length === 0) {
-        await window.loadCategoriesData();
-      }
-      const container = document.getElementById('category-container');
-      if (!container) return;
 
-      if (globalCategories.length === 0) {
-        container.innerHTML = `<p class="text-on-surface-variant font-bold text-center w-full">More categories coming soon.</p>`;
-        return;
-      }
-
-      container.innerHTML = globalCategories.map(c => `
-        <div class="flex-shrink-0 w-[280px] aspect-[3/4] relative group/item cursor-pointer snap-start rounded overflow-hidden" onclick="window.handlePathRouting('/products')">
-          <img class="w-full h-full object-cover transition-transform duration-700 group-hover/item:scale-110" src="${c.imageURL || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=400&h=400'}" alt="${c.name}">
-          <div class="absolute inset-0 bg-primary/0 group-hover/item:bg-primary/80 transition-all duration-500 flex flex-col justify-end p-8">
-            <div class="opacity-0 group-hover/item:opacity-100 transform translate-y-4 group-hover/item:translate-y-0 transition-all duration-500">
-              <h4 class="text-on-primary font-headline-md text-2xl mb-2">${c.name}</h4>
-              <p class="text-on-primary/80 text-label-sm mb-6">${c.desc || 'Explore our exclusive collection.'}</p>
-              <button class="bg-on-primary text-primary px-4 py-2 text-label-sm font-label-sm rounded font-bold">View Products</button>
-            </div>
-          </div>
-        </div>
-      `).join('');
-
-      window.initCategorySlider();
-    };
     // --- Load products for landing page ---
     async function loadProductsForLanding() {
       try {
@@ -13050,33 +12955,28 @@
       }
     });
 
+
+    //google login handler
     async function handleGoogleAuth() {
       try {
-        window.playGlobalLoader("Connecting to Google...", null, false);
+        window.playGlobalLoader("Redirecting to Google...", null, false);
         const provider = new firebase.auth.GoogleAuthProvider();
-
-        // Forces the account chooser to appear so it feels like a fresh, official login
         provider.setCustomParameters({ prompt: 'select_account' });
-
-        // Use redirect instead of popup for the full-page Google experience
         await firebase.auth().signInWithRedirect(provider);
       } catch (error) {
         window.hideGlobalLoader();
         console.error(error);
-        showToast("Google Auth redirect failed: " + error.message);
+        showToast("Google Auth failed: " + error.message);
       }
     }
 
-    // Handle the return from Google's full-page login seamlessly
+    // Consolidated handler for Google redirect fallback
     firebase.auth().getRedirectResult().then(async (result) => {
       if (result && result.user) {
         const user = result.user;
-
-        // Check if user already exists in Firestore database
         const userDoc = await db.collection('users').doc(user.uid).get();
 
         if (!userDoc.exists) {
-          // Auto-Signup logic without email verification
           await db.collection('users').doc(user.uid).set({
             email: user.email,
             name: user.displayName || "Google User",
@@ -13089,25 +12989,14 @@
           showToast("Logged in with Google successfully!");
         }
 
-        // Clear modals and grant access
         document.getElementById('login-modal')?.classList.add('hidden');
         document.getElementById('signup-modal')?.classList.add('hidden');
       }
     }).catch((error) => {
       console.error(error);
-      showToast("Google Auth failed: " + error.message);
-    });
-
-    // Handle the return from Google's full-page login
-    firebase.auth().getRedirectResult().then((result) => {
-      if (result.credential) {
-        document.getElementById('login-modal')?.classList.add('hidden');
-        document.getElementById('signup-modal')?.classList.add('hidden');
-        showToast("Logged in with Google successfully!");
+      if (error.code !== 'auth/redirect-cancelled-by-user') {
+        showToast("Google Auth failed: " + error.message);
       }
-    }).catch((error) => {
-      console.error(error);
-      showToast("Google Auth failed: " + error.message);
     });
 
     function showToast(message) {
@@ -14011,83 +13900,12 @@
       }
     };
 
-    function renderAdminOrders() {
-      const tbody = document.getElementById('admin-orders-table-body');
-      if (!tbody) return;
-      tbody.innerHTML = globalOrders.map(o => {
-        // Safely extract the item name from the orderedProducts array
-        const itemName = (o.orderedProducts && o.orderedProducts.length > 0) ? o.orderedProducts[0].title : 'Custom Frame';
 
-        // Safely parse the total to prevent crashes from old/malformed database records
-        let safeTotal = 0;
-        if (typeof o.total === 'string') safeTotal = parseFloat(o.total.replace(/[^0-9.]/g, '')) || 0;
-        else if (typeof o.total === 'number') safeTotal = o.total;
 
-        return `
-        <tr class="hover:bg-sand/10 transition">
-          <td class="px-6 py-4 font-black">${o.id || 'N/A'}</td>
-          <td class="px-6 py-4">${itemName}</td>
-          <td class="px-6 py-4 text-slate">${o.date || 'N/A'}</td>
-          <td class="px-6 py-4 font-bold">${window.appCurrency || '$'}${safeTotal.toFixed(2)}</td>
-          <td class="px-6 py-4 text-right">
-            <button onclick="viewOrderDetails('${o.id}')" class="px-4 py-2 bg-editorbg hover:bg-sand/40 border border-sand rounded-lg text-xs font-bold text-charcoal transition">View Details</button>
-          </td>
-        </tr>
-        `;
-      }).join('');
-    }
 
-    function renderAdminTracking() {
-      const tbody = document.getElementById('admin-tracking-table-body');
-      if (!tbody) return;
 
-      tbody.innerHTML = globalOrders.map(o => {
-        let statusInfo = o.status;
-        if (o.status === 'Out for Shipment' || o.status === 'Shipped') statusInfo += `<br><span class="text-[10px] text-slate">${o.shippingCompany || 'Standard'}: ${o.trackingNumber || 'N/A'}</span>`;
-        if (o.status === 'Canceled') statusInfo += `<br><span class="text-[10px] text-red-500">${o.cancelReason || 'Canceled'}</span>`;
 
-        return `
-        <tr class="hover:bg-sand/10 transition">
-          <td class="px-6 py-4 font-black">${o.id}</td>
-          <td class="px-6 py-4">${o.customer}</td>
-          <td class="px-6 py-4 text-slate">${o.date}</td>
-          <td class="px-6 py-4 font-bold">${statusInfo}</td>
-          <td class="px-6 py-4">
-            <select onchange="openTrackingModal('${o.id}', this.value)" class="bg-editorbg border border-sand rounded-lg text-xs font-bold px-3 py-2 outline-none cursor-pointer ${o.status === 'Canceled' ? 'text-red-600' : ''}">
-              <option value="Pending" ${o.status === 'Pending' ? 'selected' : ''}>Pending (Order Placed)</option>
-              <option value="Payment Confirmed" ${o.status === 'Payment Confirmed' ? 'selected' : ''}>Payment Confirmed</option>
-              <option value="Confirming Order" ${o.status === 'Confirming Order' || o.status === 'Order Confirmed' ? 'selected' : ''}>Order Confirmed</option>
-              <option value="Frame Preparation" ${o.status === 'Frame Preparation' ? 'selected' : ''}>Frame Preparation</option>
-              <option value="Printing" ${o.status === 'Printing' ? 'selected' : ''}>Printing</option>
-              <option value="Packing" ${o.status === 'Packing' ? 'selected' : ''}>Packing</option>
-              <option value="Quality Check" ${o.status === 'Quality Check' ? 'selected' : ''}>Quality Check</option>
-              <option value="Out for Shipment" ${o.status === 'Out for Shipment' || o.status === 'Shipped' ? 'selected' : ''}>Shipped (Out for Shipment)</option>
-              <option value="Out For Delivery" ${o.status === 'Out For Delivery' ? 'selected' : ''}>Out For Delivery</option>
-              <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
-              <option value="Canceled" ${o.status === 'Canceled' ? 'selected' : ''}>Canceled</option>
-            </select>
-          </td>
-        </tr>
-      `}).join('');
-    }
 
-    function renderAdminCanceled() {
-      const tbody = document.getElementById('admin-canceled-table-body');
-      if (!tbody) return;
-      const canceledOrders = globalOrders.filter(o => o.status === 'Canceled');
-      if (canceledOrders.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-4 text-center text-slate font-bold">No canceled orders.</td></tr>`;
-        return;
-      }
-      tbody.innerHTML = canceledOrders.map(o => `
-        <tr class="hover:bg-red-50 transition">
-          <td class="px-6 py-4 font-black">${o.id}</td>
-          <td class="px-6 py-4">${o.customer}</td>
-          <td class="px-6 py-4 text-slate">${o.date}</td>
-          <td class="px-6 py-4 font-bold text-red-600">${o.cancelReason || 'No reason provided'}</td>
-        </tr>
-      `).join('');
-    }
 
     window.openTrackingModal = (id, status) => {
       currentTrackingOrderId = id;
@@ -16770,31 +16588,7 @@
       if (typeof loadProductsForLanding === 'function') loadProductsForLanding();
     };
 
-    // Auto-fetch config on load
-    window.addEventListener('DOMContentLoaded', async () => {
-      // Init CMS engine
-      try {
-        await window.initCms();
-      } catch (err) {
-        console.error("CMS Initialization failed:", err);
-      }
 
-      // 1. Initial dynamic CMS pages
-      await window.initDynamicPages();
-
-      // 2. Load settings and products dynamically first
-      try {
-        const doc = await db.collection('settings').doc('site').get();
-        if (doc.exists) {
-          siteSettings = doc.data();
-          applySiteSettings();
-        }
-        await loadProductsForLanding();
-        await window.renderLandingCategories(); // Inject the dynamic categories here
-      } catch (error) {
-        console.error('Initialization error during dynamic load:', error);
-      }
-    });
 
     // 7. Security & Passwords Engine
     window.updateAdminCredentials = async () => {
