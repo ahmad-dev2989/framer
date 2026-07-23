@@ -2136,7 +2136,7 @@
           <h2 class="text-2xl font-extrabold text-charcoal mb-6">Create Product Template</h2>
           <form id="add-product-form" class="space-y-6">
             <input type="hidden" id="editing-product-id">
-            
+
             <!-- SECTION 1: Product Information -->
             <div class="glass-card bg-white border border-sand/60 rounded-3xl p-6 shadow-sm space-y-4">
               <h3 class="text-lg font-extrabold text-charcoal flex items-center gap-2">
@@ -2144,14 +2144,17 @@
               </h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div class="col-span-2">
-                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Product Name</label>
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Product
+                    Name</label>
                   <input type="text" id="product-name" placeholder="e.g. Minimalist Oak Frame"
                     class="w-full px-4 py-2.5 bg-editorbg border border-sand rounded-xl font-medium focus:border-flame focus:outline-none focus:ring-1 focus:ring-flame"
                     required>
                 </div>
                 <div class="col-span-2">
-                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Small Description</label>
-                  <textarea id="product-description" rows="2" placeholder="Describe the frame template characteristics..."
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Small
+                    Description</label>
+                  <textarea id="product-description" rows="2"
+                    placeholder="Describe the frame template characteristics..."
                     class="w-full px-4 py-2.5 bg-editorbg border border-sand rounded-xl font-medium focus:border-flame focus:outline-none focus:ring-1 focus:ring-flame"
                     required></textarea>
                 </div>
@@ -2163,7 +2166,8 @@
                   </select>
                 </div>
                 <div class="col-span-1">
-                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Tax Rate (%)</label>
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Tax Rate
+                    (%)</label>
                   <input type="number" id="product-tax" step="0.01" value="0" min="0"
                     class="w-full px-4 py-2.5 bg-editorbg border border-sand rounded-xl font-medium focus:border-flame focus:outline-none focus:ring-1 focus:ring-flame"
                     required>
@@ -2179,28 +2183,36 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
                 <div class="space-y-3 bg-editorbg/30 p-4 rounded-2xl border border-sand/40">
                   <div>
-                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">Upload File</label>
-                    <div class="border-2 border-dashed border-sand/80 hover:border-flame transition rounded-xl p-3 text-center cursor-pointer bg-white relative">
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">Upload
+                      File</label>
+                    <div
+                      class="border-2 border-dashed border-sand/80 hover:border-flame transition rounded-xl p-3 text-center cursor-pointer bg-white relative">
                       <input type="file" id="product-bg-img" accept="image/*" onchange="window.previewImageFile('bg')"
                         class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                      <span id="bg-img-text" class="text-xs font-bold text-charcoal block truncate">Upload Background File</span>
+                      <span id="bg-img-text" class="text-xs font-bold text-charcoal block truncate">Upload Background
+                        File</span>
                     </div>
                   </div>
                   <div>
-                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">OR paste Background Image URL</label>
-                    <input type="url" id="product-bg-url" oninput="window.previewImageUrl('bg')" placeholder="https://..."
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">OR paste
+                      Background Image URL</label>
+                    <input type="url" id="product-bg-url" oninput="window.previewImageUrl('bg')"
+                      placeholder="https://..."
                       class="w-full px-3 py-2 bg-white border border-sand rounded-xl text-xs font-medium focus:border-flame focus:outline-none">
                   </div>
                 </div>
                 <!-- Preview area -->
-                <div class="border border-sand/80 rounded-2xl p-3 bg-editorbg flex flex-col items-center justify-center min-h-[140px] relative overflow-hidden">
+                <div
+                  class="border border-sand/80 rounded-2xl p-3 bg-editorbg flex flex-col items-center justify-center min-h-[140px] relative overflow-hidden">
                   <div id="bg-preview-placeholder" class="text-center p-4">
                     <i data-lucide="image" class="w-8 h-8 text-slate/60 mx-auto mb-1"></i>
                     <span class="text-xs font-semibold text-slate block">No background image preview</span>
                   </div>
-                  <img id="bg-preview-img" src="" class="max-h-[120px] max-w-full rounded-lg object-contain hidden" alt="Background Preview">
+                  <img id="bg-preview-img" src="" class="max-h-[120px] max-w-full rounded-lg object-contain hidden"
+                    alt="Background Preview">
                   <button type="button" id="btn-remove-bg-preview" onclick="window.clearImagePreview('bg')"
-                    class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-md hidden" title="Remove image">
+                    class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-md hidden"
+                    title="Remove image">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                   </button>
                 </div>
@@ -2211,7 +2223,8 @@
             <div class="glass-card bg-white border border-sand/60 rounded-3xl p-6 shadow-sm space-y-4">
               <h3 class="text-lg font-extrabold text-charcoal flex items-center justify-between">
                 <span class="flex items-center gap-2">
-                  <i data-lucide="layers" class="w-5 h-5 text-flame"></i> Outer Frame <span class="text-xs font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full border border-red-200">Required</span>
+                  <i data-lucide="layers" class="w-5 h-5 text-flame"></i> Outer Frame <span
+                    class="text-xs font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full border border-red-200">Required</span>
                 </span>
               </h3>
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -2222,13 +2235,15 @@
                     required>
                 </div>
                 <div>
-                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Frame Price</label>
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Frame
+                    Price</label>
                   <input type="number" id="product-outer-price" step="0.01" placeholder="Price"
                     class="w-full px-3 py-2 bg-editorbg border border-sand rounded-xl text-xs font-semibold focus:border-flame focus:outline-none"
                     required>
                 </div>
                 <div>
-                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Thickness (cm)</label>
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Thickness
+                    (cm)</label>
                   <input type="number" id="product-outer-thickness" step="0.01" placeholder="Thickness in cm"
                     class="w-full px-3 py-2 bg-editorbg border border-sand rounded-xl text-xs font-semibold focus:border-flame focus:outline-none"
                     required>
@@ -2238,27 +2253,36 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
                 <div class="space-y-3 bg-editorbg/30 p-4 rounded-2xl border border-sand/40">
                   <div>
-                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">Upload Frame File</label>
-                    <div class="border-2 border-dashed border-sand/80 hover:border-flame transition rounded-xl p-3 text-center cursor-pointer bg-white relative">
-                      <input type="file" id="product-outer-img" accept="image/*" onchange="window.previewImageFile('outer')"
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">Upload Frame
+                      File</label>
+                    <div
+                      class="border-2 border-dashed border-sand/80 hover:border-flame transition rounded-xl p-3 text-center cursor-pointer bg-white relative">
+                      <input type="file" id="product-outer-img" accept="image/*"
+                        onchange="window.previewImageFile('outer')"
                         class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                      <span id="outer-img-text" class="text-xs font-bold text-charcoal block truncate">Upload Frame Image</span>
+                      <span id="outer-img-text" class="text-xs font-bold text-charcoal block truncate">Upload Frame
+                        Image</span>
                     </div>
                   </div>
                   <div>
-                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">OR paste Frame Image URL</label>
-                    <input type="url" id="product-outer-url" oninput="window.previewImageUrl('outer')" placeholder="https://..."
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">OR paste Frame
+                      Image URL</label>
+                    <input type="url" id="product-outer-url" oninput="window.previewImageUrl('outer')"
+                      placeholder="https://..."
                       class="w-full px-3 py-2 bg-white border border-sand rounded-xl text-xs font-medium focus:border-flame focus:outline-none">
                   </div>
                 </div>
-                <div class="border border-sand/80 rounded-2xl p-3 bg-editorbg flex flex-col items-center justify-center min-h-[140px] relative overflow-hidden">
+                <div
+                  class="border border-sand/80 rounded-2xl p-3 bg-editorbg flex flex-col items-center justify-center min-h-[140px] relative overflow-hidden">
                   <div id="outer-preview-placeholder" class="text-center p-4">
                     <i data-lucide="layers" class="w-8 h-8 text-slate/60 mx-auto mb-1"></i>
                     <span class="text-xs font-semibold text-slate block">No frame image preview</span>
                   </div>
-                  <img id="outer-preview-img" src="" class="max-h-[120px] max-w-full rounded-lg object-contain hidden" alt="Outer Frame Preview">
+                  <img id="outer-preview-img" src="" class="max-h-[120px] max-w-full rounded-lg object-contain hidden"
+                    alt="Outer Frame Preview">
                   <button type="button" id="btn-remove-outer-preview" onclick="window.clearImagePreview('outer')"
-                    class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-md hidden" title="Remove image">
+                    class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-md hidden"
+                    title="Remove image">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                   </button>
                 </div>
@@ -2269,7 +2293,7 @@
                 <div class="flex items-center justify-between border-b border-sand/40 pb-2">
                   <span class="text-xs font-bold text-charcoal uppercase tracking-wider">Available Colours</span>
                 </div>
-                
+
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
                   <div class="col-span-1">
                     <label class="text-[10px] font-bold text-slate mb-1 block">Colour Name</label>
@@ -2279,9 +2303,11 @@
                   <div class="col-span-1">
                     <label class="text-[10px] font-bold text-slate mb-1 block">Colour Hex swatch</label>
                     <div class="flex gap-2">
-                      <input type="text" id="color-hex-text-outer" value="#000000" placeholder="#000000" oninput="document.getElementById('color-hex-picker-outer').value = this.value"
+                      <input type="text" id="color-hex-text-outer" value="#000000" placeholder="#000000"
+                        oninput="document.getElementById('color-hex-picker-outer').value = this.value"
                         class="w-full px-3 py-2 bg-white border border-sand rounded-xl text-xs font-medium focus:border-flame focus:outline-none">
-                      <input type="color" id="color-hex-picker-outer" value="#000000" oninput="document.getElementById('color-hex-text-outer').value = this.value.toUpperCase()"
+                      <input type="color" id="color-hex-picker-outer" value="#000000"
+                        oninput="document.getElementById('color-hex-text-outer').value = this.value.toUpperCase()"
                         class="w-10 h-9 bg-white border border-sand rounded-xl p-0.5 cursor-pointer">
                     </div>
                   </div>
@@ -2298,12 +2324,15 @@
 
             <!-- SECTION 4: Middle Frame (Optional) -->
             <!-- Collapsed Card -->
-            <div id="middle-frame-collapsed" class="glass-card bg-white border border-sand/60 rounded-3xl p-6 shadow-sm flex items-center justify-between">
+            <div id="middle-frame-collapsed"
+              class="glass-card bg-white border border-sand/60 rounded-3xl p-6 shadow-sm flex items-center justify-between">
               <div>
                 <h4 class="text-base font-extrabold text-charcoal flex items-center gap-2">
-                  <i data-lucide="layers" class="w-5 h-5 text-slate"></i> Middle Frame <span class="text-xs font-medium text-slate bg-editorbg px-2.5 py-0.5 rounded-full border border-sand/40">Optional</span>
+                  <i data-lucide="layers" class="w-5 h-5 text-slate"></i> Middle Frame <span
+                    class="text-xs font-medium text-slate bg-editorbg px-2.5 py-0.5 rounded-full border border-sand/40">Optional</span>
                 </h4>
-                <p class="text-xs font-semibold text-slate mt-1">Configure an additional nested middle layer or linen mat.</p>
+                <p class="text-xs font-semibold text-slate mt-1">Configure an additional nested middle layer or linen
+                  mat.</p>
               </div>
               <button type="button" onclick="window.toggleFrameSection('middle', true)"
                 class="px-4 py-2.5 bg-charcoal text-cream text-xs font-extrabold rounded-xl hover:bg-black transition flex items-center gap-2">
@@ -2312,7 +2341,8 @@
             </div>
 
             <!-- Expanded Card -->
-            <div id="middle-frame-expanded" class="glass-card bg-white border border-sand/60 rounded-3xl p-6 shadow-sm space-y-4 hidden">
+            <div id="middle-frame-expanded"
+              class="glass-card bg-white border border-sand/60 rounded-3xl p-6 shadow-sm space-y-4 hidden">
               <div class="flex items-center justify-between border-b border-sand/40 pb-2">
                 <h3 class="text-lg font-extrabold text-charcoal flex items-center gap-2">
                   <i data-lucide="layers" class="w-5 h-5 text-slate"></i> Middle Frame Layer
@@ -2331,12 +2361,14 @@
                     class="w-full px-3 py-2 bg-editorbg border border-sand rounded-xl text-xs font-semibold focus:border-flame focus:outline-none">
                 </div>
                 <div>
-                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Frame Price</label>
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Frame
+                    Price</label>
                   <input type="number" id="product-middle-price" step="0.01" placeholder="Price"
                     class="w-full px-3 py-2 bg-editorbg border border-sand rounded-xl text-xs font-semibold focus:border-flame focus:outline-none">
                 </div>
                 <div>
-                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Thickness (cm)</label>
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Thickness
+                    (cm)</label>
                   <input type="number" id="product-middle-thickness" step="0.01" placeholder="Thickness in cm"
                     class="w-full px-3 py-2 bg-editorbg border border-sand rounded-xl text-xs font-semibold focus:border-flame focus:outline-none">
                 </div>
@@ -2345,27 +2377,36 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
                 <div class="space-y-3 bg-editorbg/30 p-4 rounded-2xl border border-sand/40">
                   <div>
-                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">Upload Frame File</label>
-                    <div class="border-2 border-dashed border-sand/80 hover:border-flame transition rounded-xl p-3 text-center cursor-pointer bg-white relative">
-                      <input type="file" id="product-middle-img" accept="image/*" onchange="window.previewImageFile('middle')"
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">Upload Frame
+                      File</label>
+                    <div
+                      class="border-2 border-dashed border-sand/80 hover:border-flame transition rounded-xl p-3 text-center cursor-pointer bg-white relative">
+                      <input type="file" id="product-middle-img" accept="image/*"
+                        onchange="window.previewImageFile('middle')"
                         class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                      <span id="middle-img-text" class="text-xs font-bold text-charcoal block truncate">Upload Frame Image</span>
+                      <span id="middle-img-text" class="text-xs font-bold text-charcoal block truncate">Upload Frame
+                        Image</span>
                     </div>
                   </div>
                   <div>
-                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">OR paste Frame Image URL</label>
-                    <input type="url" id="product-middle-url" oninput="window.previewImageUrl('middle')" placeholder="https://..."
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">OR paste Frame
+                      Image URL</label>
+                    <input type="url" id="product-middle-url" oninput="window.previewImageUrl('middle')"
+                      placeholder="https://..."
                       class="w-full px-3 py-2 bg-white border border-sand rounded-xl text-xs font-medium focus:border-flame focus:outline-none">
                   </div>
                 </div>
-                <div class="border border-sand/80 rounded-2xl p-3 bg-editorbg flex flex-col items-center justify-center min-h-[140px] relative overflow-hidden">
+                <div
+                  class="border border-sand/80 rounded-2xl p-3 bg-editorbg flex flex-col items-center justify-center min-h-[140px] relative overflow-hidden">
                   <div id="middle-preview-placeholder" class="text-center p-4">
                     <i data-lucide="layers" class="w-8 h-8 text-slate/60 mx-auto mb-1"></i>
                     <span class="text-xs font-semibold text-slate block">No frame image preview</span>
                   </div>
-                  <img id="middle-preview-img" src="" class="max-h-[120px] max-w-full rounded-lg object-contain hidden" alt="Middle Frame Preview">
+                  <img id="middle-preview-img" src="" class="max-h-[120px] max-w-full rounded-lg object-contain hidden"
+                    alt="Middle Frame Preview">
                   <button type="button" id="btn-remove-middle-preview" onclick="window.clearImagePreview('middle')"
-                    class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-md hidden" title="Remove image">
+                    class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-md hidden"
+                    title="Remove image">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                   </button>
                 </div>
@@ -2376,7 +2417,7 @@
                 <div class="flex items-center justify-between border-b border-sand/40 pb-2">
                   <span class="text-xs font-bold text-charcoal uppercase tracking-wider">Available Colours</span>
                 </div>
-                
+
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
                   <div class="col-span-1">
                     <label class="text-[10px] font-bold text-slate mb-1 block">Colour Name</label>
@@ -2386,9 +2427,11 @@
                   <div class="col-span-1">
                     <label class="text-[10px] font-bold text-slate mb-1 block">Colour Hex swatch</label>
                     <div class="flex gap-2">
-                      <input type="text" id="color-hex-text-middle" value="#FFFFFF" placeholder="#FFFFFF" oninput="document.getElementById('color-hex-picker-middle').value = this.value"
+                      <input type="text" id="color-hex-text-middle" value="#FFFFFF" placeholder="#FFFFFF"
+                        oninput="document.getElementById('color-hex-picker-middle').value = this.value"
                         class="w-full px-3 py-2 bg-white border border-sand rounded-xl text-xs font-medium focus:border-flame focus:outline-none">
-                      <input type="color" id="color-hex-picker-middle" value="#FFFFFF" oninput="document.getElementById('color-hex-text-middle').value = this.value.toUpperCase()"
+                      <input type="color" id="color-hex-picker-middle" value="#FFFFFF"
+                        oninput="document.getElementById('color-hex-text-middle').value = this.value.toUpperCase()"
                         class="w-10 h-9 bg-white border border-sand rounded-xl p-0.5 cursor-pointer">
                     </div>
                   </div>
@@ -2405,12 +2448,15 @@
 
             <!-- SECTION 5: Inner Frame (Optional) -->
             <!-- Collapsed Card -->
-            <div id="inner-frame-collapsed" class="glass-card bg-white border border-sand/60 rounded-3xl p-6 shadow-sm flex items-center justify-between">
+            <div id="inner-frame-collapsed"
+              class="glass-card bg-white border border-sand/60 rounded-3xl p-6 shadow-sm flex items-center justify-between">
               <div>
                 <h4 class="text-base font-extrabold text-charcoal flex items-center gap-2">
-                  <i data-lucide="layers" class="w-5 h-5 text-slate"></i> Inner Frame <span class="text-xs font-medium text-slate bg-editorbg px-2.5 py-0.5 rounded-full border border-sand/40">Optional</span>
+                  <i data-lucide="layers" class="w-5 h-5 text-slate"></i> Inner Frame <span
+                    class="text-xs font-medium text-slate bg-editorbg px-2.5 py-0.5 rounded-full border border-sand/40">Optional</span>
                 </h4>
-                <p class="text-xs font-semibold text-slate mt-1">Configure an additional internal highlight frame or fillet.</p>
+                <p class="text-xs font-semibold text-slate mt-1">Configure an additional internal highlight frame or
+                  fillet.</p>
               </div>
               <button type="button" onclick="window.toggleFrameSection('inner', true)"
                 class="px-4 py-2.5 bg-charcoal text-cream text-xs font-extrabold rounded-xl hover:bg-black transition flex items-center gap-2">
@@ -2419,7 +2465,8 @@
             </div>
 
             <!-- Expanded Card -->
-            <div id="inner-frame-expanded" class="glass-card bg-white border border-sand/60 rounded-3xl p-6 shadow-sm space-y-4 hidden">
+            <div id="inner-frame-expanded"
+              class="glass-card bg-white border border-sand/60 rounded-3xl p-6 shadow-sm space-y-4 hidden">
               <div class="flex items-center justify-between border-b border-sand/40 pb-2">
                 <h3 class="text-lg font-extrabold text-charcoal flex items-center gap-2">
                   <i data-lucide="layers" class="w-5 h-5 text-slate"></i> Inner Frame Layer
@@ -2438,12 +2485,14 @@
                     class="w-full px-3 py-2 bg-editorbg border border-sand rounded-xl text-xs font-semibold focus:border-flame focus:outline-none">
                 </div>
                 <div>
-                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Frame Price</label>
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Frame
+                    Price</label>
                   <input type="number" id="product-inner-price" step="0.01" placeholder="Price"
                     class="w-full px-3 py-2 bg-editorbg border border-sand rounded-xl text-xs font-semibold focus:border-flame focus:outline-none">
                 </div>
                 <div>
-                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Thickness (cm)</label>
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Thickness
+                    (cm)</label>
                   <input type="number" id="product-inner-thickness" step="0.01" placeholder="Thickness in cm"
                     class="w-full px-3 py-2 bg-editorbg border border-sand rounded-xl text-xs font-semibold focus:border-flame focus:outline-none">
                 </div>
@@ -2452,27 +2501,36 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
                 <div class="space-y-3 bg-editorbg/30 p-4 rounded-2xl border border-sand/40">
                   <div>
-                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">Upload Frame File</label>
-                    <div class="border-2 border-dashed border-sand/80 hover:border-flame transition rounded-xl p-3 text-center cursor-pointer bg-white relative">
-                      <input type="file" id="product-inner-img" accept="image/*" onchange="window.previewImageFile('inner')"
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">Upload Frame
+                      File</label>
+                    <div
+                      class="border-2 border-dashed border-sand/80 hover:border-flame transition rounded-xl p-3 text-center cursor-pointer bg-white relative">
+                      <input type="file" id="product-inner-img" accept="image/*"
+                        onchange="window.previewImageFile('inner')"
                         class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                      <span id="inner-img-text" class="text-xs font-bold text-charcoal block truncate">Upload Frame Image</span>
+                      <span id="inner-img-text" class="text-xs font-bold text-charcoal block truncate">Upload Frame
+                        Image</span>
                     </div>
                   </div>
                   <div>
-                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">OR paste Frame Image URL</label>
-                    <input type="url" id="product-inner-url" oninput="window.previewImageUrl('inner')" placeholder="https://..."
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate block mb-1">OR paste Frame
+                      Image URL</label>
+                    <input type="url" id="product-inner-url" oninput="window.previewImageUrl('inner')"
+                      placeholder="https://..."
                       class="w-full px-3 py-2 bg-white border border-sand rounded-xl text-xs font-medium focus:border-flame focus:outline-none">
                   </div>
                 </div>
-                <div class="border border-sand/80 rounded-2xl p-3 bg-editorbg flex flex-col items-center justify-center min-h-[140px] relative overflow-hidden">
+                <div
+                  class="border border-sand/80 rounded-2xl p-3 bg-editorbg flex flex-col items-center justify-center min-h-[140px] relative overflow-hidden">
                   <div id="inner-preview-placeholder" class="text-center p-4">
                     <i data-lucide="layers" class="w-8 h-8 text-slate/60 mx-auto mb-1"></i>
                     <span class="text-xs font-semibold text-slate block">No frame image preview</span>
                   </div>
-                  <img id="inner-preview-img" src="" class="max-h-[120px] max-w-full rounded-lg object-contain hidden" alt="Inner Frame Preview">
+                  <img id="inner-preview-img" src="" class="max-h-[120px] max-w-full rounded-lg object-contain hidden"
+                    alt="Inner Frame Preview">
                   <button type="button" id="btn-remove-inner-preview" onclick="window.clearImagePreview('inner')"
-                    class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-md hidden" title="Remove image">
+                    class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-md hidden"
+                    title="Remove image">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                   </button>
                 </div>
@@ -2483,7 +2541,7 @@
                 <div class="flex items-center justify-between border-b border-sand/40 pb-2">
                   <span class="text-xs font-bold text-charcoal uppercase tracking-wider">Available Colours</span>
                 </div>
-                
+
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
                   <div class="col-span-1">
                     <label class="text-[10px] font-bold text-slate mb-1 block">Colour Name</label>
@@ -2493,9 +2551,11 @@
                   <div class="col-span-1">
                     <label class="text-[10px] font-bold text-slate mb-1 block">Colour Hex swatch</label>
                     <div class="flex gap-2">
-                      <input type="text" id="color-hex-text-inner" value="#D4AF37" placeholder="#D4AF37" oninput="document.getElementById('color-hex-picker-inner').value = this.value"
+                      <input type="text" id="color-hex-text-inner" value="#D4AF37" placeholder="#D4AF37"
+                        oninput="document.getElementById('color-hex-picker-inner').value = this.value"
                         class="w-full px-3 py-2 bg-white border border-sand rounded-xl text-xs font-medium focus:border-flame focus:outline-none">
-                      <input type="color" id="color-hex-picker-inner" value="#D4AF37" oninput="document.getElementById('color-hex-text-inner').value = this.value.toUpperCase()"
+                      <input type="color" id="color-hex-picker-inner" value="#D4AF37"
+                        oninput="document.getElementById('color-hex-text-inner').value = this.value.toUpperCase()"
                         class="w-10 h-9 bg-white border border-sand rounded-xl p-0.5 cursor-pointer">
                     </div>
                   </div>
@@ -2518,15 +2578,18 @@
               <div class="bg-white p-4 rounded-xl border border-sand/80 space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div>
-                    <label class="text-[11px] font-extrabold uppercase tracking-wider text-charcoal block">Product Gallery Images</label>
-                    <span class="text-[10px] text-slate font-medium block">Used for Product Cards, listing, and gallery views</span>
+                    <label class="text-[11px] font-extrabold uppercase tracking-wider text-charcoal block">Product
+                      Gallery Images</label>
+                    <span class="text-[10px] text-slate font-medium block">Used for Product Cards, listing, and gallery
+                      views</span>
                   </div>
                   <span id="product-gallery-text" class="text-xs font-bold text-flame">0 gallery image(s) added</span>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <!-- Option 1: File Upload -->
-                  <div class="border-2 border-dashed border-sand/80 hover:border-flame transition rounded-xl p-3 text-center cursor-pointer bg-editorbg relative">
+                  <div
+                    class="border-2 border-dashed border-sand/80 hover:border-flame transition rounded-xl p-3 text-center cursor-pointer bg-editorbg relative">
                     <input type="file" id="product-gallery-file-input" multiple accept="image/*"
                       class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                     <div class="flex items-center justify-center gap-2">
@@ -2540,12 +2603,14 @@
                     <input type="url" id="product-gallery-url-input" placeholder="Paste image URL (https://...)"
                       class="flex-1 px-3 py-2 bg-editorbg border border-sand rounded-xl text-xs font-medium focus:border-flame focus:outline-none">
                     <button type="button" onclick="window.addProductGalleryUrl()"
-                      class="px-3 py-2 bg-charcoal text-cream text-xs font-bold rounded-xl hover:bg-black transition whitespace-nowrap">Add URL</button>
+                      class="px-3 py-2 bg-charcoal text-cream text-xs font-bold rounded-xl hover:bg-black transition whitespace-nowrap">Add
+                      URL</button>
                   </div>
                 </div>
 
                 <!-- Preview Grid for Gallery Images -->
-                <div id="product-gallery-preview" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3 pt-2"></div>
+                <div id="product-gallery-preview" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3 pt-2">
+                </div>
               </div>
             </div>
 
@@ -2556,14 +2621,16 @@
                   <i data-lucide="maximize" class="w-5 h-5 text-flame"></i> Available Sizes (cm only)
                 </h3>
                 <button type="button" onclick="addProductSizeRow()"
-                  class="px-3 py-1.5 bg-white border border-sand rounded-lg text-xs font-bold text-charcoal hover:border-flame transition">Add size</button>
+                  class="px-3 py-1.5 bg-white border border-sand rounded-lg text-xs font-bold text-charcoal hover:border-flame transition">Add
+                  size</button>
               </div>
               <div id="product-sizes-list" class="space-y-2"></div>
             </div>
 
             <button type="submit"
               class="w-full btn-solid-orange py-3.5 rounded-xl text-cream font-extrabold text-lg shadow-lg flex items-center justify-center gap-2 hover:bg-flame/90 transition">
-              <i data-lucide="plus-circle" class="w-5 h-5"></i> <span id="product-submit-label">Add Product Template</span>
+              <i data-lucide="plus-circle" class="w-5 h-5"></i> <span id="product-submit-label">Add Product
+                Template</span>
             </button>
           </form>
         </div>
@@ -2609,9 +2676,12 @@
             </div>
 
             <!-- Available Colours (Frames only) -->
-            <div id="admin-asset-colours-container" class="bg-editorbg/40 border border-sand/60 rounded-2xl p-4 space-y-3">
-              <span class="text-[10px] font-bold uppercase tracking-wider text-slate block border-b border-sand/40 pb-1">Available Colours</span>
-              
+            <div id="admin-asset-colours-container"
+              class="bg-editorbg/40 border border-sand/60 rounded-2xl p-4 space-y-3">
+              <span
+                class="text-[10px] font-bold uppercase tracking-wider text-slate block border-b border-sand/40 pb-1">Available
+                Colours</span>
+
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 items-end">
                 <div class="col-span-1">
                   <label class="text-[9px] font-bold text-slate mb-1 block">Name</label>
@@ -2642,21 +2712,26 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
               <div>
                 <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Upload File</label>
-                <div class="border-2 border-dashed border-sand/80 hover:border-flame transition rounded-xl p-4 text-center cursor-pointer bg-editorbg relative">
+                <div
+                  class="border-2 border-dashed border-sand/80 hover:border-flame transition rounded-xl p-4 text-center cursor-pointer bg-editorbg relative">
                   <input type="file" id="admin-asset-file" accept="image/*" onchange="window.previewAssetImageFile()"
                     class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                   <i data-lucide="upload-cloud" class="w-6 h-6 mx-auto text-slate mb-1"></i>
-                  <span id="admin-file-name" class="text-xs font-bold text-charcoal block truncate">Click to Browse</span>
+                  <span id="admin-file-name" class="text-xs font-bold text-charcoal block truncate">Click to
+                    Browse</span>
                 </div>
               </div>
-              <div class="border border-sand/80 rounded-2xl p-2 bg-editorbg flex flex-col items-center justify-center min-h-[90px] relative overflow-hidden">
+              <div
+                class="border border-sand/80 rounded-2xl p-2 bg-editorbg flex flex-col items-center justify-center min-h-[90px] relative overflow-hidden">
                 <div id="asset-preview-placeholder" class="text-center p-2">
                   <i data-lucide="image" class="w-6 h-6 text-slate/50 mx-auto"></i>
                   <span class="text-[10px] font-semibold text-slate block">No image preview</span>
                 </div>
-                <img id="asset-preview-img" src="" class="max-h-[80px] max-w-full rounded-lg object-contain hidden" alt="Asset Preview">
+                <img id="asset-preview-img" src="" class="max-h-[80px] max-w-full rounded-lg object-contain hidden"
+                  alt="Asset Preview">
                 <button type="button" id="btn-remove-asset-preview" onclick="window.clearAssetImagePreview()"
-                  class="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-md hidden" title="Remove image">
+                  class="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-md hidden"
+                  title="Remove image">
                   <i data-lucide="trash-2" class="w-3 h-3"></i>
                 </button>
               </div>
@@ -5654,15 +5729,19 @@
         <div id="panel-elements" class="tool-panel-content hidden flex flex-col h-full overflow-hidden">
           <div class="p-4 border-b border-sand/40 flex gap-2 overflow-x-auto no-scrollbar shrink-0" id="elements-tabs">
             <button onclick="switchElementCategory('outer-frame')"
-              class="elem-tab active px-3 py-1.5 bg-flame/10 text-flame rounded-lg text-[11px] font-bold whitespace-nowrap">Outer Frame</button>
+              class="elem-tab active px-3 py-1.5 bg-flame/10 text-flame rounded-lg text-[11px] font-bold whitespace-nowrap">Outer
+              Frame</button>
             <button onclick="switchElementCategory('middle-frame')"
-              class="elem-tab px-3 py-1.5 bg-editorbg text-slate rounded-lg text-[11px] font-bold whitespace-nowrap">Middle Frame</button>
+              class="elem-tab px-3 py-1.5 bg-editorbg text-slate rounded-lg text-[11px] font-bold whitespace-nowrap">Middle
+              Frame</button>
             <button onclick="switchElementCategory('inner-frame')"
-              class="elem-tab px-3 py-1.5 bg-editorbg text-slate rounded-lg text-[11px] font-bold whitespace-nowrap">Inner Frame</button>
+              class="elem-tab px-3 py-1.5 bg-editorbg text-slate rounded-lg text-[11px] font-bold whitespace-nowrap">Inner
+              Frame</button>
             <button onclick="switchElementCategory('decor')"
               class="elem-tab px-3 py-1.5 bg-editorbg text-slate rounded-lg text-[11px] font-bold whitespace-nowrap">Decoration</button>
             <button onclick="switchElementCategory('textures')"
-              class="elem-tab px-3 py-1.5 bg-editorbg text-slate rounded-lg text-[11px] font-bold whitespace-nowrap">Background Texture</button>
+              class="elem-tab px-3 py-1.5 bg-editorbg text-slate rounded-lg text-[11px] font-bold whitespace-nowrap">Background
+              Texture</button>
           </div>
           <div id="elements-content" class="p-5 overflow-y-auto no-scrollbar flex-1">
 
@@ -6277,7 +6356,7 @@
       const isDynamicThickness = Boolean(config.dynamicThickness);
 
       const hasOuterFrame = product.outerFrame && typeof product.outerFrame === 'object';
-      
+
       let outerFrame = null;
       let middleFrame = null;
       let innerFrame = null;
@@ -6327,7 +6406,7 @@
       };
 
       Object.defineProperty(normalized, 'price', {
-        get: function() {
+        get: function () {
           const outerPrice = this.outerFrame ? this.outerFrame.price : 0;
           const middlePrice = this.middleFrame ? this.middleFrame.price : 0;
           const innerPrice = this.innerFrame ? this.innerFrame.price : 0;
@@ -6497,7 +6576,13 @@
 
     function getCurrentCustomizationSummary() {
       const config = window.activeFrameConfiguration || {};
-      const decor = Array.from(document.querySelectorAll('#artwork-layer .canvas-item')).filter(item => item.dataset.frameRole !== 'frame' && item.dataset.frameRole !== 'artwork' && (parseFloat(item.dataset.cost) || 0) >= 0 && item.dataset.itemName).map(item => ({ name: item.dataset.itemName, price: parseFloat(item.dataset.cost) || 0 }));
+      const decor = Array.from(document.querySelectorAll('#artwork-layer .canvas-item'))
+        .filter(item => {
+          const role = item.dataset.frameRole;
+          return role !== 'frame' && role !== 'middle-frame' && role !== 'inner-frame' && role !== 'artwork' && 
+                 (parseFloat(item.dataset.cost) || 0) >= 0 && item.dataset.itemName;
+        })
+        .map(item => ({ name: item.dataset.itemName, price: parseFloat(item.dataset.cost) || 0 }));
       return { product: config.productName || document.getElementById('editor-project-title').innerText, frame: config.productName || 'Custom Frame', size: config.size ? { width: config.size.width, height: config.size.height, name: config.size.name || `${config.size.width} × ${config.size.height}` } : null, colour: config.colour || null, thickness: config.dynamicThickness ? config.thickness || 100 : null, decor, quantity: 1, pricing: calculateCanvasCost() };
     }
     function renderCheckoutCustomizationSummary() {
@@ -7728,7 +7813,7 @@
       document.getElementById('editing-product-id').value = '';
       document.getElementById('add-product-form').reset();
       if (document.getElementById('product-description')) document.getElementById('product-description').value = '';
-      
+
       // Clear sizes list
       document.getElementById('product-sizes-list').innerHTML = '';
       defaultFrameSizes.forEach(addProductSizeRow);
@@ -8306,7 +8391,7 @@
       if (document.getElementById('product-description')) document.getElementById('product-description').value = product.description || '';
       document.getElementById('product-tax').value = product.taxRate || 0;
       document.getElementById('product-sizes-list').innerHTML = '';
-      
+
       // Map sizes
       const sizesToLoad = product.sizes || product.frameConfiguration?.sizes || defaultFrameSizes;
       sizesToLoad.forEach(addProductSizeRow);
@@ -9005,200 +9090,363 @@
     };
 
 
+    window.scanGeometryCache = {};
+
+    window.scanImageGeometry = (imageSrc) => {
+      if (window.scanGeometryCache[imageSrc]) {
+        return Promise.resolve(window.scanGeometryCache[imageSrc]);
+      }
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+          const imgW = img.naturalWidth;
+          const imgH = img.naturalHeight;
+
+          const scanCanvas = document.createElement('canvas');
+          scanCanvas.width = imgW;
+          scanCanvas.height = imgH;
+          const ctx = scanCanvas.getContext('2d', { willReadFrequently: true });
+          ctx.drawImage(img, 0, 0);
+
+          let minX = imgW, minY = imgH, maxX = 0, maxY = 0;
+          let hasVisiblePixels = false;
+          let holeMinX = null, holeMinY = null, holeMaxX = null, holeMaxY = null;
+
+          try {
+            const imageData = ctx.getImageData(0, 0, imgW, imgH).data;
+            for (let y = 0; y < imgH; y++) {
+              for (let x = 0; x < imgW; x++) {
+                if (imageData[(y * imgW + x) * 4 + 3] > 10) {
+                  if (x < minX) minX = x;
+                  if (x > maxX) maxX = x;
+                  if (y < minY) minY = y;
+                  if (y > maxY) maxY = y;
+                  hasVisiblePixels = true;
+                }
+              }
+            }
+
+            const alphaAt = (x, y) => imageData[(y * imgW + x) * 4 + 3];
+            const transparent = (x, y) => alphaAt(x, y) <= 10;
+
+            let startX = Math.max(0, Math.min(imgW - 1, Math.round((minX + maxX) / 2)));
+            let startY = Math.max(0, Math.min(imgH - 1, Math.round((minY + maxY) / 2)));
+            if (!transparent(startX, startY)) {
+              let found = false;
+              const maxR = Math.floor(Math.min(imgW, imgH) / 2);
+              for (let r = 1; r < maxR && !found; r += 2) {
+                for (let dy = -r; dy <= r && !found; dy += 2) {
+                  for (let dx = -r; dx <= r && !found; dx += 2) {
+                    const x = startX + dx;
+                    const y = startY + dy;
+                    if (x < 0 || y < 0 || x >= imgW || y >= imgH) continue;
+                    if (transparent(x, y)) { startX = x; startY = y; found = true; }
+                  }
+                }
+              }
+            }
+
+            if (transparent(startX, startY)) {
+              const visited = new Uint8Array(imgW * imgH);
+              const queue = new Int32Array(imgW * imgH);
+              let qh = 0, qt = 0;
+              const startIdx = startY * imgW + startX;
+              visited[startIdx] = 1;
+              queue[qt++] = startIdx;
+              holeMinX = startX; holeMaxX = startX; holeMinY = startY; holeMaxY = startY;
+
+              while (qh < qt) {
+                const idx = queue[qh++];
+                const x = idx % imgW;
+                const y = (idx / imgW) | 0;
+                if (x < holeMinX) holeMinX = x;
+                if (x > holeMaxX) holeMaxX = x;
+                if (y < holeMinY) holeMinY = y;
+                if (y > holeMaxY) holeMaxY = y;
+
+                const n1 = idx - 1;
+                const n2 = idx + 1;
+                const n3 = idx - imgW;
+                const n4 = idx + imgW;
+
+                if (x > 0 && !visited[n1] && transparent(x - 1, y)) { visited[n1] = 1; queue[qt++] = n1; }
+                if (x < imgW - 1 && !visited[n2] && transparent(x + 1, y)) { visited[n2] = 1; queue[qt++] = n2; }
+                if (y > 0 && !visited[n3] && transparent(x, y - 1)) { visited[n3] = 1; queue[qt++] = n3; }
+                if (y < imgH - 1 && !visited[n4] && transparent(x, y + 1)) { visited[n4] = 1; queue[qt++] = n4; }
+              }
+            }
+          } catch (e) {
+            console.error("Scan error: ", e);
+          }
+
+          if (!hasVisiblePixels) { minX = 0; minY = 0; maxX = imgW; maxY = imgH; }
+
+          const result = {
+            img,
+            imgW,
+            imgH,
+            minX,
+            minY,
+            maxX,
+            maxY,
+            holeMinX,
+            holeMinY,
+            holeMaxX,
+            holeMaxY,
+            visibleW: maxX - minX || imgW,
+            visibleH: maxY - minY || imgH
+          };
+
+          window.scanGeometryCache[imageSrc] = result;
+          resolve(result);
+        };
+        img.onerror = (err) => reject(err);
+        img.src = imageSrc;
+      });
+    };
+
+    window.rebuildEditorCanvasLayers = async (isInit = false) => {
+      const product = window.activeFrameProduct;
+      if (!product) return;
+
+      const normProduct = window.normalizeProductData(product);
+      const config = window.activeFrameConfiguration;
+
+      const canvas = document.getElementById('design-canvas');
+      if (!canvas) return;
+
+      // 1. Determine target canvas dimensions
+      let canvasW, canvasH;
+      if (isInit) {
+        const size = config?.size || normProduct.sizes[0] || defaultFrameSizes[0];
+        config.size = size;
+        const ratio = size.width / size.height;
+        const max = 720;
+        canvasW = ratio >= 1 ? max : Math.round(max * ratio);
+        canvasH = ratio >= 1 ? Math.round(max / ratio) : max;
+        canvas.style.width = `${canvasW}px`;
+        canvas.style.height = `${canvasH}px`;
+        const drawing = document.getElementById('drawing-layer');
+        if (drawing) {
+          drawing.width = canvasW;
+          drawing.height = canvasH;
+        }
+      } else {
+        canvasW = canvas.offsetWidth;
+        canvasH = canvas.offsetHeight;
+      }
+
+      const outerFrameData = normProduct.outerFrame;
+      const middleFrameData = normProduct.middleFrame;
+      const innerFrameData = normProduct.innerFrame;
+
+      // Fallback for simple images without frame assets
+      if (!normProduct.bgImage && (!outerFrameData || !outerFrameData.image)) {
+        const imgSrc = normProduct.images && normProduct.images.length > 0 ? normProduct.images[0] : null;
+        if (imgSrc) {
+          addFrameToCanvas(imgSrc, normProduct.price, normProduct.name);
+          showToast("Template loaded! Right-click to adjust layers.");
+        }
+        window.updateCanvasScale();
+        return;
+      }
+
+      try {
+        // Load & Scan Outer Frame (Required)
+        const outer = await window.scanImageGeometry(outerFrameData.image);
+
+        // Load & Scan Middle Frame (Optional)
+        let middle = null;
+        if (middleFrameData && middleFrameData.image) {
+          middle = await window.scanImageGeometry(middleFrameData.image);
+        }
+
+        // Load & Scan Inner Frame (Optional)
+        let inner = null;
+        if (innerFrameData && innerFrameData.image) {
+          inner = await window.scanImageGeometry(innerFrameData.image);
+        }
+
+        // Clear existing frame and artwork elements from DOM
+        const artLayer = document.getElementById('artwork-layer');
+        if (!artLayer) return;
+
+        const toRemove = artLayer.querySelectorAll('[data-frame-role="frame"], [data-frame-role="middle-frame"], [data-frame-role="inner-frame"], [data-frame-role="artwork"]');
+        toRemove.forEach(el => el.remove());
+
+        // Outer Frame fits design-canvas exactly
+        const outerScaleX = canvasW / outer.visibleW;
+        const outerScaleY = canvasH / outer.visibleH;
+
+        const outerFinalW = outer.imgW * outerScaleX;
+        const outerFinalH = outer.imgH * outerScaleY;
+        const outerLeft = -(outer.minX * outerScaleX);
+        const outerTop = -(outer.minY * outerScaleY);
+
+        // Outer Frame opening relative to design-canvas
+        const outerHoleLeft = (outer.holeMinX - outer.minX) * outerScaleX;
+        const outerHoleTop = (outer.holeMinY - outer.minY) * outerScaleY;
+        const outerHoleWidth = (outer.holeMaxX - outer.holeMinX) * outerScaleX;
+        const outerHoleHeight = (outer.holeMaxY - outer.holeMinY) * outerScaleY;
+
+        let lastHoleLeft = outerHoleLeft;
+        let lastHoleTop = outerHoleTop;
+        let lastHoleWidth = outerHoleWidth;
+        let lastHoleHeight = outerHoleHeight;
+
+        let middleElement = null;
+        let innerElement = null;
+
+        // Middle Frame fits inside Outer Frame opening
+        if (middle) {
+          const midScaleX = lastHoleWidth / middle.visibleW;
+          const midScaleY = lastHoleHeight / middle.visibleH;
+
+          const midFinalW = middle.imgW * midScaleX;
+          const midFinalH = middle.imgH * midScaleY;
+          const midLeft = lastHoleLeft - middle.minX * midScaleX;
+          const midTop = lastHoleTop - middle.minY * midScaleY;
+
+          middleElement = document.createElement('div');
+          middleElement.className = 'canvas-item absolute select-none bg-transparent';
+          middleElement.style.width = midFinalW + 'px';
+          middleElement.style.height = midFinalH + 'px';
+          middleElement.style.left = midLeft + 'px';
+          middleElement.style.top = midTop + 'px';
+          middleElement.dataset.frameRole = 'middle-frame';
+          middleElement.innerHTML = `<img src="${middleFrameData.image}" crossorigin="anonymous" style="width:100%; height:100%;" class="pointer-events-none block drop-shadow-lg">`;
+
+          lastHoleLeft = lastHoleLeft + (middle.holeMinX - middle.minX) * midScaleX;
+          lastHoleTop = lastHoleTop + (middle.holeMinY - middle.minY) * midScaleY;
+          lastHoleWidth = (middle.holeMaxX - middle.holeMinX) * midScaleX;
+          lastHoleHeight = (middle.holeMaxY - middle.holeMinY) * midScaleY;
+        }
+
+        // Inner Frame fits inside Middle Frame opening (or Outer Frame opening if no Middle Frame)
+        if (inner) {
+          const innerScaleX = lastHoleWidth / inner.visibleW;
+          const innerScaleY = lastHoleHeight / inner.visibleH;
+
+          const innerFinalW = inner.imgW * innerScaleX;
+          const innerFinalH = inner.imgH * innerScaleY;
+          const innerLeft = lastHoleLeft - inner.minX * innerScaleX;
+          const innerTop = lastHoleTop - inner.minY * innerScaleY;
+
+          innerElement = document.createElement('div');
+          innerElement.className = 'canvas-item absolute select-none bg-transparent';
+          innerElement.style.width = innerFinalW + 'px';
+          innerElement.style.height = innerFinalH + 'px';
+          innerElement.style.left = innerLeft + 'px';
+          innerElement.style.top = innerTop + 'px';
+          innerElement.dataset.frameRole = 'inner-frame';
+          innerElement.innerHTML = `<img src="${innerFrameData.image}" crossorigin="anonymous" style="width:100%; height:100%;" class="pointer-events-none block drop-shadow-md">`;
+
+          lastHoleLeft = lastHoleLeft + (inner.holeMinX - inner.minX) * innerScaleX;
+          lastHoleTop = lastHoleTop + (inner.holeMinY - inner.minY) * innerScaleY;
+          lastHoleWidth = (inner.holeMaxX - inner.holeMinX) * innerScaleX;
+          lastHoleHeight = (inner.holeMaxY - inner.holeMinY) * innerScaleY;
+        }
+
+        // Background Artwork fits innermost opening
+        const bgWrap = document.createElement('div');
+        bgWrap.className = 'canvas-item absolute cursor-move select-none bg-transparent';
+        bgWrap.dataset.type = 'image';
+        bgWrap.style.width = lastHoleWidth + 'px';
+        bgWrap.style.height = lastHoleHeight + 'px';
+        bgWrap.style.left = lastHoleLeft + 'px';
+        bgWrap.style.top = lastHoleTop + 'px';
+        bgWrap.dataset.cost = 0;
+        bgWrap.dataset.itemName = "Background Artwork";
+        bgWrap.dataset.frameRole = 'artwork';
+        bgWrap.innerHTML = `<img src="${normProduct.bgImage}" crossorigin="anonymous" class="w-full h-full object-fill pointer-events-none block rounded-md">`;
+
+        // Outer Frame Element
+        const frameWrap = document.createElement('div');
+        frameWrap.className = 'canvas-item absolute cursor-move select-none bg-transparent';
+        frameWrap.style.isolation = 'isolate';
+        frameWrap.dataset.type = 'image';
+        frameWrap.style.width = outerFinalW + 'px';
+        frameWrap.style.height = outerFinalH + 'px';
+        frameWrap.style.left = outerLeft + 'px';
+        frameWrap.style.top = outerTop + 'px';
+        frameWrap.dataset.cost = (normProduct.saleActive && normProduct.salePrice != null) ? normProduct.salePrice : (outerFrameData.price || 0);
+        frameWrap.dataset.itemName = outerFrameData.name;
+        frameWrap.dataset.frameRole = 'frame';
+        frameWrap.dataset.frameBounds = JSON.stringify({ imgW: outer.imgW, imgH: outer.imgH, minX: outer.minX, minY: outer.minY, maxX: outer.maxX, maxY: outer.maxY });
+
+        let croppedFrameSrc = null;
+        try {
+          const cropCanvas = document.createElement('canvas');
+          cropCanvas.width = outer.visibleW;
+          cropCanvas.height = outer.visibleH;
+          const cropCtx = cropCanvas.getContext('2d');
+          cropCtx.drawImage(outer.img, outer.minX, outer.minY, outer.visibleW, outer.visibleH, 0, 0, outer.visibleW, outer.visibleH);
+          croppedFrameSrc = cropCanvas.toDataURL('image/png');
+        } catch (e) { }
+
+        if (croppedFrameSrc) frameWrap.dataset.frameCroppedSrc = croppedFrameSrc;
+        if (outer.holeMinX != null && outer.holeMinY != null && outer.holeMaxX != null && outer.holeMaxY != null) {
+          const sliceLeft = Math.max(1, outer.holeMinX - outer.minX);
+          const sliceTop = Math.max(1, outer.holeMinY - outer.minY);
+          const sliceRight = Math.max(1, outer.visibleW - (outer.holeMaxX - outer.minX));
+          const sliceBottom = Math.max(1, outer.visibleH - (outer.holeMaxY - outer.minY));
+          frameWrap.dataset.frameSlices = JSON.stringify({ sliceLeft, sliceTop, sliceRight, sliceBottom, srcW: outer.visibleW, srcH: outer.visibleH });
+        }
+        frameWrap.innerHTML = `<img src="${outerFrameData.image}" crossorigin="anonymous" style="width:100%; height:100%;" class="pointer-events-none block drop-shadow-xl">`;
+
+        // Append in bottom-to-top order
+        artLayer.appendChild(bgWrap);
+        if (innerElement) artLayer.appendChild(innerElement);
+        if (middleElement) artLayer.appendChild(middleElement);
+        artLayer.appendChild(frameWrap);
+
+        if (isInit) {
+          selectElement(bgWrap, 'image');
+        }
+
+        // Run hooks for active frame thickness & colour overlay (outer frame only)
+        if (config?.dynamicThickness) {
+          window.applyFrameThickness(config.thickness || 100, false);
+        }
+        if (config?.colour) {
+          window.updateFrameColourOverlay();
+        }
+
+        window.updateCanvasScale();
+        recordState();
+        showToast("Layers rendered perfectly!");
+      } catch (err) {
+        console.error("Canvas layers build failed:", err);
+        showToast("Error rendering product layers.");
+      }
+    };
+
     window.loadProductIntoEditor = (product) => {
-      window.activeFrameProduct = product;
+      const normProduct = window.normalizeProductData(product);
+      window.activeFrameProduct = normProduct;
       window.activeFrameConfiguration = {
-        productId: product.id || product.productId || null,
-        productName: product.name || 'Custom Frame',
+        productId: normProduct.id || normProduct.productId || null,
+        productName: normProduct.name || 'Custom Frame',
         size: null,
         colour: null,
         thickness: 100,
-        ...(product.frameConfiguration || {})
+        ...(normProduct.frameConfiguration || {})
       };
       const configuredSizes = window.activeFrameConfiguration.sizes || defaultFrameSizes;
       const configuredColours = window.activeFrameConfiguration.colours || defaultFrameColours;
       window.activeFrameConfiguration.size = configuredSizes[0];
       window.activeFrameConfiguration.colour = configuredColours[0];
       const artLayer = document.getElementById('artwork-layer');
-      artLayer.innerHTML = '';
+      if (artLayer) artLayer.innerHTML = '';
       document.getElementById('design-canvas').style.backgroundColor = '#ffffff';
       document.getElementById('canvas-bg-color').value = '#ffffff';
 
-      triggerTransition('editor', `${product.name} Customization`);
+      triggerTransition('editor', `${normProduct.name} Customization`);
 
       setTimeout(() => {
-        if (product.frameImage && product.bgImage) {
-          const canvasW = document.getElementById('design-canvas').offsetWidth;
-          const canvasH = document.getElementById('design-canvas').offsetHeight;
-          const img = new Image();
-          img.crossOrigin = "anonymous";
-
-          img.onload = () => {
-            const imgW = img.naturalWidth;
-            const imgH = img.naturalHeight;
-
-            const scanCanvas = document.createElement('canvas');
-            scanCanvas.width = imgW;
-            scanCanvas.height = imgH;
-            const ctx = scanCanvas.getContext('2d', { willReadFrequently: true });
-            ctx.drawImage(img, 0, 0);
-
-            let minX = imgW, minY = imgH, maxX = 0, maxY = 0;
-            let hasVisiblePixels = false;
-            let holeMinX = null, holeMinY = null, holeMaxX = null, holeMaxY = null;
-
-            try {
-              const imageData = ctx.getImageData(0, 0, imgW, imgH).data;
-              for (let y = 0; y < imgH; y++) {
-                for (let x = 0; x < imgW; x++) {
-                  if (imageData[(y * imgW + x) * 4 + 3] > 10) {
-                    if (x < minX) minX = x;
-                    if (x > maxX) maxX = x;
-                    if (y < minY) minY = y;
-                    if (y > maxY) maxY = y;
-                    hasVisiblePixels = true;
-                  }
-                }
-              }
-
-              const alphaAt = (x, y) => imageData[(y * imgW + x) * 4 + 3];
-              const transparent = (x, y) => alphaAt(x, y) <= 10;
-
-              let startX = Math.max(0, Math.min(imgW - 1, Math.round((minX + maxX) / 2)));
-              let startY = Math.max(0, Math.min(imgH - 1, Math.round((minY + maxY) / 2)));
-              if (!transparent(startX, startY)) {
-                let found = false;
-                const maxR = Math.floor(Math.min(imgW, imgH) / 2);
-                for (let r = 1; r < maxR && !found; r += 2) {
-                  for (let dy = -r; dy <= r && !found; dy += 2) {
-                    for (let dx = -r; dx <= r && !found; dx += 2) {
-                      const x = startX + dx;
-                      const y = startY + dy;
-                      if (x < 0 || y < 0 || x >= imgW || y >= imgH) continue;
-                      if (transparent(x, y)) { startX = x; startY = y; found = true; }
-                    }
-                  }
-                }
-              }
-
-              if (transparent(startX, startY)) {
-                const visited = new Uint8Array(imgW * imgH);
-                const queue = new Int32Array(imgW * imgH);
-                let qh = 0, qt = 0;
-                const startIdx = startY * imgW + startX;
-                visited[startIdx] = 1;
-                queue[qt++] = startIdx;
-                holeMinX = startX; holeMaxX = startX; holeMinY = startY; holeMaxY = startY;
-
-                while (qh < qt) {
-                  const idx = queue[qh++];
-                  const x = idx % imgW;
-                  const y = (idx / imgW) | 0;
-                  if (x < holeMinX) holeMinX = x;
-                  if (x > holeMaxX) holeMaxX = x;
-                  if (y < holeMinY) holeMinY = y;
-                  if (y > holeMaxY) holeMaxY = y;
-
-                  const n1 = idx - 1;
-                  const n2 = idx + 1;
-                  const n3 = idx - imgW;
-                  const n4 = idx + imgW;
-
-                  if (x > 0 && !visited[n1] && transparent(x - 1, y)) { visited[n1] = 1; queue[qt++] = n1; }
-                  if (x < imgW - 1 && !visited[n2] && transparent(x + 1, y)) { visited[n2] = 1; queue[qt++] = n2; }
-                  if (y > 0 && !visited[n3] && transparent(x, y - 1)) { visited[n3] = 1; queue[qt++] = n3; }
-                  if (y < imgH - 1 && !visited[n4] && transparent(x, y + 1)) { visited[n4] = 1; queue[qt++] = n4; }
-                }
-              }
-            } catch (e) { }
-
-            if (!hasVisiblePixels) { minX = 0; minY = 0; maxX = imgW; maxY = imgH; }
-
-            const visibleW = (maxX - minX) || imgW;
-            const visibleH = (maxY - minY) || imgH;
-
-            let croppedFrameSrc = null;
-            try {
-              const cropCanvas = document.createElement('canvas');
-              cropCanvas.width = visibleW;
-              cropCanvas.height = visibleH;
-              const cropCtx = cropCanvas.getContext('2d');
-              cropCtx.drawImage(img, minX, minY, visibleW, visibleH, 0, 0, visibleW, visibleH);
-              croppedFrameSrc = cropCanvas.toDataURL('image/png');
-            } catch (e) { }
-
-            // Restore auto-fit logic: calculate scale to make the VISIBLE part exactly fit the canvas boundaries
-            const scaleX = canvasW / visibleW;
-            const scaleY = canvasH / visibleH;
-
-            const finalW = imgW * scaleX;
-            const finalH = imgH * scaleY;
-
-            const frameLeft = -(minX * scaleX);
-            const frameTop = -(minY * scaleY);
-
-            // The background perfectly matches the canvas dimensions minus a tiny inward safety buffer
-            const safetyX = canvasW * 0.005;
-            const safetyY = canvasH * 0.005;
-            const bgWidth = canvasW - (safetyX * 2);
-            const bgHeight = canvasH - (safetyY * 2);
-
-            // Add Background Image perfectly constrained inside the canvas workspace bounds
-            const bgWrap = document.createElement('div');
-            bgWrap.className = 'canvas-item absolute cursor-move select-none bg-transparent';
-            bgWrap.dataset.type = 'image';
-            bgWrap.style.width = bgWidth + 'px';
-            bgWrap.style.height = bgHeight + 'px';
-            bgWrap.style.left = safetyX + 'px';
-            bgWrap.style.top = safetyY + 'px';
-            bgWrap.dataset.cost = 0;
-            bgWrap.dataset.itemName = "Background Artwork";
-            bgWrap.dataset.frameRole = 'artwork';
-            // object-fill guarantees it completely stretches to the edges without leaving blank gaps
-            bgWrap.innerHTML = `<img src="${product.bgImage}" crossorigin="anonymous" class="w-full h-full object-fill pointer-events-none block rounded-md">`;
-            artLayer.appendChild(bgWrap);
-
-            // Add Frame Image precisely matched and auto-fitted to the canvas bounds
-            const frameWrap = document.createElement('div');
-            frameWrap.className = 'canvas-item absolute relative cursor-move select-none bg-transparent';
-            frameWrap.style.isolation = 'isolate';
-            frameWrap.dataset.type = 'image';
-            frameWrap.style.width = finalW + 'px';
-            frameWrap.style.height = finalH + 'px';
-            frameWrap.style.left = frameLeft + 'px';
-            frameWrap.style.top = frameTop + 'px';
-            frameWrap.dataset.cost = (product.saleActive && product.salePrice != null) ? product.salePrice : (product.price || 0);
-            frameWrap.dataset.itemName = product.name;
-            frameWrap.dataset.frameRole = 'frame';
-            frameWrap.dataset.frameBounds = JSON.stringify({ imgW, imgH, minX, minY, maxX, maxY });
-            if (croppedFrameSrc) frameWrap.dataset.frameCroppedSrc = croppedFrameSrc;
-            if (holeMinX != null && holeMinY != null && holeMaxX != null && holeMaxY != null) {
-              const sliceLeft = Math.max(1, holeMinX - minX);
-              const sliceTop = Math.max(1, holeMinY - minY);
-              const sliceRight = Math.max(1, visibleW - (holeMaxX - minX));
-              const sliceBottom = Math.max(1, visibleH - (holeMaxY - minY));
-              frameWrap.dataset.frameSlices = JSON.stringify({ sliceLeft, sliceTop, sliceRight, sliceBottom, srcW: visibleW, srcH: visibleH });
-            }
-            frameWrap.innerHTML = `<img src="${product.frameImage}" crossorigin="anonymous" style="width:100%; height:100%;" class="pointer-events-none block drop-shadow-xl">`;
-            artLayer.appendChild(frameWrap);
-
-            selectElement(bgWrap, 'image');
-            window.renderFrameCustomizationPanel();
-            if (window.activeFrameConfiguration?.dynamicThickness) window.applyFrameThickness(window.activeFrameConfiguration.thickness || 100, false);
-            recordState();
-            showToast("Smart Template loaded & Auto-fitted perfectly!");
-            window.updateCanvasScale();
-          };
-          img.src = product.frameImage;
-        } else {
-          const imgSrc = product.images && product.images.length > 0 ? product.images[0] : null;
-          if (imgSrc) {
-            addFrameToCanvas(imgSrc, product.price, product.name);
-            showToast("Template loaded! Right-click to adjust layers.");
-          }
-          window.updateCanvasScale();
-        }
-      }, 800);
+        window.rebuildEditorCanvasLayers(true);
+      }, 50);
     };
 
     window.selectManagedFrame = async (productId) => {
@@ -9485,19 +9733,39 @@
       }
       if (shouldRecord) recordState();
     };
-    window.refitActiveFrameForSize = () => {
-      const config = window.activeFrameConfiguration; const frame = document.querySelector('#artwork-layer [data-frame-role="frame"]'); const artwork = document.querySelector('#artwork-layer [data-frame-role="artwork"]');
-      if (!config?.size || !frame) return;
-      const canvas = document.getElementById('design-canvas'); const oldW = canvas.offsetWidth; const oldH = canvas.offsetHeight;
-      const ratio = config.size.width / config.size.height; const max = 720; const newW = ratio >= 1 ? max : Math.round(max * ratio); const newH = ratio >= 1 ? Math.round(max / ratio) : max;
-      Array.from(document.querySelectorAll('#artwork-layer .canvas-item')).filter(item => item !== frame && item !== artwork).forEach(item => { item.style.left = `${item.offsetLeft / oldW * newW}px`; item.style.top = `${item.offsetTop / oldH * newH}px`; item.style.width = `${item.offsetWidth / oldW * newW}px`; item.style.height = `${item.offsetHeight / oldH * newH}px`; });
-      canvas.style.width = `${newW}px`; canvas.style.height = `${newH}px`; const drawing = document.getElementById('drawing-layer'); drawing.width = newW; drawing.height = newH;
-      if (artwork) { artwork.style.left = `${newW * .005}px`; artwork.style.top = `${newH * .005}px`; artwork.style.width = `${newW * .99}px`; artwork.style.height = `${newH * .99}px`; }
-      const bounds = JSON.parse(frame.dataset.frameBounds || '{}'); const visibleW = (bounds.maxX - bounds.minX) || bounds.imgW; const visibleH = (bounds.maxY - bounds.minY) || bounds.imgH;
-      if (visibleW && visibleH) { const sx = newW / visibleW, sy = newH / visibleH; frame.style.width = `${bounds.imgW * sx}px`; frame.style.height = `${bounds.imgH * sy}px`; frame.style.left = `${-bounds.minX * sx}px`; frame.style.top = `${-bounds.minY * sy}px`; }
-      if (config?.dynamicThickness) window.applyFrameThickness(config.thickness || 100, false);
-      window.updateCanvasScale();
-      recordState();
+    window.refitActiveFrameForSize = async () => {
+      const config = window.activeFrameConfiguration;
+      if (!config?.size) return;
+      const canvas = document.getElementById('design-canvas');
+      const oldW = canvas.offsetWidth;
+      const oldH = canvas.offsetHeight;
+      const ratio = config.size.width / config.size.height;
+      const max = 720;
+      const newW = ratio >= 1 ? max : Math.round(max * ratio);
+      const newH = ratio >= 1 ? Math.round(max / ratio) : max;
+
+      // Scale positions/dimensions of other items (decorations, custom layers)
+      Array.from(document.querySelectorAll('#artwork-layer .canvas-item'))
+        .filter(item => {
+          const role = item.dataset.frameRole;
+          return role !== 'frame' && role !== 'middle-frame' && role !== 'inner-frame' && role !== 'artwork';
+        })
+        .forEach(item => {
+          item.style.left = `${item.offsetLeft / oldW * newW}px`;
+          item.style.top = `${item.offsetTop / oldH * newH}px`;
+          item.style.width = `${item.offsetWidth / oldW * newW}px`;
+          item.style.height = `${item.offsetHeight / oldH * newH}px`;
+        });
+
+      canvas.style.width = `${newW}px`;
+      canvas.style.height = `${newH}px`;
+      const drawing = document.getElementById('drawing-layer');
+      if (drawing) {
+        drawing.width = newW;
+        drawing.height = newH;
+      }
+
+      await window.rebuildEditorCanvasLayers(false);
     };
 
     window.currentCanvasScale = 1;
@@ -12578,7 +12846,7 @@
           window.renderAssetColourChips();
           window.clearAssetImagePreview();
           window.handleAssetCategoryChange();
-          
+
           toggleAdminSection('orders');
           loadGlobalAssets();
           if (window.loadAdminManageElementsTable) window.loadAdminManageElementsTable();
