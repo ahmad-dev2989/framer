@@ -6136,7 +6136,7 @@
         <input type="file" id="real-file-uploader" class="hidden" accept="image/*">
     </div>
 
-    <!-- Frame Context Panel (Desktop Right) -->
+    <!-- Frame Context Panel (Desktop Right - Popup) -->
     <div id="desktop-frame-panel"
       class="hidden absolute top-20 right-6 bg-white shadow-xl border border-sand/60 rounded-2xl p-5 w-64 z-40 flex-col gap-4">
       <div class="border-b border-sand/40 pb-2 mb-2">
@@ -6153,6 +6153,19 @@
         </div>
         <input type="range" id="dt-thickness-slider" min="70" max="150" value="100" class="w-full accent-flame"
           oninput="applyFrameThickness(this.value)">
+      </div>
+    </div>
+
+    <!-- PERMANENT Live Design Summary (Desktop Right) -->
+    <div id="permanent-live-summary-panel"
+      class="hidden md:flex absolute top-[280px] right-6 bg-white shadow-xl border border-sand/60 rounded-2xl p-5 w-64 z-30 flex-col">
+      <span
+        class="text-[11px] font-black uppercase tracking-wider text-charcoal block border-b border-sand/60 pb-3 mb-2 flex items-center gap-2">
+        <i data-lucide="eye" class="w-4 h-4 text-flame"></i> Live Design Summary
+      </span>
+      <!-- Changed ID to Class to prevent duplicate ID conflicts -->
+      <div class="live-frame-preview-target space-y-1">
+        <p class="text-xs text-slate font-medium py-2">Select a template to view details.</p>
       </div>
     </div>
 
@@ -9734,8 +9747,9 @@
     window.updateLiveFramePreview = () => {
       const config = window.activeFrameConfiguration;
       const product = window.activeFrameProduct;
-      const container = document.getElementById('live-frame-preview-content');
-      if (!config || !product || !container) return;
+      // Target both left and right panel summary containers via class instead of ID
+      const containers = document.querySelectorAll('#live-frame-preview-content, .live-frame-preview-target');
+      if (!config || !product || containers.length === 0) return;
 
       let html = '';
       let totalPrice = 0;
@@ -9780,11 +9794,55 @@
         </div>
       `;
 
-      container.innerHTML = html;
+      containers.forEach(c => c.innerHTML = html);
     };
 
-    // Frame Thickness Hover Tooltip Brain (Resolves strict geometry so overlapping works flawlessly)
+    // Frame Thickness Hover Tooltip Brain (Resolves strict geometry so artwork is ignored)
     let tooltipThrottle = false;
+    document.addEventListener('mousemove', (e) => {
+      const tooltip = document.getElementById('frame-thickness-tooltip');
+      if (!tooltip) return;
+
+      const workspace = document.getElementById('editor-workspace-main');
+      if (!workspace || !workspace.contains(e.target)) {
+        tooltip.classList.add('hidden');
+        return;
+      }
+
+      if (tooltipThrottle) return;
+      tooltipThrottle = true;
+      setTimeout(() => tooltipThrottle = false, 50);
+
+      // Uses getRealTarget to verify the exact non-transparent layer being hovered
+      const item = getRealTarget(e.clientX, e.clientY);
+
+      // Strict check: ONLY show tooltip if the role is a frame (ignores artwork)
+      if (item && ['frame', 'middle-frame', 'inner-frame'].includes(item.dataset.frameRole)) {
+        const role = item.dataset.frameRole;
+        const config = window.activeFrameConfiguration;
+        const product = window.activeFrameProduct;
+
+        if (config && product) {
+          let baseThick = 2.0, pct = 100, name = '';
+          if (role === 'frame') { baseThick = product.outerFrame?.thickness || 2.0; pct = config.thickness || 100; name = 'Outer Frame'; }
+          else if (role === 'middle-frame') { baseThick = product.middleFrame?.thickness || 2.0; pct = config.middleThickness || 100; name = 'Middle Frame'; }
+          else if (role === 'inner-frame') { baseThick = product.innerFrame?.thickness || 2.0; pct = config.innerThickness || 100; name = 'Inner Frame'; }
+
+          const finalThick = (baseThick * (pct / 100)).toFixed(1);
+          tooltip.innerHTML = `<span class="text-sand/80">${name}:</span> <span class="text-flame ml-1">${finalThick} cm</span>`;
+
+          tooltip.style.left = (e.clientX + 15) + 'px';
+          tooltip.style.top = (e.clientY + 15) + 'px';
+          tooltip.classList.remove('hidden');
+          return;
+        }
+      }
+      // Hide if artwork is hovered or out of bounds
+      tooltip.classList.add('hidden');
+    });
+
+    // Frame Thickness Hover Tooltip Brain (Resolves strict geometry so overlapping works flawlessly)
+    tooltipThrottle = false;
     document.addEventListener('mousemove', (e) => {
       const tooltip = document.getElementById('frame-thickness-tooltip');
       if (!tooltip) return;
