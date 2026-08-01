@@ -1022,7 +1022,7 @@
               <a href="${resolvedUrl}" class="${linkClass} flex items-center dropdown-trigger" onclick="event.preventDefault(); window.handlePathRouting('${resolvedUrl}')">
                 ${item.name} <span class="material-symbols-outlined text-[14px] ml-1">expand_more</span>
               </a>
-              <div class="dropdown-menu absolute top-full left-0 mt-2 w-48 bg-white shadow-xl rounded-md opacity-0 pointer-events-none transition-all flex flex-col py-2 border border-outline-variant/30 z-50">
+              <div class="dropdown-menu absolute top-full left-0 mt-2 w-48 bg-white shadow-xl rounded-md flex flex-col py-2 border border-outline-variant/30 z-50">
                 ${item.dropdown.map(d => {
             // Corrected Sub-URL Resolution
             const resolvedSubUrl = d.customUrl || d.page || d.url || '/';
