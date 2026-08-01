@@ -12158,6 +12158,13 @@
       const origin = window.location.origin;
 
       let cleanPath = pathname || "/";
+
+      // Native browser handling for Mailto (Emails), Tel (Phones), and External Links
+      if (cleanPath.startsWith('mailto:') || cleanPath.startsWith('tel:') || cleanPath.startsWith('http')) {
+        window.location.href = cleanPath;
+        return;
+      }
+
       if (cleanPath.endsWith('/') && cleanPath !== '/') {
         cleanPath = cleanPath.slice(0, -1);
       }
@@ -12172,12 +12179,17 @@
           }
         }
 
+        // FAST TRACK: Bypasses the loading screen for instant scroll to the Contact Section
+        if (cleanPath === "/contact") {
+          window.handlePathRouting(cleanPath, false);
+          return;
+        }
+
         let text = "Curating your workspace...";
         if (cleanPath === "/" || cleanPath === "") text = "Returning home...";
         else if (cleanPath === "/products") text = "Curating landing gallery...";
         else if (cleanPath === "/about-us") text = "Curating our story...";
         else if (cleanPath === "/blogs") text = "Retrieving editorial journals...";
-        else if (cleanPath === "/contact") text = "Accessing customer support desk...";
         else if (cleanPath === "/faq") text = "Curating FAQ guides...";
         else if (cleanPath === "/order-tracking" || cleanPath === "/orders-tracking") text = "Retrieving order logs...";
         else if (cleanPath === "/custom-frame-design") text = "Loading custom frame builder...";
