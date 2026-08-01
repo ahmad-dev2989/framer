@@ -6,15 +6,7 @@
     navigation: [
       { id: "nav_home", name: "HOME", url: "/", enabled: true },
       {
-        id: "nav_products", name: "PRODUCTS", url: "/products", enabled: true, dropdown: [
-          { name: "Premium Frames", url: "/products" },
-          { name: "Standard Frames", url: "/products" },
-          { name: "Wooden Frames", url: "/products" },
-          { name: "Metal Frames", url: "/products" },
-          { name: "Floating Frames", url: "/products" },
-          { name: "Canvas Frames", url: "/products" },
-          { name: "Custom Frames", url: "/products" }
-        ]
+        id: "nav_products", name: "PRODUCTS", url: "/products", enabled: true, dropdown: []
       },
       {
         id: "nav_contact", name: "CONTACT", url: "/contact", enabled: true, dropdown: [
@@ -602,12 +594,42 @@
       document.head.appendChild(cmsGlobalStyle);
     }
 
+    // FETCH LIVE CATEGORIES FROM FIREBASE
+    if (typeof window.loadCategoriesData === 'function') {
+      await window.loadCategoriesData();
+    }
+    const liveCategoryLinks = (window.globalCategories || []).map(cat => ({
+      name: cat.name,
+      url: `/category/${cat.id}`
+    }));
+    
+    // Fallback if no categories have been added by admin yet
+    if (liveCategoryLinks.length === 0) {
+      liveCategoryLinks.push({ name: "All Products", url: "/products" });
+    }
+
+    // UPDATE THE BASE DEFAULT BEHAVIOR SO RESET GRABS THESE
+    const defaultProdNav = window.defaultCustomization.navigation.find(n => n.id === "nav_products");
+    if (defaultProdNav) {
+      defaultProdNav.dropdown = liveCategoryLinks;
+    }
+
     try {
       const doc = await db.collection('settings').doc('customization').get();
       let dbData = {};
       if (doc.exists) {
         dbData = doc.data();
       }
+
+      // AUTO-SYNC EXISTING DATABASE DROPDOWNS TO LIVE CATEGORIES
+      // (This instantly removes your dummy links if they were previously saved)
+      if (dbData.navigation) {
+        const dbProdNav = dbData.navigation.find(n => n.id === "nav_products");
+        if (dbProdNav) {
+          dbProdNav.dropdown = liveCategoryLinks;
+        }
+      }
+
       // Merge with defaults to ensure future-ready items are populated
       mergeDefaults(dbData, window.defaultCustomization);
       window.publicCustomization = clone(dbData);
