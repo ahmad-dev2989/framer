@@ -594,14 +594,23 @@
       document.head.appendChild(cmsGlobalStyle);
     }
 
-    // FETCH LIVE CATEGORIES FROM FIREBASE
-    if (typeof window.loadCategoriesData === 'function') {
-      await window.loadCategoriesData();
+    // FETCH LIVE CATEGORIES DIRECTLY FROM FIREBASE
+    let liveCategoryLinks = [];
+    try {
+      // Access the initialized Firebase instance directly
+      const dbInstance = firebase.firestore();
+      const snap = await dbInstance.collection('categories').orderBy('createdAt', 'desc').get();
+      
+      liveCategoryLinks = snap.docs.map(doc => ({
+        name: doc.data().name,
+        url: `/category/${doc.id}`
+      }));
+
+      // Bind it to window so index.html can safely use it globally too
+      window.globalCategories = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+      console.warn("CMS could not fetch live categories from database:", error);
     }
-    const liveCategoryLinks = (window.globalCategories || []).map(cat => ({
-      name: cat.name,
-      url: `/category/${cat.id}`
-    }));
     
     // Fallback if no categories have been added by admin yet
     if (liveCategoryLinks.length === 0) {
