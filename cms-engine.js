@@ -1195,7 +1195,7 @@
 
         // Build Footer Icons
         footerHtml += `
-          <a href="${s.url}" target="_blank" rel="noopener noreferrer" aria-label="${s.name}" class="w-10 h-10 rounded-full border border-outline-variant/30 flex items-center justify-center transition-all hover:opacity-80" style="${iconColorStyle}">
+          <a href="${s.url}" target="_blank" rel="noopener noreferrer" aria-label="${s.name}" class="w-10 h-10 rounded-full border border-outline-variant/30 flex items-center justify-center transition-all hover:bg-[var(--text-header,#000102)] hover:text-white hover:border-[var(--text-header,#000102)] hover:scale-110" style="${iconColorStyle}">
             <i class="${s.icon} text-sm"></i>
           </a>
         `;
