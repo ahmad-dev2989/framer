@@ -5020,7 +5020,7 @@
             </div>
 
             <!-- Price & Discount -->
-            <div class="flex items-center gap-3 mb-6">
+            <div class="flex items-center gap-3 mb-6 mt-auto">
               <span id="pd-price" class="text-2xl sm:text-3xl font-bold text-gray-900">$195.00</span>
               <span id="pd-original-price" class="text-lg text-gray-400 line-through">$250.00</span>
               <span id="pd-discount-badge"
@@ -8937,12 +8937,13 @@
               'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=400&h=400';
 
             return `
-             <div class="reveal bg-surface-container-lowest p-4 group active" ${delayStyle}>
-               <div class="product-preview-container relative overflow-hidden mb-6 aspect-[4/5] bg-surface-container !p-0 !outline-none !border !border-[#9eb6c4] rounded-sm flex items-center justify-center">
+             <div class="reveal bg-surface-container-lowest p-4 group active flex flex-col h-full" ${delayStyle}>
+               <div class="product-preview-container relative overflow-hidden mb-6 aspect-[4/5] bg-surface-container !p-0 !outline-none !border-4 !border-[#9eb6c4] rounded-sm flex items-center justify-center">
                  <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="${galleryImg}" alt="${product.name}">
                  ${hasSale ? `<div class="absolute top-4 right-4 bg-on-primary px-3 py-1 text-label-sm font-label-sm shadow-sm z-10 text-primary font-bold">Sale</div>` : ''}
                  ${product.outOfStock ? `<div class="absolute top-4 left-4 bg-error text-on-primary px-3 py-1 text-label-sm font-label-sm shadow-sm z-10">Out of Stock</div>` : ''}
                </div>
+
                <div class="flex items-center gap-1 text-secondary-fixed-dim mb-2">
                  <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
                  <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
@@ -8953,7 +8954,7 @@
                </div>
                <h3 class="text-headline-md font-headline-md text-primary mb-2 text-xl">${product.name}</h3>
                <p class="text-on-surface-variant text-body-md mb-4 line-clamp-2">${desc}</p>
-               <div class="flex items-center gap-3 mb-6">
+               <div class="flex items-center gap-3 mb-6 mt-auto">
                  ${priceHtml}
                </div>
                <button onclick="window.openProductDetail('${product.id}')" class="w-full py-3 bg-primary text-on-primary text-label-sm font-label-sm hover:bg-secondary transition-all ${product.outOfStock ? 'opacity-50 cursor-not-allowed' : ''}" ${product.outOfStock ? 'disabled' : ''}>View Details</button>
@@ -17647,8 +17648,8 @@
           'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=400&h=400';
 
         return `
-          <div class="reveal bg-surface-container-lowest p-4 group active border border-outline-variant/30 rounded-lg hover:shadow-xl transition-all duration-300" ${delayStyle}>
-            <div class="product-preview-container relative overflow-hidden mb-6 aspect-[4/5] bg-surface-container !p-0 !outline-none !border !border-[#9eb6c4] rounded-sm flex items-center justify-center cursor-pointer" onclick="window.handlePathRouting('/products/${slugify(product.name)}')">
+          <div class="reveal bg-surface-container-lowest p-4 group active border border-outline-variant/30 rounded-lg hover:shadow-xl transition-all duration-300 flex flex-col h-full" ${delayStyle}>
+            <div class="product-preview-container relative overflow-hidden mb-6 aspect-[4/5] bg-surface-container !p-0 !outline-none !border-4 !border-[#9eb6c4] rounded-sm flex items-center justify-center cursor-pointer" onclick="window.handlePathRouting('/products/${slugify(product.name)}')">
               <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="${galleryImg}" alt="${product.name}">
               ${hasSale ? `<div class="absolute top-4 right-4 bg-on-primary px-3 py-1 text-label-sm font-label-sm shadow-sm z-10 text-primary font-bold">Sale</div>` : ''}
               ${product.outOfStock ? `<div class="absolute top-4 left-4 bg-error text-on-primary px-3 py-1 text-label-sm font-label-sm shadow-sm z-10">Out of Stock</div>` : ''}
@@ -17663,7 +17664,7 @@
             </div>
             <h3 class="text-headline-md font-headline-md text-primary mb-2 text-xl cursor-pointer hover:text-secondary transition line-clamp-1" onclick="window.handlePathRouting('/products/${slugify(product.name)}')">${product.name}</h3>
             <p class="text-on-surface-variant text-body-md mb-4 line-clamp-2">${desc}</p>
-            <div class="flex items-center gap-3 mb-6">
+            <div class="flex items-center gap-3 mb-6 mt-auto">
               ${priceHtml}
             </div>
             <button onclick="window.handlePathRouting('/products/${slugify(product.name)}')" class="w-full py-3 bg-primary text-on-primary text-label-sm font-label-sm hover:bg-secondary transition-all rounded ${product.outOfStock ? 'opacity-50 cursor-not-allowed' : ''}" ${product.outOfStock ? 'disabled' : ''}>View Details</button>
