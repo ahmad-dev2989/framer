@@ -829,9 +829,21 @@
       z-index: 1010;
       opacity: 0;
       visibility: hidden;
-      transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1) 1s, 
-                  transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) 1s, 
-                  visibility 0s linear 1.25s;
+      /* Reduced to 0.5s delay */
+      transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0.5s, 
+                  transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0.5s, 
+                  visibility 0s linear 0.75s;
+    }
+
+    /* Invisible bridge to prevent hover loss between button and menu */
+    .nav-dropdown-container .dropdown-menu::before {
+      content: '';
+      position: absolute;
+      top: -15px;
+      left: 0;
+      width: 100%;
+      height: 15px;
+      background: transparent;
     }
 
     .nav-dropdown-container:hover .dropdown-menu,
