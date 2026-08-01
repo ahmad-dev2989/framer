@@ -828,15 +828,20 @@
       min-width: 180px;
       z-index: 1010;
       opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      visibility: hidden;
+      transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1) 1s, 
+                  transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) 1s, 
+                  visibility 0s linear 1.25s;
     }
 
     .nav-dropdown-container:hover .dropdown-menu,
     .nav-dropdown-container.active .dropdown-menu {
       opacity: 1;
-      pointer-events: auto;
+      visibility: visible;
       transform: translateX(-50%) translateY(0) scale(1);
+      transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0s, 
+                  transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0s, 
+                  visibility 0s linear 0s;
     }
 
     .dropdown-menu a {
@@ -3982,12 +3987,12 @@
 
       <!-- Manual slideshow navigation arrows -->
       <button id="hero-prev-btn"
-        class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-40 bg-white/20 hover:bg-secondary text-white w-12 h-12 items-center justify-center rounded-full backdrop-blur-sm transition-all"
+        class="hero-nav-arrow hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-40 bg-white/20 hover:bg-secondary text-white w-12 h-12 items-center justify-center rounded-full backdrop-blur-sm"
         aria-label="Previous Slide">
         <span class="material-symbols-outlined">chevron_left</span>
       </button>
       <button id="hero-next-btn"
-        class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-40 bg-white/20 hover:bg-secondary text-white w-12 h-12 items-center justify-center rounded-full backdrop-blur-sm transition-all"
+        class="hero-nav-arrow hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-40 bg-white/20 hover:bg-secondary text-white w-12 h-12 items-center justify-center rounded-full backdrop-blur-sm"
         aria-label="Next Slide">
         <span class="material-symbols-outlined">chevron_right</span>
       </button>
