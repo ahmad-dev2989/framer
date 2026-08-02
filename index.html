@@ -5377,7 +5377,7 @@
             </div>
 
             <div class="flex flex-col items-center gap-2 cursor-pointer group shrink-0"
-              onclick="triggerTransition('editor', '8x10 Ratio')">
+              onclick="window.launchEmptyEditor('8x10 Classic Ratio', 400, 500)">
               <div
                 class="w-14 h-14 rounded-2xl glass-card flex items-center justify-center text-charcoal group-hover:border-flame group-hover:scale-105 transition transform">
                 <span class="font-black text-sm">8x10"</span>
@@ -12603,6 +12603,9 @@
       }
       else if (cleanPath === "/custom-frame-design") {
         window.switchView('editor', false);
+        if (!window.activeFrameProduct) {
+          window.launchEmptyEditor('Custom Workspace', 400, 500);
+        }
         window.updateSEOMetadata({
           title: "Bespoke Frame Builder & Customizer Workspace | FrameCraft Studio",
           description: "Create your museum-grade custom frame in real-time. Enter millimeter-precision dimensions, select profile materials, and add custom mounts.",
@@ -15282,6 +15285,43 @@
       }
     }
 
+    window.launchEmptyEditor = (name, width, height) => {
+      const defaultTripleFrameProduct = {
+          id: 'custom-workspace',
+          name: name || 'Custom Triple Frame',
+          price: 95.00,
+          description: 'Bespoke custom sized framing.',
+          bgImage: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80',
+          outerFrame: {
+              name: 'Classic Oak Wood',
+              image: 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=800&h=800',
+              price: 45.00,
+              thickness: 4.0,
+              dynamicThickness: true,
+              colors: [{name: 'Oak Wood', value: '#8b5a2b'}]
+          },
+          middleFrame: {
+              name: 'White Matte',
+              image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800&h=800',
+              price: 25.00,
+              thickness: 6.0,
+              dynamicThickness: true,
+              colors: [{name: 'Silk White', value: '#ffffff'}]
+          },
+          innerFrame: {
+              name: 'Grey-Blue Accent',
+              image: 'https://images.unsplash.com/photo-1604339454148-1c23f0b5d156?auto=format&fit=crop&q=80&w=800&h=800',
+              price: 25.00,
+              thickness: 1.5,
+              dynamicThickness: true,
+              colors: [{name: 'Grey Blue', value: '#9eb6c4'}]
+          },
+          sizes: [{width: width || 400, height: height || 500, name: name || "Custom"}]
+      };
+
+      window.loadProductIntoEditor(defaultTripleFrameProduct);
+    };
+
     function startCustomSizedEditor() {
       const type = document.getElementById('frame-shape-type').value;
       let w, h, name;
@@ -15297,12 +15337,9 @@
       }
 
       const canvas = document.getElementById('design-canvas');
-      const frameOverlay = document.getElementById('frame-overlay');
       const dWidth = Math.min(w, 800);
       const dHeight = Math.min(h, 800);
-      canvas.style.width = dWidth + 'px';
-      canvas.style.height = dHeight + 'px';
-
+      
       if (type === 'circle') {
         canvas.style.borderRadius = '50%';
       } else if (type === 'rounded') {
@@ -15311,10 +15348,7 @@
         canvas.style.borderRadius = '0px';
       }
 
-      const dLayer = document.getElementById('drawing-layer');
-      dLayer.width = dWidth;
-      dLayer.height = dHeight;
-      triggerTransition('editor', name);
+      window.launchEmptyEditor(name, dWidth, dHeight);
     }
 
     const toolBtns = document.querySelectorAll('.editor-tool-btn');
