@@ -9869,6 +9869,9 @@
         productId: normProduct.id || normProduct.productId || null,
         productName: normProduct.name || 'Custom Frame',
         size: null,
+        outerColour: null,  // FIX: Start with original texture
+        middleColour: null, // FIX: Start with original texture
+        innerColour: null,  // FIX: Start with original texture
         colour: null,
         thickness: 100,
         middleThickness: 100,
@@ -9879,9 +9882,8 @@
         ...(normProduct.frameConfiguration || {})
       };
       const configuredSizes = window.activeFrameConfiguration.sizes || defaultFrameSizes;
-      const configuredColours = window.activeFrameConfiguration.colours || defaultFrameColours;
       window.activeFrameConfiguration.size = configuredSizes[0];
-      window.activeFrameConfiguration.colour = configuredColours[0];
+
       const artLayer = document.getElementById('artwork-layer');
       if (artLayer) artLayer.innerHTML = '';
       document.getElementById('design-canvas').style.backgroundColor = '#ffffff';
@@ -10302,7 +10304,6 @@
       if (value === 'original') {
         if (role === 'frame') {
           config.outerColour = null;
-          config.colour = null;
         } else if (role === 'middle-frame') {
           config.middleColour = null;
         } else if (role === 'inner-frame') {
@@ -10327,7 +10328,6 @@
       if (colour) {
         if (role === 'frame') {
           config.outerColour = colour;
-          config.colour = colour;
         } else if (role === 'middle-frame') {
           config.middleColour = colour;
         } else if (role === 'inner-frame') {
