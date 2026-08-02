@@ -10344,10 +10344,8 @@
       if (!colourConfig) {
         const existingColor = frameEl.querySelector('.frame-colour-overlay');
         const existingLuma = frameEl.querySelector('.frame-luma-overlay');
-        const existingMultiply = frameEl.querySelector('.frame-multiply-overlay');
         if (existingColor) existingColor.remove();
         if (existingLuma) existingLuma.remove();
-        if (existingMultiply) existingMultiply.remove();
         return;
       }
 
@@ -10356,17 +10354,11 @@
       if (!slices || !bounds || !bounds.imgW || !bounds.imgH) {
         const existingColor = frameEl.querySelector('.frame-colour-overlay');
         const existingLuma = frameEl.querySelector('.frame-luma-overlay');
-        const existingMultiply = frameEl.querySelector('.frame-multiply-overlay');
         if (existingColor) existingColor.remove();
         if (existingLuma) existingLuma.remove();
-        if (existingMultiply) existingMultiply.remove();
         return;
       }
       frameEl.style.isolation = 'isolate';
-
-      // Clean up the old multiply layer if it exists from previous code
-      const oldMultiply = frameEl.querySelector('.frame-multiply-overlay');
-      if (oldMultiply) oldMultiply.remove();
 
       let overlayColor = frameEl.querySelector('.frame-colour-overlay');
       if (!overlayColor) {
@@ -10376,7 +10368,7 @@
         overlayColor.style.borderStyle = 'solid';
         overlayColor.style.background = 'transparent';
         overlayColor.style.mixBlendMode = 'color';
-        overlayColor.style.opacity = '1'; // Full hue replacement
+        overlayColor.style.opacity = '1';
         overlayColor.style.zIndex = '5';
         frameEl.appendChild(overlayColor);
       }
@@ -10388,14 +10380,18 @@
         overlayLuma.style.boxSizing = 'border-box';
         overlayLuma.style.borderStyle = 'solid';
         overlayLuma.style.background = 'transparent';
-        overlayLuma.style.mixBlendMode = 'overlay'; // Better than multiply for light colors/white
-        overlayLuma.style.opacity = '0.85'; // High opacity pushes brightness to match selected color perfectly
+        overlayLuma.style.mixBlendMode = 'overlay';
+        overlayLuma.style.opacity = '0.85';
         overlayLuma.style.zIndex = '6';
         frameEl.appendChild(overlayLuma);
       }
 
-      const sx = frameEl.offsetWidth / bounds.imgW;
-      const sy = frameEl.offsetHeight / bounds.imgH;
+      // FIX: Extract widths directly from the inline styles to prevent layout thrashing zeros
+      const elWidth = parseFloat(frameEl.style.width) || frameEl.offsetWidth;
+      const elHeight = parseFloat(frameEl.style.height) || frameEl.offsetHeight;
+
+      const sx = elWidth / bounds.imgW;
+      const sy = elHeight / bounds.imgH;
       const visibleW = (bounds.maxX - bounds.minX) || bounds.imgW;
       const visibleH = (bounds.maxY - bounds.minY) || bounds.imgH;
       const visLeft = (bounds.minX || 0) * sx;
@@ -10508,9 +10504,8 @@
       const slices = JSON.parse(frameEl.dataset.frameSlices || 'null');
       const bounds = JSON.parse(frameEl.dataset.frameBounds || '{}');
 
-      // FIX: Rely purely on the geometric slices to enable dynamic thickness, bypassing the buggy config booleans.
       if (croppedSrc && slices && bounds && bounds.imgW && bounds.imgH) {
-        if (img) { img.style.transform = ''; img.style.visibility = 'hidden'; }
+        if (img) { img.style.visibility = 'hidden'; }
         let borderEl = frameEl.querySelector('.dynamic-frame-border');
         if (!borderEl) {
           borderEl = document.createElement('div');
@@ -10521,15 +10516,19 @@
           borderEl.style.zIndex = '1';
           borderEl.style.borderImageSource = `url("${croppedSrc}")`;
           borderEl.style.borderImageSlice = `${slices.sliceTop} ${slices.sliceRight} ${slices.sliceBottom} ${slices.sliceLeft}`;
-          borderEl.style.borderImageRepeat = 'round'; // Crucial for scaling frame textures!
+          borderEl.style.borderImageRepeat = 'round';
           frameEl.appendChild(borderEl);
         } else {
           borderEl.style.borderImageSource = `url("${croppedSrc}")`;
           borderEl.style.borderImageSlice = `${slices.sliceTop} ${slices.sliceRight} ${slices.sliceBottom} ${slices.sliceLeft}`;
         }
 
-        const sx = frameEl.offsetWidth / bounds.imgW;
-        const sy = frameEl.offsetHeight / bounds.imgH;
+        // FIX: Extract widths directly from the inline styles to prevent layout thrashing zeros
+        const elWidth = parseFloat(frameEl.style.width) || frameEl.offsetWidth;
+        const elHeight = parseFloat(frameEl.style.height) || frameEl.offsetHeight;
+
+        const sx = elWidth / bounds.imgW;
+        const sy = elHeight / bounds.imgH;
         const visibleW = (bounds.maxX - bounds.minX) || bounds.imgW;
         const visibleH = (bounds.maxY - bounds.minY) || bounds.imgH;
 
