@@ -12910,6 +12910,88 @@
       }
     });
 
+    window.autoSeedDemoStore = async () => {
+      try {
+        const prodSnap = await db.collection('products').limit(1).get();
+        if (!prodSnap.empty) return; // Only seed if completely empty
+
+        const categories = [
+          { id: 'cat-custome', name: 'CUSTOME', desc: 'Fully customizable, bespoke frames tailored to your exact specifications.', img: 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=400' },
+          { id: 'cat-elite', name: 'ELITE', desc: 'Premium elite collection for the most prestigious artworks.', img: 'https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&q=80&w=400' },
+          { id: 'cat-wood', name: 'WOOD', desc: 'Natural, organic wood finishes bringing warmth to your space.', img: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&q=80&w=400' },
+          { id: 'cat-royal', name: 'ROYAL', desc: 'Royal, ornate, and highly detailed classical designs.', img: 'https://images.unsplash.com/photo-1550584488-06764ee714a6?auto=format&fit=crop&q=80&w=400' },
+          { id: 'cat-silver', name: 'SILVER', desc: 'Sleek, modern silver frames for contemporary aesthetics.', img: 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=400' },
+          { id: 'cat-gold', name: 'GOLD', desc: 'Luxurious gold frames providing timeless elegance.', img: 'https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&q=80&w=400' }
+        ];
+
+        const extendedColors = [
+          {name: 'Oak Wood', value: '#8b5a2b'},
+          {name: 'Ebony Black', value: '#1a1a1a'},
+          {name: 'Pure White', value: '#ffffff'},
+          {name: 'Silver Matte', value: '#e3e2e0'},
+          {name: 'Gold Leaf', value: '#d4af37'},
+          {name: 'Rose Gold', value: '#b76e79'},
+          {name: 'Champagne', value: '#f7e7ce'},
+          {name: 'Rich Walnut', value: '#5c4033'},
+          {name: 'Mahogany', value: '#4a0404'},
+          {name: 'Deep Cherry', value: '#651a14'},
+          {name: 'Dark Maple', value: '#800000'},
+          {name: 'Light Ash', value: '#c6b39d'},
+          {name: 'Natural Pine', value: '#d2b48c'},
+          {name: 'Grey Blue', value: '#9eb6c4'},
+          {name: 'Royal Navy', value: '#000080'},
+          {name: 'Forest Green', value: '#228b22'}
+        ];
+
+        const svgOuter = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500"><path fill-rule="evenodd" clip-rule="evenodd" fill="#8b5a2b" d="M0,0 H400 V500 H0 Z M20,20 V480 H380 V20 Z"/></svg>`);
+        const svgMiddle = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500"><path fill-rule="evenodd" clip-rule="evenodd" fill="#e3e2e0" d="M0,0 H400 V500 H0 Z M20,20 V480 H380 V20 Z"/></svg>`);
+        const svgInner = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500"><path fill-rule="evenodd" clip-rule="evenodd" fill="#9eb6c4" d="M0,0 H400 V500 H0 Z M20,20 V480 H380 V20 Z"/></svg>`);
+
+        const getFrameObj = (namePrefix) => ({
+          outerFrame: { name: `${namePrefix} Outer`, image: svgOuter, price: 45.00, thickness: 4.0, dynamicThickness: true, colors: extendedColors },
+          middleFrame: { name: `${namePrefix} Matte`, image: svgMiddle, price: 25.00, thickness: 6.0, dynamicThickness: true, colors: extendedColors },
+          innerFrame: { name: `${namePrefix} Inner`, image: svgInner, price: 25.00, thickness: 1.5, dynamicThickness: true, colors: extendedColors }
+        });
+
+        const batch = db.batch();
+
+        for (const cat of categories) {
+          const catRef = db.collection('categories').doc(cat.id);
+          batch.set(catRef, {
+            name: cat.name,
+            desc: cat.desc,
+            imageURL: cat.img,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+
+          for (let i = 1; i <= 3; i++) {
+            const prodRef = db.collection('products').doc();
+            const prodName = `${cat.name} Edition ${i}`;
+            batch.set(prodRef, {
+              name: prodName,
+              price: 95.00,
+              description: `The ${prodName} is a premium handcrafted frame from our ${cat.name} collection. It features a stunning three-layer profile perfect for preserving your finest artwork.`,
+              categoryId: cat.id,
+              bgImage: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80',
+              galleryImages: [cat.img, 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&q=80&w=400'],
+              images: [],
+              sizes: [ {width: 8, height: 10, name: '8x10" Classic'}, {width: 16, height: 20, name: '16x20" Medium'}, {width: 24, height: 36, name: '24x36" Large'} ],
+              ...getFrameObj(prodName),
+              createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+          }
+        }
+        await batch.commit();
+
+        // Force reload memory
+        if (window.loadCategoriesData) await window.loadCategoriesData();
+        if (window.loadProductTemplates) await loadProductTemplates();
+        if (window.renderLandingCategories) window.renderLandingCategories();
+      } catch (err) {
+        console.error("Auto-seeder failed:", err);
+      }
+    };
+
     window.addEventListener('DOMContentLoaded', async () => {
       // Init CMS engine
       try {
@@ -12917,6 +12999,9 @@
       } catch (err) {
         console.error("CMS Initialization failed:", err);
       }
+      
+      // Auto Seed Database if completely empty
+      await window.autoSeedDemoStore();
 
       // 1. Initial dynamic CMS pages
       await window.initDynamicPages();
@@ -15291,6 +15376,25 @@
       const svgMiddle = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500"><path fill-rule="evenodd" clip-rule="evenodd" fill="#e3e2e0" d="M0,0 H400 V500 H0 Z M20,20 V480 H380 V20 Z"/></svg>`);
       const svgInner = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500"><path fill-rule="evenodd" clip-rule="evenodd" fill="#9eb6c4" d="M0,0 H400 V500 H0 Z M20,20 V480 H380 V20 Z"/></svg>`);
 
+      const extendedColors = [
+        {name: 'Oak Wood', value: '#8b5a2b'},
+        {name: 'Ebony Black', value: '#1a1a1a'},
+        {name: 'Pure White', value: '#ffffff'},
+        {name: 'Silver Matte', value: '#e3e2e0'},
+        {name: 'Gold Leaf', value: '#d4af37'},
+        {name: 'Rose Gold', value: '#b76e79'},
+        {name: 'Champagne', value: '#f7e7ce'},
+        {name: 'Rich Walnut', value: '#5c4033'},
+        {name: 'Mahogany', value: '#4a0404'},
+        {name: 'Deep Cherry', value: '#651a14'},
+        {name: 'Dark Maple', value: '#800000'},
+        {name: 'Light Ash', value: '#c6b39d'},
+        {name: 'Natural Pine', value: '#d2b48c'},
+        {name: 'Grey Blue', value: '#9eb6c4'},
+        {name: 'Royal Navy', value: '#000080'},
+        {name: 'Forest Green', value: '#228b22'}
+      ];
+
       const defaultTripleFrameProduct = {
           id: 'custom-workspace',
           name: name || 'Custom Triple Frame',
@@ -15303,7 +15407,7 @@
               price: 45.00,
               thickness: 4.0,
               dynamicThickness: true,
-              colors: [{name: 'Oak Wood', value: '#8b5a2b'}]
+              colors: extendedColors
           },
           middleFrame: {
               name: 'Silver Matte',
@@ -15311,7 +15415,7 @@
               price: 25.00,
               thickness: 2.0,
               dynamicThickness: true,
-              colors: [{name: 'Silver', value: '#e3e2e0'}]
+              colors: extendedColors
           },
           innerFrame: {
               name: 'Grey-Blue Accent',
@@ -15319,7 +15423,7 @@
               price: 25.00,
               thickness: 1.0,
               dynamicThickness: true,
-              colors: [{name: 'Grey Blue', value: '#9eb6c4'}]
+              colors: extendedColors
           },
           sizes: [{width: width || 400, height: height || 500, name: name || "Custom"}]
       };
