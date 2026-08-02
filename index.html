@@ -13012,7 +13012,22 @@
 
     window.autoSeedDemoStore = async () => {
       try {
-        // Fetch EXISTING categories from the database
+        // 1. SILENTLY REPAIR EXISTING PRODUCTS IN THE DATABASE
+        const allProducts = await db.collection('products').get();
+        if (!allProducts.empty) {
+            const repairBatch = db.batch();
+            let needsRepair = false;
+            allProducts.docs.forEach(doc => {
+                const bg = doc.data().bgImage;
+                if (bg === 'default.png' || bg === 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80') {
+                    repairBatch.update(doc.ref, { bgImage: './default.png' });
+                    needsRepair = true;
+                }
+            });
+            if (needsRepair) await repairBatch.commit();
+        }
+
+        // 2. Fetch EXISTING categories from the database
         const catSnap = await db.collection('categories').get();
         if (catSnap.empty) return; // If no categories exist, do nothing
 
@@ -13063,7 +13078,7 @@
               
               // Use category image for thumbnail, or fallback
               const catThumb = cat.imageURL || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=400';
-              const bgImg = 'default.png';
+              const bgImg = './default.png';
 
               batch.set(prodRef, {
                 name: prodName,
@@ -15572,7 +15587,7 @@
           name: name || 'Custom Triple Frame',
           price: 95.00,
           description: 'Bespoke custom sized framing.',
-          bgImage: 'default.png',
+          bgImage: './default.png',
           outerFrame: {
               name: 'Oak Wood Finish',
               image: svgOuter,
