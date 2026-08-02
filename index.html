@@ -5178,102 +5178,18 @@
           </div>
         </div>
 
-        <!-- Customer Reviews Section -->
-        <div class="border-t border-gray-200/80 pt-16 mb-16">
+        <!-- Dynamic Customer Reviews Section -->
+        <div class="border-t border-gray-200/80 pt-16 mb-16" id="product-reviews-section">
           <h2 class="font-serif text-2xl md:text-3xl font-medium text-gray-900 mb-10">
             Customer Reviews
           </h2>
-
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             <!-- Left Review Breakdown (4 cols) -->
-            <div class="lg:col-span-4 bg-[#f5f4f2] p-8">
-              <div class="text-5xl font-extrabold text-gray-900 mb-1">4.8</div>
-              <div class="flex text-amber-500 text-lg mb-1">★★★★★</div>
-              <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-6">BASED ON 94 REVIEWS</p>
-
-              <!-- Rating Progress Bars -->
-              <div class="space-y-2 mb-8 text-xs text-gray-600">
-                <div class="flex items-center gap-3">
-                  <span class="w-3 font-bold">5</span>
-                  <div class="flex-1 bg-gray-200 h-2 rounded-full overflow-hidden">
-                    <div class="bg-[#855d28] h-full w-[85%]"></div>
-                  </div>
-                  <span class="w-8 text-right text-gray-400">85%</span>
-                </div>
-                <div class="flex items-center gap-3">
-                  <span class="w-3 font-bold">4</span>
-                  <div class="flex-1 bg-gray-200 h-2 rounded-full overflow-hidden">
-                    <div class="bg-[#855d28] h-full w-[10%]"></div>
-                  </div>
-                  <span class="w-8 text-right text-gray-400">10%</span>
-                </div>
-                <div class="flex items-center gap-3">
-                  <span class="w-3 font-bold">3</span>
-                  <div class="flex-1 bg-gray-200 h-2 rounded-full overflow-hidden">
-                    <div class="bg-[#855d28] h-full w-[3%]"></div>
-                  </div>
-                  <span class="w-8 text-right text-gray-400">3%</span>
-                </div>
-                <div class="flex items-center gap-3">
-                  <span class="w-3 font-bold">2</span>
-                  <div class="flex-1 bg-gray-200 h-2 rounded-full overflow-hidden">
-                    <div class="bg-[#855d28] h-full w-[1%]"></div>
-                  </div>
-                  <span class="w-8 text-right text-gray-400">1%</span>
-                </div>
-                <div class="flex items-center gap-3">
-                  <span class="w-3 font-bold">1</span>
-                  <div class="flex-1 bg-gray-200 h-2 rounded-full overflow-hidden">
-                    <div class="bg-[#855d28] h-full w-[1%]"></div>
-                  </div>
-                  <span class="w-8 text-right text-gray-400">1%</span>
-                </div>
-              </div>
-
-              <button type="button"
-                class="w-full bg-white border border-gray-300 hover:border-black py-3 text-xs font-bold uppercase tracking-wider text-gray-900 transition cursor-pointer">
-                WRITE A REVIEW
-              </button>
+            <div class="lg:col-span-4 bg-[#f5f4f2] p-8" id="pd-reviews-summary-container">
+              <div class="text-center text-slate font-bold py-4">Loading reviews...</div>
             </div>
-
             <!-- Right Reviews List (8 cols) -->
-            <div class="lg:col-span-8 space-y-8">
-              <!-- Review 1 -->
-              <div class="border-b border-gray-200/80 pb-8">
-                <div class="flex justify-between items-start mb-2">
-                  <div class="flex text-amber-500 text-sm">★★★★★</div>
-                  <span class="bg-[#f0efeb] text-[10px] font-bold text-gray-500 px-2 py-0.5 uppercase tracking-wider">
-                    VERIFIED PURCHASE
-                  </span>
-                </div>
-                <h4 class="font-bold text-gray-900 text-base mb-1">Exceptional quality and finish</h4>
-                <p class="text-xs text-gray-400 mb-3">Eleanor R. &bull; October 12, 2023</p>
-                <p class="text-sm text-gray-600 leading-relaxed">
-                  The frame is even more beautiful in person. The gold leaf has a stunning depth to it that you just
-                  don't see in mass-produced frames. It truly elevated my family's oil portrait to museum quality.
-                </p>
-              </div>
-
-              <!-- Review 2 -->
-              <div class="border-b border-gray-200/80 pb-8">
-                <div class="flex justify-between items-start mb-2">
-                  <div class="flex text-amber-500 text-sm">★★★★<span class="text-gray-300">★</span></div>
-                  <span class="bg-[#f0efeb] text-[10px] font-bold text-gray-500 px-2 py-0.5 uppercase tracking-wider">
-                    VERIFIED PURCHASE
-                  </span>
-                </div>
-                <h4 class="font-bold text-gray-900 text-base mb-1">Classic elegance for a modern home</h4>
-                <p class="text-xs text-gray-400 mb-3">Julian M. &bull; September 28, 2023</p>
-                <p class="text-sm text-gray-600 leading-relaxed">
-                  I was worried it might be too 'busy' for my living room, but the craftsmanship is so refined that it
-                  actually works perfectly as a statement piece. Extremely well-packaged and arrived without a scratch.
-                </p>
-              </div>
-
-              <button type="button"
-                class="font-bold text-xs tracking-wider text-gray-900 uppercase hover:underline flex items-center gap-1 cursor-pointer">
-                VIEW ALL REVIEWS &darr;
-              </button>
+            <div class="lg:col-span-8 space-y-8" id="pd-reviews-list-container">
             </div>
           </div>
         </div>
@@ -9302,8 +9218,182 @@
         };
       }
 
+      // Fetch dynamic reviews
+      window.loadProductReviews(product.id || slugify(product.name));
+
       window.scrollTo({ top: 0, behavior: 'instant' });
       if (window.lucide) lucide.createIcons();
+    };
+
+    // --- REVIEWS ENGINE ---
+    window.currentReviewProductId = null;
+
+    window.loadProductReviews = async (productId) => {
+      window.currentReviewProductId = productId;
+      const summaryContainer = document.getElementById('pd-reviews-summary-container');
+      const listContainer = document.getElementById('pd-reviews-list-container');
+      if (!summaryContainer || !listContainer) return;
+
+      summaryContainer.innerHTML = '<div class="text-center text-slate font-bold py-4">Loading reviews...</div>';
+      listContainer.innerHTML = '';
+
+      try {
+        const snap = await db.collection('reviews').where('productId', '==', productId).orderBy('createdAt', 'desc').get();
+        const reviews = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        if (reviews.length === 0) {
+          summaryContainer.innerHTML = `
+            <div class="text-5xl font-extrabold text-gray-900 mb-1">0.0</div>
+            <div class="flex text-gray-300 text-lg mb-1">★★★★★</div>
+            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-6">NO REVIEWS YET</p>
+            <button type="button" onclick="window.initiateWriteReview()" class="w-full bg-white border border-gray-300 hover:border-black py-3 text-xs font-bold uppercase tracking-wider text-gray-900 transition cursor-pointer">
+              WRITE THE FIRST REVIEW
+            </button>
+          `;
+          listContainer.innerHTML = '<div class="text-slate font-medium italic py-8">Be the first to share your experience with this product!</div>';
+          return;
+        }
+
+        const total = reviews.length;
+        const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
+        const avg = (sum / total).toFixed(1);
+
+        const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+        reviews.forEach(r => counts[r.rating]++);
+
+        const getStarsHtml = (rating) => {
+          let html = '';
+          for (let i = 1; i <= 5; i++) {
+            html += i <= rating ? '★' : '<span class="text-gray-300">★</span>';
+          }
+          return html;
+        };
+
+        summaryContainer.innerHTML = `
+          <div class="text-5xl font-extrabold text-gray-900 mb-1">${avg}</div>
+          <div class="flex text-amber-500 text-lg mb-1">${getStarsHtml(Math.round(avg))}</div>
+          <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-6">BASED ON ${total} REVIEWS</p>
+
+          <div class="space-y-2 mb-8 text-xs text-gray-600">
+            ${[5, 4, 3, 2, 1].map(star => {
+              const pct = Math.round((counts[star] / total) * 100);
+              return \`
+              <div class="flex items-center gap-3">
+                <span class="w-3 font-bold">\${star}</span>
+                <div class="flex-1 bg-gray-200 h-2 rounded-full overflow-hidden">
+                  <div class="bg-[#855d28] h-full" style="width: \${pct}%"></div>
+                </div>
+                <span class="w-8 text-right text-gray-400">\${pct}%</span>
+              </div>\`;
+            }).join('')}
+          </div>
+          <button type="button" onclick="window.initiateWriteReview()" class="w-full bg-white border border-gray-300 hover:border-black py-3 text-xs font-bold uppercase tracking-wider text-gray-900 transition cursor-pointer">
+            WRITE A REVIEW
+          </button>
+        `;
+
+        listContainer.innerHTML = reviews.map(r => {
+          const d = (r.createdAt && r.createdAt.toDate) ? new Date(r.createdAt.toDate()).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Recently';
+          return \`
+            <div class="border-b border-gray-200/80 pb-8">
+              <div class="flex justify-between items-start mb-2">
+                <div class="flex text-amber-500 text-sm">\${getStarsHtml(r.rating)}</div>
+                <span class="bg-[#f0efeb] text-[10px] font-bold text-gray-500 px-2 py-0.5 uppercase tracking-wider">
+                  VERIFIED PURCHASE
+                </span>
+              </div>
+              <h4 class="font-bold text-gray-900 text-base mb-1">\${r.rating === 5 ? 'Exceptional quality!' : (r.rating >= 3 ? 'Great product' : 'Could be better')}</h4>
+              <p class="text-xs text-gray-400 mb-3">\${r.userName} &bull; \${d}</p>
+              <p class="text-sm text-gray-600 leading-relaxed">\${r.text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+            </div>
+          \`;
+        }).join('');
+      } catch (err) {
+        console.error("Error loading reviews:", err);
+      }
+    };
+
+    window.initiateWriteReview = async () => {
+      if (!currentUser) {
+        showToast("Please log in to write a review.");
+        toggleModal('login-modal');
+        return;
+      }
+      
+      window.playGlobalLoader("Verifying purchase history...", null, false);
+      try {
+        const ordersSnap = await db.collection('orders').where('uid', '==', currentUser.uid).get();
+        let hasConfirmedOrder = false;
+        ordersSnap.docs.forEach(doc => {
+          const data = doc.data();
+          if (data.status !== 'Pending' && data.status !== 'Canceled') {
+            hasConfirmedOrder = true;
+          }
+        });
+
+        window.hideGlobalLoader();
+
+        if (!hasConfirmedOrder && currentUser.role !== 'admin') {
+          showToast("You must have at least one confirmed order to write a review.");
+          return;
+        }
+
+        window.setReviewStars(5);
+        document.getElementById('review-text-val').value = '';
+        toggleModal('write-review-modal');
+
+      } catch (e) {
+        window.hideGlobalLoader();
+        showToast("Error verifying purchase history.");
+      }
+    };
+
+    window.setReviewStars = (val) => {
+      document.getElementById('review-rating-val').value = val;
+      const stars = document.querySelectorAll('#review-star-selector i');
+      stars.forEach((star, idx) => {
+        if (idx < val) {
+          star.classList.remove('text-gray-300');
+          star.classList.add('text-amber-500');
+        } else {
+          star.classList.remove('text-amber-500');
+          star.classList.add('text-gray-300');
+        }
+      });
+    };
+
+    window.submitProductReview = async (e) => {
+      e.preventDefault();
+      const rating = parseInt(document.getElementById('review-rating-val').value);
+      const text = document.getElementById('review-text-val').value.trim();
+
+      if (rating === 0) return showToast("Please select a star rating.");
+      if (!text) return showToast("Please write a review text.");
+
+      const btn = e.target.querySelector('button[type="submit"]');
+      const origHtml = btn.innerHTML;
+      btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Submitting...';
+      btn.disabled = true;
+
+      try {
+        await db.collection('reviews').add({
+          productId: window.currentReviewProductId,
+          userId: currentUser.uid,
+          userName: currentUser.name || "Customer",
+          rating: rating,
+          text: text,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        showToast("Review submitted successfully!");
+        toggleModal('write-review-modal');
+        window.loadProductReviews(window.currentReviewProductId);
+      } catch (err) {
+        showToast("Error submitting review: " + err.message);
+      } finally {
+        btn.innerHTML = origHtml;
+        btn.disabled = false;
+        lucide.createIcons();
+      }
     };
 
 
@@ -17991,8 +18081,35 @@
     </div>
   </div>
 
-  <!-- Floating Chat Widget -->
-  <div id="user-live-chat-container" class="fixed bottom-6 right-6 z-[9000] flex flex-col items-end">
+  <!-- Write Review Modal -->
+  <div id="write-review-modal" class="hidden fixed inset-0 z-[10005] flex items-center justify-center bg-charcoal/60 backdrop-blur-sm transition-opacity px-4">
+    <div class="bg-white p-8 rounded-3xl border border-sand/50 w-full max-w-md shadow-2xl relative">
+      <div class="flex justify-between items-center mb-6 border-b border-sand/40 pb-4">
+        <h3 class="text-xl font-extrabold text-charcoal">Write a Review</h3>
+        <button onclick="toggleModal('write-review-modal')" class="text-slate hover:text-flame transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form onsubmit="window.submitProductReview(event)" class="space-y-4">
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-2 block">Rating</label>
+          <div class="flex items-center gap-2 text-2xl cursor-pointer" id="review-star-selector">
+            <i class="fa-solid fa-star text-gray-300" onclick="window.setReviewStars(1)"></i>
+            <i class="fa-solid fa-star text-gray-300" onclick="window.setReviewStars(2)"></i>
+            <i class="fa-solid fa-star text-gray-300" onclick="window.setReviewStars(3)"></i>
+            <i class="fa-solid fa-star text-gray-300" onclick="window.setReviewStars(4)"></i>
+            <i class="fa-solid fa-star text-gray-300" onclick="window.setReviewStars(5)"></i>
+          </div>
+          <input type="hidden" id="review-rating-val" value="0">
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-2 block">Your Review</label>
+          <textarea id="review-text-val" rows="4" class="w-full px-4 py-3 bg-editorbg border border-sand rounded-xl font-medium focus:border-flame focus:outline-none resize-none" placeholder="Share your experience with this frame..." required></textarea>
+        </div>
+        <button type="submit" class="w-full btn-solid-orange py-3.5 rounded-xl text-cream font-extrabold text-sm shadow-md mt-2 flex justify-center items-center gap-2">
+          Submit Review
+        </button>
+      </form>
+    </div>
+  </div>
     <!-- Chat Window -->
     <div id="user-chat-window"
       class="bg-white border border-gray-200/80 shadow-2xl rounded-2xl w-[340px] sm:w-[370px] h-[520px] mb-4 flex flex-col overflow-hidden transition-all duration-300 transform scale-95 opacity-0 origin-bottom-right pointer-events-none hidden">
