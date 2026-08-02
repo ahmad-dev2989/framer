@@ -9050,6 +9050,10 @@
       // 2. Hide homepage landing content sections (hero, frames/category, about, contact)
       window.showLandingContentSections(false);
 
+      // FIX: Explicitly hide the products browser section so they don't stack!
+      const browseSec = document.getElementById('products-browse-section');
+      if (browseSec) browseSec.classList.add('hidden');
+
       // 3. Unhide product-detail-view immediately
       const pdView = document.getElementById('product-detail-view');
       if (pdView) pdView.classList.remove('hidden');
