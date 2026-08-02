@@ -9844,13 +9844,13 @@
 
         // Apply dynamic thickness to each active layer
         const outerFrame = document.querySelector('#artwork-layer [data-frame-role="frame"]');
-        window.applySingleFrameThickness(outerFrame, config.thickness || 100, config);
+        window.applySingleFrameThickness(outerFrame, config.thickness || 100);
 
         const middleFrame = document.querySelector('#artwork-layer [data-frame-role="middle-frame"]');
-        window.applySingleFrameThickness(middleFrame, config.middleThickness || 100, config);
+        window.applySingleFrameThickness(middleFrame, config.middleThickness || 100);
 
         const innerFrame = document.querySelector('#artwork-layer [data-frame-role="inner-frame"]');
-        window.applySingleFrameThickness(innerFrame, config.innerThickness || 100, config);
+        window.applySingleFrameThickness(innerFrame, config.innerThickness || 100);
 
         window.updateFrameColourOverlay();
 
@@ -10501,14 +10501,15 @@
       }
     };
 
-    window.applySingleFrameThickness = (frameEl, thicknessVal, config) => {
+    window.applySingleFrameThickness = (frameEl, thicknessVal) => {
       if (!frameEl) return;
       const img = frameEl.querySelector('img');
       const croppedSrc = frameEl.dataset.frameCroppedSrc;
       const slices = JSON.parse(frameEl.dataset.frameSlices || 'null');
       const bounds = JSON.parse(frameEl.dataset.frameBounds || '{}');
 
-      if (config.dynamicThickness && croppedSrc && slices && bounds && bounds.imgW && bounds.imgH) {
+      // FIX: Rely purely on the geometric slices to enable dynamic thickness, bypassing the buggy config booleans.
+      if (croppedSrc && slices && bounds && bounds.imgW && bounds.imgH) {
         if (img) { img.style.transform = ''; img.style.visibility = 'hidden'; }
         let borderEl = frameEl.querySelector('.dynamic-frame-border');
         if (!borderEl) {
@@ -10520,7 +10521,7 @@
           borderEl.style.zIndex = '1';
           borderEl.style.borderImageSource = `url("${croppedSrc}")`;
           borderEl.style.borderImageSlice = `${slices.sliceTop} ${slices.sliceRight} ${slices.sliceBottom} ${slices.sliceLeft}`;
-          borderEl.style.borderImageRepeat = 'round';
+          borderEl.style.borderImageRepeat = 'round'; // Crucial for scaling frame textures!
           frameEl.appendChild(borderEl);
         } else {
           borderEl.style.borderImageSource = `url("${croppedSrc}")`;
