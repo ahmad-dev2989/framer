@@ -3914,7 +3914,7 @@
             class="nav-link-item text-[var(--text-footer,#45474b)] text-[15px] hover:text-[var(--btn-color,#775a19)] transition-colors">Products</a>
           <a href="/products" onclick="event.preventDefault(); window.handlePathRouting('/products')"
             class="nav-link-item text-[var(--text-footer,#45474b)] text-[15px] hover:text-[var(--btn-color,#775a19)] transition-colors">Category</a>
-          <a href="/about-us" onclick="event.preventDefault(); window.handlePathRouting('/about-us')"
+          <a href="#about-section" onclick="event.preventDefault(); window.scrollToSection('about-section')"
             class="nav-link-item text-[var(--text-footer,#45474b)] text-[15px] hover:text-[var(--btn-color,#775a19)] transition-colors">About</a>
           <a href="/contact" onclick="event.preventDefault(); window.handlePathRouting('/contact')"
             class="nav-link-item text-[var(--text-footer,#45474b)] text-[15px] hover:text-[var(--btn-color,#775a19)] transition-colors">Contact</a>
@@ -3991,8 +3991,8 @@
             </div>
           </div>
 
-          <a href="/about-us"
-            onclick="event.preventDefault(); window.handlePathRouting('/about-us'); toggleMobileMenu()"
+          <a href="#about-section"
+            onclick="event.preventDefault(); window.scrollToSection('about-section'); toggleMobileMenu()"
             class="block text-lg font-bold text-charcoal">ABOUT US</a>
 
           <div id="mobile-nav-auth-links" class="pt-6 border-t border-sand/40 flex flex-col gap-3">
@@ -5277,8 +5277,8 @@
                 onclick="event.preventDefault(); window.handlePathRouting('/')">Home</a></li>
             <li><a class="hover:text-[var(--btn-color,#775a19)] transition-colors block" href="/products"
                 onclick="event.preventDefault(); window.handlePathRouting('/products')">Products</a></li>
-            <li><a class="hover:text-[var(--btn-color,#775a19)] transition-colors block" href="/about-us"
-                onclick="event.preventDefault(); window.handlePathRouting('/about-us')">About Us</a></li>
+            <li><a class="hover:text-[var(--btn-color,#775a19)] transition-colors block" href="#about-section"
+                onclick="event.preventDefault(); window.scrollToSection('about-section')">About Us</a></li>
             <li><a class="hover:text-[var(--btn-color,#775a19)] transition-colors block" href="/contact"
                 onclick="event.preventDefault(); window.handlePathRouting('/contact')">Contact</a></li>
           </ul>
