@@ -10065,13 +10065,18 @@
         `;
       };
 
-      if (product.outerFrame && product.outerFrame.name) {
+      // Strictly query the actual canvas to ensure the layers actually exist physically
+      const hasOuter = document.querySelector('#artwork-layer [data-frame-role="frame"]');
+      const hasMiddle = document.querySelector('#artwork-layer [data-frame-role="middle-frame"]');
+      const hasInner = document.querySelector('#artwork-layer [data-frame-role="inner-frame"]');
+
+      if (hasOuter && product.outerFrame && product.outerFrame.name) {
         html += renderLayer(product.outerFrame.name, product.outerFrame.thickness || 2.0, config.thickness || 100, config.outerColour || config.colour, 'Outer Frame', product.outerFrame.price);
       }
-      if (product.middleFrame && product.middleFrame.name) {
+      if (hasMiddle && product.middleFrame && product.middleFrame.name) {
         html += renderLayer(product.middleFrame.name, product.middleFrame.thickness || 2.0, config.middleThickness || 100, config.middleColour, 'Middle Frame', product.middleFrame.price);
       }
-      if (product.innerFrame && product.innerFrame.name) {
+      if (hasInner && product.innerFrame && product.innerFrame.name) {
         html += renderLayer(product.innerFrame.name, product.innerFrame.thickness || 2.0, config.innerThickness || 100, config.innerColour, 'Inner Frame', product.innerFrame.price);
       }
 
@@ -15382,7 +15387,9 @@
       historyStack.push({
         art: artLayer.innerHTML,
         canvasBg: document.getElementById('design-canvas').style.backgroundColor || '#ffffff',
-        canvasDraw: document.getElementById('drawing-layer').toDataURL()
+        canvasDraw: document.getElementById('drawing-layer').toDataURL(),
+        configState: window.activeFrameConfiguration ? JSON.parse(JSON.stringify(window.activeFrameConfiguration)) : null,
+        productState: window.activeFrameProduct ? JSON.parse(JSON.stringify(window.activeFrameProduct)) : null
       });
       renderLayersList();
     }
@@ -15394,6 +15401,9 @@
       document.getElementById('design-canvas').style.backgroundColor = s.canvasBg;
       document.getElementById('canvas-bg-color').value = rgbToHex(s.canvasBg);
 
+      if (s.configState) window.activeFrameConfiguration = JSON.parse(JSON.stringify(s.configState));
+      if (s.productState) window.activeFrameProduct = JSON.parse(JSON.stringify(s.productState));
+
       const canvas = document.getElementById('drawing-layer');
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -15404,6 +15414,7 @@
       }
 
       artLayer.querySelectorAll('[data-type="text"]').forEach(t => t.onblur = recordState);
+      if (window.updateLiveFramePreview) window.updateLiveFramePreview();
       renderLayersList();
     }
 
@@ -15535,7 +15546,7 @@
 
     // CLIPBOARD LOGIC WITH SYSTEM API OVERRIDE
     window.doCopy = () => { if (selectedItem && selectedItem !== mainWorkspace) clipboardNode = selectedItem.cloneNode(true); };
-    window.doCut = () => { if (selectedItem && selectedItem !== mainWorkspace) { doCopy(); selectedItem.remove(); deselectAll(); recordState(); } };
+    window.doCut = () => { if (selectedItem && selectedItem !== mainWorkspace) { doCopy(); window.deleteActive(); } };
 
     window.doPaste = async () => {
       if (clipboardNode) {
@@ -15890,7 +15901,18 @@
 
 
     window.deleteActive = () => {
-      if (selectedItem) { selectedItem.remove(); deselectAll(); recordState(); }
+      if (selectedItem) {
+        if (window.activeFrameProduct) {
+          const role = selectedItem.dataset.frameRole;
+          if (role === 'frame') window.activeFrameProduct.outerFrame = null;
+          if (role === 'middle-frame') window.activeFrameProduct.middleFrame = null;
+          if (role === 'inner-frame') window.activeFrameProduct.innerFrame = null;
+        }
+        selectedItem.remove(); 
+        deselectAll(); 
+        if (window.updateLiveFramePreview) window.updateLiveFramePreview();
+        recordState(); 
+      }
     };
 
     window.moveLayer = (dir) => {
