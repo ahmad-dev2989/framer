@@ -4094,8 +4094,7 @@
             <span
               class="text-secondary font-label-sm text-xs sm:text-label-sm uppercase tracking-widest block mb-1.5 sm:mb-4"
               data-cms="pages.home.sections.products_sec.elements.subtitle">Curated Selections</span>
-            <h2 class="text-2xl sm:text-headline-lg font-bold sm:font-headline-lg text-primary"
-              data-cms="pages.home.sections.products_sec.elements.title">Featured Frames</h2>
+            <h2 class="text-4xl md:text-5xl font-extrabold font-serif tracking-tight text-primary mb-4">Featured Frames</h2>
           </div>
           <a class="text-primary font-label-sm text-xs sm:text-label-sm border-b border-primary pb-1 hover:text-secondary hover:border-secondary transition-all self-start md:self-auto"
             href="/products" onclick="event.preventDefault(); window.handlePathRouting('/products')">View All
@@ -4264,7 +4263,7 @@
     <section id="category-section" class="py-24 bg-surface-container relative overflow-hidden">
       <div class="px-4 md:px-margin-desktop max-w-container-max mx-auto mb-12 flex justify-between items-end">
         <div>
-          <h2 class="text-headline-lg font-headline-lg text-primary">Shop by Category</h2>
+          <h2 class="text-4xl md:text-5xl font-extrabold font-serif tracking-tight text-primary mb-4">Shop by Category</h2>
           <p class="text-on-surface-variant mt-2 max-w-xl">Find the perfect match for your specific occasion or art
             type.</p>
         </div>
@@ -4381,8 +4380,7 @@
         <div class="bg-white shadow-xl flex flex-col lg:flex-row overflow-hidden rounded-lg">
           <!-- Form -->
           <div class="flex-1 p-8 md:p-16 scroll-animate slide-left">
-            <h2 class="text-headline-lg font-headline-lg text-[40px] text-primary mb-4"
-              data-cms="pages.contact.sections.content.elements.heading">Get in Touch</h2>
+            <h2 class="text-4xl md:text-5xl font-extrabold font-serif tracking-tight text-primary mb-4">Get in Touch</h2>
             <p class="text-on-surface-variant mb-12 text-lg"
               data-cms="pages.contact.sections.content.elements.info_heading">Have a unique piece or a large collection?
               Our designers are ready to help.</p>
@@ -5250,9 +5248,7 @@
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 px-4 md:px-12 py-16 max-w-container-max mx-auto">
         <!-- Brand -->
         <div class="space-y-6">
-          <a class="text-[28px] font-bold text-[var(--text-header,#000102)] tracking-tight" href="#"
-            onclick="event.preventDefault(); window.handlePathRouting('/')"
-            style="font-family: 'Playfair Display', serif;">FrameCraft</a>
+          <a href="#" onclick="window.handlePathRouting('/')" class="text-2xl font-extrabold font-serif tracking-tight text-primary hover:opacity-80 transition-opacity">FrameCraft</a>
           <p class="text-[var(--text-footer,#45474b)] text-[15px] leading-relaxed"
             data-cms="pages.footer.sections.general.elements.desc">
             Curating the world's finest mouldings and professional matting since 2014. Your art deserves the best.
@@ -13017,10 +13013,11 @@
         if (!allProducts.empty) {
             const repairBatch = db.batch();
             let needsRepair = false;
+            const correctBg = window.getDefaultImage();
             allProducts.docs.forEach(doc => {
                 const bg = doc.data().bgImage;
-                if (bg === 'default.png' || bg === 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80') {
-                    repairBatch.update(doc.ref, { bgImage: './default.png' });
+                if (bg === 'default.png' || bg === './default.png' || bg === 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80') {
+                    repairBatch.update(doc.ref, { bgImage: correctBg });
                     needsRepair = true;
                 }
             });
@@ -13078,7 +13075,7 @@
               
               // Use category image for thumbnail, or fallback
               const catThumb = cat.imageURL || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=400';
-              const bgImg = './default.png';
+              const bgImg = window.getDefaultImage();
 
               batch.set(prodRef, {
                 name: prodName,
@@ -15557,6 +15554,14 @@
       }
     }
 
+    // 🛠️ FIX: Smart Path Resolver for local file:/// environments
+    window.getDefaultImage = () => {
+        let base = window.location.href.split('#')[0].split('?')[0];
+        if (base.endsWith('index.html')) base = base.replace('index.html', '');
+        if (!base.endsWith('/')) base += '/';
+        return base + 'default.png';
+    };
+
     window.launchEmptyEditor = (name, width, height) => {
       // Generate perfect hollow frames with transparent centers to act as clean colored layers
       const svgOuter = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500"><path fill-rule="evenodd" clip-rule="evenodd" fill="#8b5a2b" d="M0,0 H400 V500 H0 Z M20,20 V480 H380 V20 Z"/></svg>`);
@@ -15587,7 +15592,7 @@
           name: name || 'Custom Triple Frame',
           price: 95.00,
           description: 'Bespoke custom sized framing.',
-          bgImage: './default.png',
+          bgImage: window.getDefaultImage(),
           outerFrame: {
               name: 'Oak Wood Finish',
               image: svgOuter,
