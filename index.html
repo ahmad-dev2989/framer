@@ -15286,6 +15286,11 @@
     }
 
     window.launchEmptyEditor = (name, width, height) => {
+      // Generate perfect hollow frames with transparent centers to act as clean colored layers
+      const svgOuter = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500"><path fill-rule="evenodd" clip-rule="evenodd" fill="#8b5a2b" d="M0,0 H400 V500 H0 Z M20,20 V480 H380 V20 Z"/></svg>`);
+      const svgMiddle = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500"><path fill-rule="evenodd" clip-rule="evenodd" fill="#e3e2e0" d="M0,0 H400 V500 H0 Z M20,20 V480 H380 V20 Z"/></svg>`);
+      const svgInner = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500"><path fill-rule="evenodd" clip-rule="evenodd" fill="#9eb6c4" d="M0,0 H400 V500 H0 Z M20,20 V480 H380 V20 Z"/></svg>`);
+
       const defaultTripleFrameProduct = {
           id: 'custom-workspace',
           name: name || 'Custom Triple Frame',
@@ -15293,26 +15298,26 @@
           description: 'Bespoke custom sized framing.',
           bgImage: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80',
           outerFrame: {
-              name: 'Classic Oak Wood',
-              image: 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=800&h=800',
+              name: 'Oak Wood Finish',
+              image: svgOuter,
               price: 45.00,
               thickness: 4.0,
               dynamicThickness: true,
               colors: [{name: 'Oak Wood', value: '#8b5a2b'}]
           },
           middleFrame: {
-              name: 'White Matte',
-              image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800&h=800',
+              name: 'Silver Matte',
+              image: svgMiddle,
               price: 25.00,
-              thickness: 6.0,
+              thickness: 2.0,
               dynamicThickness: true,
-              colors: [{name: 'Silk White', value: '#ffffff'}]
+              colors: [{name: 'Silver', value: '#e3e2e0'}]
           },
           innerFrame: {
               name: 'Grey-Blue Accent',
-              image: 'https://images.unsplash.com/photo-1604339454148-1c23f0b5d156?auto=format&fit=crop&q=80&w=800&h=800',
+              image: svgInner,
               price: 25.00,
-              thickness: 1.5,
+              thickness: 1.0,
               dynamicThickness: true,
               colors: [{name: 'Grey Blue', value: '#9eb6c4'}]
           },
