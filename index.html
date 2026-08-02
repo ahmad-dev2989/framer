@@ -12933,6 +12933,7 @@
       const dashboardBtn = document.getElementById('dashboard-cart-btn');
       const headerNavCartBtn = document.getElementById('header-nav-cart-btn');
       const headerNavOrdersBtn = document.getElementById('header-nav-orders-btn');
+      const chatWidget = document.getElementById('user-live-chat-container');
 
       const showCart = ['dashboard', 'editor', 'checkout'].includes(targetId);
       if (floatingBtn) {
@@ -12963,6 +12964,13 @@
         } else {
           headerNavOrdersBtn.classList.remove('hidden');
           headerNavOrdersBtn.classList.add('flex');
+        }
+      }
+      if (chatWidget) {
+        if (targetId === 'editor') {
+          chatWidget.style.display = 'none';
+        } else {
+          chatWidget.style.display = '';
         }
       }
 
@@ -13055,7 +13063,7 @@
               
               // Use category image for thumbnail, or fallback
               const catThumb = cat.imageURL || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=400';
-              const bgImg = 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80';
+              const bgImg = 'default.png';
 
               batch.set(prodRef, {
                 name: prodName,
@@ -15564,7 +15572,7 @@
           name: name || 'Custom Triple Frame',
           price: 95.00,
           description: 'Bespoke custom sized framing.',
-          bgImage: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80',
+          bgImage: 'default.png',
           outerFrame: {
               name: 'Oak Wood Finish',
               image: svgOuter,
