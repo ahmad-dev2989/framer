@@ -2782,6 +2782,7 @@
             <i data-lucide="image-plus" class="w-6 h-6 text-flame"></i> Add Workspace Element
           </h2>
           <form id="admin-upload-form" class="space-y-5" onsubmit="window.handleAdminAssetUpload(event)">
+            <input type="hidden" id="edit-asset-id" value="">
             <div>
               <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1 block">Category</label>
               <select id="admin-asset-category" onchange="window.handleAssetCategoryChange()"
@@ -2816,6 +2817,15 @@
             </div>
 
             <!-- Dynamic Thickness Toggle -->
+            <div id="admin-asset-dynamic-container" class="flex items-center pb-2">
+              <label class="flex items-center gap-2 text-xs font-bold text-charcoal cursor-pointer select-none">
+                <input type="checkbox" id="admin-asset-dynamic" class="accent-flame w-4 h-4 rounded" checked>
+                <span>Allow Dynamic Thickness Scaling</span>
+              </label>
+            </div>
+
+            <!-- Available Colours (Frames only) --> 
+                        <!-- Dynamic Thickness Toggle -->
             <div id="admin-asset-dynamic-container" class="flex items-center pb-2">
               <label class="flex items-center gap-2 text-xs font-bold text-charcoal cursor-pointer select-none">
                 <input type="checkbox" id="admin-asset-dynamic" class="accent-flame w-4 h-4 rounded" checked>
@@ -7027,6 +7037,10 @@
         if (tab === 'add-product') populateProductCategoryDropdown();
         if (tab === 'add-element') {
           document.getElementById('admin-upload-form').reset();
+          const editIdEl = document.getElementById('edit-asset-id');
+          if (editIdEl) editIdEl.value = '';
+          const btn = document.querySelector('#admin-upload-form button[type="submit"]');
+          if (btn) btn.innerHTML = `<i data-lucide="plus-circle" class="w-5 h-5"></i> Publish Element`;
           window.assetColoursState = [];
           window.renderAssetColourChips();
           window.clearAssetImagePreview();
@@ -7371,7 +7385,7 @@
             <button onclick="toggleElementStock('${a.id}', ${!!a.outOfStock})" class="px-3 py-1.5 ${a.outOfStock ? 'bg-green-50 text-green-600 border-green-200 hover:bg-green-100' : 'bg-orange-50 text-orange-600 border-orange-200 hover:bg-orange-100'} border rounded-lg text-xs font-bold transition mr-1 mb-1 sm:mb-0 w-24">
               ${a.outOfStock ? 'Mark In Stock' : 'Mark OOS'}
             </button>
-            <button onclick="editAdminAssetCost('${a.id}', ${a.cost || 0})" class="px-3 py-1.5 bg-editorbg hover:bg-sand/40 border border-sand rounded-lg text-xs font-bold text-charcoal transition mr-1">Edit Price</button>
+            <button onclick="window.editAdminAsset('${a.id}')" class="px-3 py-1.5 bg-editorbg hover:bg-sand/40 border border-sand rounded-lg text-xs font-bold text-charcoal transition mr-1">Edit</button>
             <button onclick="deleteAdminAsset('${a.id}')" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg text-xs font-bold text-red-600 transition">Delete</button>
           </td>
         </tr>
@@ -14073,9 +14087,54 @@
       showToast("Design added to your studio cart!");
     }
 
+    window.editAdminAsset = async (id) => {
+      try {
+        const doc = await db.collection('assets').doc(id).get();
+        if (!doc.exists) return showToast("Element not found.");
+        const a = doc.data();
+
+        document.getElementById('edit-asset-id').value = id;
+        document.getElementById('admin-asset-category').value = a.category;
+        window.handleAssetCategoryChange();
+
+        document.getElementById('admin-asset-name').value = a.name || '';
+        document.getElementById('admin-asset-cost').value = a.cost || 0;
+        
+        if (['outer-frame', 'middle-frame', 'inner-frame'].includes(a.category)) {
+          document.getElementById('admin-asset-thickness').value = a.thickness || '';
+          if (document.getElementById('admin-asset-dynamic')) {
+            document.getElementById('admin-asset-dynamic').checked = a.dynamicThickness !== false;
+          }
+          window.assetColoursState = a.colors || a.colours || [];
+          window.renderAssetColourChips();
+        }
+
+        const img = document.getElementById('asset-preview-img');
+        const placeholder = document.getElementById('asset-preview-placeholder');
+        const btnRemove = document.getElementById('btn-remove-asset-preview');
+        if (a.imageURL) {
+          img.src = a.imageURL;
+          img.classList.remove('hidden');
+          placeholder.classList.add('hidden');
+          if (btnRemove) btnRemove.classList.remove('hidden');
+        }
+
+        switchAdminSubTab('products', 'add-element');
+        const btn = document.querySelector('#admin-upload-form button[type="submit"]');
+        if (btn) btn.innerHTML = `<i data-lucide="edit" class="w-5 h-5"></i> Update Element`;
+        lucide.createIcons();
+
+        document.getElementById('admin-products-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        showToast("Edit mode activated. Modify and publish.");
+      } catch (e) {
+        showToast("Error loading asset: " + e.message);
+      }
+    };
+
     window.handleAdminAssetUpload = async (e) => {
       e.preventDefault();
 
+      const editId = document.getElementById('edit-asset-id').value;
       const category = document.getElementById('admin-asset-category').value;
       const name = document.getElementById('admin-asset-name').value.trim();
       const costVal = document.getElementById('admin-asset-cost').value;
@@ -14089,14 +14148,20 @@
 
       try {
         if (!name) throw new Error("Name is required.");
-        if (!file) throw new Error("Please select an image file first!");
+        if (!file && !editId) throw new Error("Please select an image file first!");
 
         const assetPayload = {
           category: category,
           name: name,
-          type: file.type,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
+
+        if (!editId) {
+          assetPayload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+        }
+        if (file) {
+          assetPayload.type = file.type;
+        }
 
         if (isFrame) {
           const cost = parseFloat(costVal);
@@ -14117,34 +14182,41 @@
 
         const btn = e.target.querySelector('button[type="submit"]');
         const originalHtml = btn.innerHTML;
-        btn.innerHTML = `<i data-lucide="loader" class="w-5 h-5 animate-spin"></i> Publishing...`;
+        btn.innerHTML = `<i data-lucide="loader" class="w-5 h-5 animate-spin"></i> ${editId ? 'Updating...' : 'Publishing...'}`;
         btn.disabled = true;
         lucide.createIcons();
 
         try {
-          showToast("Uploading element to Cloudinary...");
-          const secureUrl = await uploadToCloudinary(file);
-          assetPayload.imageURL = secureUrl;
+          if (file) {
+            showToast("Uploading element to Cloudinary...");
+            const secureUrl = await uploadToCloudinary(file);
+            assetPayload.imageURL = secureUrl;
+          }
 
           showToast("Saving Asset to Firestore...");
-          await db.collection('assets').add(assetPayload);
+          if (editId) {
+            await db.collection('assets').doc(editId).update(assetPayload);
+            showToast("Element updated successfully!");
+          } else {
+            await db.collection('assets').add(assetPayload);
+            showToast("Element published successfully!");
+          }
 
-          showToast("Element published successfully!");
           document.getElementById('admin-upload-form').reset();
+          document.getElementById('edit-asset-id').value = '';
+          btn.innerHTML = `<i data-lucide="plus-circle" class="w-5 h-5"></i> Publish Element`;
           window.assetColoursState = [];
           window.renderAssetColourChips();
           window.clearAssetImagePreview();
           window.handleAssetCategoryChange();
 
-          toggleAdminSection('orders');
+          switchAdminSubTab('products', 'manage-elements');
           loadGlobalAssets();
           if (window.loadAdminManageElementsTable) window.loadAdminManageElementsTable();
-          if (window.loadAdminManageAssets) window.loadAdminManageAssets();
         } catch (err) {
           console.error("Admin Upload Error:", err);
           showToast("Upload failed: " + (err.message || "Unknown error"));
         } finally {
-          btn.innerHTML = originalHtml;
           btn.disabled = false;
           setTimeout(() => lucide.createIcons(), 10);
         }
