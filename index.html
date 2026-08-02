@@ -6246,10 +6246,10 @@
 
     <!-- Zoom Controls -->
     <div
-      class="absolute bottom-6 right-6 bg-white shadow-lg border border-sand/40 rounded-full px-4 py-2 flex items-center gap-4 z-10">
-      <i data-lucide="zoom-out" class="w-4 h-4 text-slate cursor-pointer hover:text-charcoal"></i>
-      <span class="text-xs font-bold text-charcoal w-8 text-center">85%</span>
-      <i data-lucide="zoom-in" class="w-4 h-4 text-slate cursor-pointer hover:text-charcoal"></i>
+      class="absolute bottom-6 right-6 bg-white shadow-lg border border-sand/40 rounded-full px-4 py-2 flex items-center gap-4 z-10 select-none">
+      <i data-lucide="zoom-out" id="zoom-out-btn" class="w-4 h-4 text-slate cursor-pointer hover:text-charcoal transition" onclick="window.adjustCanvasZoom(-0.15)" title="Zoom Out"></i>
+      <span id="zoom-percentage-label" class="text-xs font-bold text-charcoal w-10 text-center">100%</span>
+      <i data-lucide="zoom-in" id="zoom-in-btn" class="w-4 h-4 text-slate cursor-pointer hover:text-charcoal transition" onclick="window.adjustCanvasZoom(0.15)" title="Zoom In"></i>
     </div>
     </main>
 
@@ -10651,6 +10651,14 @@
     };
 
     window.currentCanvasScale = 1;
+    window.canvasZoomLevel = 1.0; // Manual zoom multiplier state
+
+    window.adjustCanvasZoom = (delta) => {
+      // Restrict zoom limits between 40% and 250%
+      window.canvasZoomLevel = Math.max(0.4, Math.min(2.5, window.canvasZoomLevel + delta));
+      window.updateCanvasScale();
+    };
+
     window.updateCanvasScale = () => {
       const canvas = document.getElementById('design-canvas');
       const wrapper = document.getElementById('scaler-wrapper');
@@ -10665,14 +10673,21 @@
       const availableW = Math.max(100, main.clientWidth - paddingX);
       const availableH = Math.max(100, main.clientHeight - paddingY);
 
-      const scale = Math.min(1, Math.min(availableW / canvasW, availableH / canvasH));
-      window.currentCanvasScale = scale;
+      const baseScale = Math.min(1, Math.min(availableW / canvasW, availableH / canvasH));
+      const finalScale = baseScale * window.canvasZoomLevel;
+      window.currentCanvasScale = finalScale;
 
-      canvas.style.transform = `scale(${scale})`;
+      canvas.style.transform = `scale(${finalScale})`;
       canvas.style.transformOrigin = 'center center';
 
-      wrapper.style.width = `${canvasW * scale}px`;
-      wrapper.style.height = `${canvasH * scale}px`;
+      wrapper.style.width = `${canvasW * finalScale}px`;
+      wrapper.style.height = `${canvasH * finalScale}px`;
+
+      // Update the percentage label text dynamically
+      const label = document.getElementById('zoom-percentage-label');
+      if (label) {
+        label.innerText = `${Math.round(window.canvasZoomLevel * 100)}%`;
+      }
 
       if (typeof syncRing === 'function') {
         syncRing();
