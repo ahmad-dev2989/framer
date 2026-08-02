@@ -12373,11 +12373,15 @@
 
       // Intercept user-initiated transitions to run the loading screen before doing actual routing!
       if (pushHistoryState) {
-        if (window.location.pathname !== cleanPath) {
+        const currentPath = window.location.pathname;
+        const currentHash = window.location.hash.replace('#', '');
+        
+        if (currentPath !== cleanPath && currentHash !== cleanPath) {
           try {
             window.history.pushState({ view: cleanPath }, "", cleanPath);
           } catch (e) {
-            console.warn("Failed to push history state:", e);
+            console.warn("Failed to push history state, falling back to hash for local file support:", e);
+            window.location.hash = cleanPath; // Fallback to add history state locally
           }
         }
 
@@ -12408,6 +12412,24 @@
         });
         return;
       }
+
+      // FORCE HIDE ALL SECONDARY SECTIONS to prevent stacking bugs when moving backwards/forwards
+      const secondarySections = [
+        'products-browse-section', 
+        'product-detail-view', 
+        'faq-section', 
+        'orders-tracking-section', 
+        'user-profile-section', 
+        'user-settings-section', 
+        'dynamic-page-section', 
+        'blog-index-section', 
+        'terms-section', 
+        'cookies-section'
+      ];
+      secondarySections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+      });
 
       // Dynamic dynamic pages match
       const cmsPage = window.dynamicPages && window.dynamicPages.find(p => "/" + p.slug === cleanPath);
@@ -12907,10 +12929,21 @@
     };
 
     window.addEventListener('popstate', function (e) {
+      let path = window.location.pathname;
+      if (window.location.hash && window.location.hash !== '#') {
+        path = window.location.hash.replace('#', '');
+      }
       if (e.state && e.state.view) {
-        window.handlePathRouting(window.location.pathname, false);
-      } else {
-        window.handlePathRouting(window.location.pathname || "/", false);
+        path = e.state.view;
+      }
+      window.handlePathRouting(path || "/", false);
+    });
+
+    // Also add hashchange fallback for robust local browser testing
+    window.addEventListener('hashchange', function (e) {
+      const path = window.location.hash.replace('#', '');
+      if (path) {
+        window.handlePathRouting(path, false);
       }
     });
 
