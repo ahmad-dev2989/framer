@@ -8902,7 +8902,10 @@
 
         const productsGrid = document.querySelector('#frames-section .products-grid');
         if (productsGrid && products.length > 0) {
-          productsGrid.innerHTML = products.map((product, idx) => {
+          // Limit to exactly 8 products for the Home Page
+          const displayProducts = products.slice(0, 8);
+
+          productsGrid.innerHTML = displayProducts.map((product, idx) => {
             const hasSale = product.saleActive && product.salePrice != null;
 
             // Exact price HTML structure from Stitch UI
@@ -8947,6 +8950,25 @@
              </div>
           `;
           }).join('');
+
+          // Handle 'View All Products' Button Injection
+          let viewAllContainer = document.getElementById('home-view-all-container');
+          if (!viewAllContainer) {
+            viewAllContainer = document.createElement('div');
+            viewAllContainer.id = 'home-view-all-container';
+            viewAllContainer.className = 'mt-12 flex justify-center w-full col-span-full';
+            productsGrid.parentNode.appendChild(viewAllContainer);
+          }
+          
+          if (products.length > 8) {
+            viewAllContainer.innerHTML = `
+              <button onclick="window.handlePathRouting('/products')" class="px-10 py-4 bg-primary text-on-primary font-bold rounded hover:bg-secondary transition-colors text-sm uppercase tracking-wider flex items-center gap-2 shadow-md">
+                View All ${products.length} Products <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            `;
+          } else {
+            viewAllContainer.innerHTML = '';
+          }
         }
         lucide.createIcons();
         if (window.initScrollAnimations) window.initScrollAnimations();
