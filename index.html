@@ -2824,14 +2824,7 @@
               </label>
             </div>
 
-            <!-- Available Colours (Frames only) --> 
-                        <!-- Dynamic Thickness Toggle -->
-            <div id="admin-asset-dynamic-container" class="flex items-center pb-2">
-              <label class="flex items-center gap-2 text-xs font-bold text-charcoal cursor-pointer select-none">
-                <input type="checkbox" id="admin-asset-dynamic" class="accent-flame w-4 h-4 rounded" checked>
-                <span>Allow Dynamic Thickness Scaling</span>
-              </label>
-            </div>
+           
 
             <!-- Available Colours (Frames only) -->
             <div id="admin-asset-colours-container"
@@ -14093,6 +14086,10 @@
         if (!doc.exists) return showToast("Element not found.");
         const a = doc.data();
 
+        // FIX: Switch the tab FIRST! The tab switch logic wipes the form, so we must 
+        // clear the form before we populate it, otherwise the wipe overwrites our data!
+        switchAdminSubTab('products', 'add-element');
+
         document.getElementById('edit-asset-id').value = id;
         document.getElementById('admin-asset-category').value = a.category;
         window.handleAssetCategoryChange();
@@ -14103,7 +14100,8 @@
         if (['outer-frame', 'middle-frame', 'inner-frame'].includes(a.category)) {
           document.getElementById('admin-asset-thickness').value = a.thickness || '';
           if (document.getElementById('admin-asset-dynamic')) {
-            document.getElementById('admin-asset-dynamic').checked = a.dynamicThickness !== false;
+            // FIX: Strictly evaluate the database boolean so it perfectly matches reality
+            document.getElementById('admin-asset-dynamic').checked = Boolean(a.dynamicThickness);
           }
           window.assetColoursState = a.colors || a.colours || [];
           window.renderAssetColourChips();
@@ -14119,7 +14117,6 @@
           if (btnRemove) btnRemove.classList.remove('hidden');
         }
 
-        switchAdminSubTab('products', 'add-element');
         const btn = document.querySelector('#admin-upload-form button[type="submit"]');
         if (btn) btn.innerHTML = `<i data-lucide="edit" class="w-5 h-5"></i> Update Element`;
         lucide.createIcons();
