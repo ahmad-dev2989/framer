@@ -2815,6 +2815,14 @@
                 class="w-full px-4 py-2.5 bg-editorbg border border-sand rounded-xl font-medium focus:border-flame focus:outline-none">
             </div>
 
+            <!-- Dynamic Thickness Toggle -->
+            <div id="admin-asset-dynamic-container" class="flex items-center pb-2">
+              <label class="flex items-center gap-2 text-xs font-bold text-charcoal cursor-pointer select-none">
+                <input type="checkbox" id="admin-asset-dynamic" class="accent-flame w-4 h-4 rounded" checked>
+                <span>Allow Dynamic Thickness Scaling</span>
+              </label>
+            </div>
+
             <!-- Available Colours (Frames only) -->
             <div id="admin-asset-colours-container"
               class="bg-editorbg/40 border border-sand/60 rounded-2xl p-4 space-y-3">
@@ -6420,22 +6428,26 @@
       const nameContainer = document.getElementById('admin-asset-name-container');
       const costContainer = document.getElementById('admin-asset-cost-container');
       const thicknessContainer = document.getElementById('admin-asset-thickness-container');
+      const dynamicContainer = document.getElementById('admin-asset-dynamic-container');
       const coloursContainer = document.getElementById('admin-asset-colours-container');
 
       if (isFrame) {
         if (nameContainer) nameContainer.classList.remove('hidden');
         if (costContainer) costContainer.classList.remove('hidden');
         if (thicknessContainer) thicknessContainer.classList.remove('hidden');
+        if (dynamicContainer) dynamicContainer.classList.remove('hidden');
         if (coloursContainer) coloursContainer.classList.remove('hidden');
       } else if (isDecor) {
         if (nameContainer) nameContainer.classList.remove('hidden');
         if (costContainer) costContainer.classList.remove('hidden');
         if (thicknessContainer) thicknessContainer.classList.add('hidden');
+        if (dynamicContainer) dynamicContainer.classList.add('hidden');
         if (coloursContainer) coloursContainer.classList.add('hidden');
       } else if (isTexture) {
         if (nameContainer) nameContainer.classList.remove('hidden');
         if (costContainer) costContainer.classList.add('hidden');
         if (thicknessContainer) thicknessContainer.classList.add('hidden');
+        if (dynamicContainer) dynamicContainer.classList.add('hidden');
         if (coloursContainer) coloursContainer.classList.add('hidden');
       }
     };
@@ -13338,7 +13350,8 @@
           image: asset.imageURL || asset.image,
           price: typeof asset.price === 'number' ? asset.price : parseFloat(asset.price || 0),
           colors: asset.colors || asset.colours || [],
-          thickness: typeof asset.thickness === 'number' ? asset.thickness : parseFloat(asset.thickness || 2.0)
+          thickness: typeof asset.thickness === 'number' ? asset.thickness : parseFloat(asset.thickness || 2.0),
+          dynamicThickness: typeof asset.dynamicThickness === 'boolean' ? asset.dynamicThickness : true
         };
       }
 
@@ -14067,6 +14080,7 @@
       const name = document.getElementById('admin-asset-name').value.trim();
       const costVal = document.getElementById('admin-asset-cost').value;
       const thicknessVal = document.getElementById('admin-asset-thickness').value;
+      const isDynamic = document.getElementById('admin-asset-dynamic')?.checked || false;
       const fileInput = document.getElementById('admin-asset-file');
       const file = fileInput.files[0];
 
@@ -14093,6 +14107,7 @@
 
           assetPayload.cost = cost;
           assetPayload.thickness = thickness;
+          assetPayload.dynamicThickness = isDynamic;
           assetPayload.colours = window.assetColoursState;
         } else if (isDecor) {
           const cost = parseFloat(costVal);
