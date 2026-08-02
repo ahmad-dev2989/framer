@@ -12912,17 +12912,11 @@
 
     window.autoSeedDemoStore = async () => {
       try {
-        const prodSnap = await db.collection('products').limit(1).get();
-        if (!prodSnap.empty) return; // Only seed if completely empty
+        // Fetch EXISTING categories from the database
+        const catSnap = await db.collection('categories').get();
+        if (catSnap.empty) return; // If no categories exist, do nothing
 
-        const categories = [
-          { id: 'cat-custome', name: 'CUSTOME', desc: 'Fully customizable, bespoke frames tailored to your exact specifications.', img: 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=400' },
-          { id: 'cat-elite', name: 'ELITE', desc: 'Premium elite collection for the most prestigious artworks.', img: 'https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&q=80&w=400' },
-          { id: 'cat-wood', name: 'WOOD', desc: 'Natural, organic wood finishes bringing warmth to your space.', img: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&q=80&w=400' },
-          { id: 'cat-royal', name: 'ROYAL', desc: 'Royal, ornate, and highly detailed classical designs.', img: 'https://images.unsplash.com/photo-1550584488-06764ee714a6?auto=format&fit=crop&q=80&w=400' },
-          { id: 'cat-silver', name: 'SILVER', desc: 'Sleek, modern silver frames for contemporary aesthetics.', img: 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=400' },
-          { id: 'cat-gold', name: 'GOLD', desc: 'Luxurious gold frames providing timeless elegance.', img: 'https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&q=80&w=400' }
-        ];
+        const existingCategories = catSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
         const extendedColors = [
           {name: 'Oak Wood', value: '#8b5a2b'},
@@ -12953,40 +12947,52 @@
           innerFrame: { name: `${namePrefix} Inner`, image: svgInner, price: 25.00, thickness: 1.5, dynamicThickness: true, colors: extendedColors }
         });
 
-        const batch = db.batch();
+        let seededCount = 0;
 
-        for (const cat of categories) {
-          const catRef = db.collection('categories').doc(cat.id);
-          batch.set(catRef, {
-            name: cat.name,
-            desc: cat.desc,
-            imageURL: cat.img,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
+        // Loop through the existing 6 categories
+        for (const cat of existingCategories) {
+          // Check if this specific category is empty
+          const prodSnap = await db.collection('products').where('categoryId', '==', cat.id).limit(1).get();
+          
+          if (prodSnap.empty) {
+            // Category is empty! Let's add 3 dummy products to it.
+            const batch = db.batch();
+            for (let i = 1; i <= 3; i++) {
+              const prodRef = db.collection('products').doc();
+              const prodName = `${cat.name || 'Custom'} Edition ${i}`;
+              
+              // Use category image for thumbnail, or fallback
+              const catThumb = cat.imageURL || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=400';
+              const bgImg = 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80';
 
-          for (let i = 1; i <= 3; i++) {
-            const prodRef = db.collection('products').doc();
-            const prodName = `${cat.name} Edition ${i}`;
-            batch.set(prodRef, {
-              name: prodName,
-              price: 95.00,
-              description: `The ${prodName} is a premium handcrafted frame from our ${cat.name} collection. It features a stunning three-layer profile perfect for preserving your finest artwork.`,
-              categoryId: cat.id,
-              bgImage: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80',
-              galleryImages: [cat.img, 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&q=80&w=400'],
-              images: [],
-              sizes: [ {width: 8, height: 10, name: '8x10" Classic'}, {width: 16, height: 20, name: '16x20" Medium'}, {width: 24, height: 36, name: '24x36" Large'} ],
-              ...getFrameObj(prodName),
-              createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
+              batch.set(prodRef, {
+                name: prodName,
+                price: 95.00,
+                description: `The ${prodName} is a premium handcrafted frame from our ${cat.name} collection. It features a stunning three-layer profile perfect for preserving your finest artwork.`,
+                categoryId: cat.id,
+                bgImage: bgImg,
+                galleryImages: [catThumb, 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&q=80&w=400'],
+                images: [],
+                sizes: [ {width: 8, height: 10, name: '8x10" Classic'}, {width: 16, height: 20, name: '16x20" Medium'}, {width: 24, height: 36, name: '24x36" Large'} ],
+                ...getFrameObj(prodName),
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+              });
+            }
+            await batch.commit();
+            seededCount++;
           }
         }
-        await batch.commit();
 
-        // Force reload memory
-        if (window.loadCategoriesData) await window.loadCategoriesData();
-        if (window.loadProductTemplates) await loadProductTemplates();
-        if (window.renderLandingCategories) window.renderLandingCategories();
+        // Only reload if we actually added new products
+        if (seededCount > 0) {
+          if (window.loadCategoriesData) await window.loadCategoriesData();
+          if (window.loadProductTemplates) await loadProductTemplates();
+          if (window.renderLandingCategories) window.renderLandingCategories();
+          if (window.loadProductsForLanding) await window.loadProductsForLanding();
+          if (window.renderProductsPage && !document.getElementById('products-browse-section').classList.contains('hidden')) {
+              window.renderProductsPage();
+          }
+        }
       } catch (err) {
         console.error("Auto-seeder failed:", err);
       }
