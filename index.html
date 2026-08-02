@@ -12438,8 +12438,8 @@
           }
         }
 
-        // FAST TRACK: Bypasses the loading screen for instant scroll to the Contact Section
-        if (cleanPath === "/contact") {
+        // FAST TRACK: Bypasses the loading screen for instant scroll to landing sections
+        if (cleanPath === "/contact" || cleanPath === "/about-us" || cleanPath === "/" || cleanPath === "/products") {
           window.handlePathRouting(cleanPath, false);
           return;
         }
@@ -12907,6 +12907,9 @@
       }
 
       const views = ['landing', 'dashboard', 'editor', 'admin', 'checkout'];
+      const target = document.getElementById(targetId + '-view');
+      const isNewView = target && target.classList.contains('hidden');
+
       views.forEach(v => {
         const el = document.getElementById(v + '-view');
         if (el) el.classList.add('hidden');
@@ -12919,9 +12922,13 @@
         switchDashboardTab('templates');
       }
 
-      const target = document.getElementById(targetId + '-view');
       if (target) target.classList.remove('hidden');
-      window.scrollTo({ top: 0, behavior: 'instant' });
+      
+      // ONLY snap to the top if we are actually switching to a completely new screen!
+      // This prevents the page from jumping to the hero section when navigating between sections.
+      if (isNewView) {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
 
       if (targetId === 'editor') {
         window.updateCanvasScale();
