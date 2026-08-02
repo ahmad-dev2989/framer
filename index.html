@@ -6051,7 +6051,7 @@
                 <span id="frame-thickness-value" class="font-extrabold text-flame">100%</span>
               </div>
               <input type="range" id="frame-thickness-slider" min="70" max="150" value="100" class="w-full accent-flame"
-                oninput="applyFrameThickness(this.value)">
+                oninput="applyFrameThickness(this.value, false)" onchange="recordState()">
             </div>
 
             <!-- NEW: Live Frame Preview Section -->
@@ -6204,7 +6204,7 @@
           <span>Thickness</span><span id="dt-thickness-val">100%</span>
         </div>
         <input type="range" id="dt-thickness-slider" min="70" max="150" value="100" class="w-full accent-flame"
-          oninput="applyFrameThickness(this.value)">
+          oninput="applyFrameThickness(this.value, false)" onchange="recordState()">
       </div>
     </div>
 
@@ -8963,7 +8963,7 @@
           if (products.length > 8) {
             viewAllContainer.innerHTML = `
               <button onclick="window.handlePathRouting('/products')" class="px-10 py-4 bg-primary text-on-primary font-bold rounded hover:bg-secondary transition-colors text-sm uppercase tracking-wider flex items-center gap-2 shadow-md">
-                View All ${products.length} Products <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                View All  Products <i data-lucide="arrow-right" class="w-4 h-4"></i>
               </button>
             `;
           } else {
@@ -9855,8 +9855,7 @@
         window.updateFrameColourOverlay();
 
         window.updateCanvasScale();
-        recordState();
-        showToast("Layers rendered perfectly!");
+        // Removed recordState() and showToast() to prevent infinite spam during slider dragging
       } catch (err) {
         console.error("Canvas layers build failed:", err);
         showToast("Error rendering product layers.");
@@ -10009,7 +10008,7 @@
           mobileHtml += `
                  <div class="h-4 w-px bg-sand mx-1 shrink-0"></div>
                  <i data-lucide="move-horizontal" class="w-3 h-3 text-slate shrink-0"></i>
-                 <input type="range" id="mob-thickness-slider" min="70" max="150" value="${layerThickness}" class="w-12 accent-flame shrink-0" oninput="applyFrameThickness(this.value)">
+                 <input type="range" id="mob-thickness-slider" min="70" max="150" value="${layerThickness}" class="w-12 accent-flame shrink-0" oninput="applyFrameThickness(this.value, false)" onchange="recordState()">
               `;
         }
         mobileControls.innerHTML = mobileHtml;
@@ -13366,6 +13365,7 @@
       // Recalculate layers and pricing estimates immediately
       await window.rebuildEditorCanvasLayers(false);
       window.syncFrameCustomizationPanels();
+      recordState(); // Guarantee the new frame is saved to Undo History!
     };
 
     window.updateElementsTabsVisibility = () => {
