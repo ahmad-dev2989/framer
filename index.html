@@ -6787,7 +6787,18 @@
             (parseFloat(item.dataset.cost) || 0) >= 0 && item.dataset.itemName;
         })
         .map(item => ({ name: item.dataset.itemName, price: parseFloat(item.dataset.cost) || 0 }));
-      return { product: config.productName || document.getElementById('editor-project-title').innerText, frame: config.productName || 'Custom Frame', size: config.size ? { width: config.size.width, height: config.size.height, name: config.size.name || `${config.size.width} × ${config.size.height}` } : null, colour: config.colour || null, thickness: config.dynamicThickness ? config.thickness || 100 : null, decor, quantity: 1, pricing: calculateCanvasCost() };
+      return { 
+        product: config.productName || document.getElementById('editor-project-title').innerText, 
+        frame: config.productName || 'Custom Frame', 
+        size: config.size ? { width: config.size.width, height: config.size.height, name: config.size.name || `${config.size.width} × ${config.size.height}` } : null, 
+        colour: config.colour || null, 
+        thickness: config.dynamicThickness ? config.thickness || 100 : null, 
+        middleThickness: config.middleThickness || null,
+        innerThickness: config.innerThickness || null,
+        decor, 
+        quantity: 1, 
+        pricing: calculateCanvasCost() 
+      };
     }
     function renderCheckoutCustomizationSummary() {
       const container = document.getElementById('checkout-customization-summary'); if (!container) return;
@@ -15387,6 +15398,11 @@
 
       document.getElementById('admin-order-content').innerHTML = `
         <div class="grid grid-cols-2 gap-y-3 max-h-[70vh] overflow-y-auto no-scrollbar">
+          ${order.previewImageURL ? `
+          <div class="col-span-2 mb-2 flex justify-center bg-editorbg rounded-xl p-3 border border-sand/50 shadow-inner">
+            <img src="${order.previewImageURL}" class="max-h-56 object-contain drop-shadow-lg rounded" alt="Order Preview" />
+          </div>
+          ` : ''}
           <div><span class="block text-[9px] uppercase text-slate font-bold">Order ID</span><span class="text-charcoal font-black text-sm">${order.id || 'N/A'}</span></div>
           <div><span class="block text-[9px] uppercase text-slate font-bold">Settled Amount</span><span class="text-flame font-black text-sm">${order.total || '0.00'}</span></div>
           <div class="col-span-2"><span class="block text-[9px] uppercase text-slate font-bold">Fulfillment Status</span><span class="text-charcoal font-extrabold bg-sand/20 px-2 py-0.5 rounded text-xs inline-block mt-0.5">${order.status || 'Pending'}</span></div>
@@ -15402,7 +15418,18 @@
           <hr class="col-span-2 border-sand/40 my-1">
           
           <div class="col-span-2"><span class="block text-[9px] uppercase text-slate font-bold">Items Spec Profile</span><span class="text-charcoal font-bold text-xs">${(order.orderedProducts && order.orderedProducts.length > 0) ? order.orderedProducts.map(p => p.title + ' (x' + (p.qty || 1) + ')').join(', ') : 'Custom Frame'}</span></div>
-          <div class="col-span-2"><span class="block text-[9px] uppercase text-slate font-bold">Customization</span><span class="text-charcoal font-bold text-xs">${order.customization ? `Frame: ${order.customization.frame} · Size: ${order.customization.size?.name || 'Original size'} · Colour: ${order.customization.colour?.name || 'Original finish'} · Thickness: ${order.customization.thickness ? `${order.customization.thickness}%` : 'Standard'} · Decor: ${order.customization.decor?.length ? order.customization.decor.map(d => d.name).join(', ') : 'None'} · Quantity: ${order.customization.quantity || 1}` : 'No saved customization details'}</span></div>
+          <div class="col-span-2"><span class="block text-[9px] uppercase text-slate font-bold">Customization</span><span class="text-charcoal font-medium text-xs leading-relaxed inline-block mt-1">
+            ${order.customization ? `
+              <b>Frame:</b> ${order.customization.frame} <br>
+              <b>Size:</b> ${order.customization.size?.name || 'Original size'} <br>
+              <b>Colour:</b> ${order.customization.colour?.name || 'Original finish'} <br>
+              <b>Outer Thickness:</b> ${order.customization.thickness ? `${order.customization.thickness}%` : 'Standard'} <br>
+              ${order.customization.middleThickness ? `<b>Middle Thickness:</b> ${order.customization.middleThickness}% <br>` : ''}
+              ${order.customization.innerThickness ? `<b>Inner Thickness:</b> ${order.customization.innerThickness}% <br>` : ''}
+              <b>Decor:</b> ${order.customization.decor?.length ? order.customization.decor.map(d => d.name).join(', ') : 'None'} <br>
+              <b>Quantity:</b> ${order.customization.quantity || 1}
+            ` : 'No saved customization details'}
+          </span></div>
           <div class="col-span-2"><span class="block text-[9px] uppercase text-slate font-bold">Customer Name</span><span class="text-charcoal font-bold">${order.customer || 'Guest'}</span></div>
           <div><span class="block text-[9px] uppercase text-slate font-bold">Phone Number</span><span class="text-charcoal font-bold text-xs">${order.phone || 'N/A'}</span></div>
           <div><span class="block text-[9px] uppercase text-slate font-bold">Fulfillment City</span><span class="text-charcoal font-bold text-xs">${order.address ? (order.address.split(',')[1] || 'Local').trim() : 'Local'}</span></div>
