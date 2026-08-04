@@ -14937,13 +14937,13 @@
           previewImageURL: activePreviewUrl || 'https://via.placeholder.com/400',
 
           // CRITICAL FIX: Deep parse to strictly enforce Firestore entity rules
-          orderedProducts: JSON.parse(JSON.stringify(cartItems.length > 0 ? cartItems.map(i => ({ 
-             title: i.title || 'Product', 
+          orderedProducts: JSON.parse(JSON.stringify((!window.isDirectBuyCheckout && cartItems.length > 0) ? cartItems.map(i => ({ 
+             title: String(i.title || 'Product'), 
              cost: parseFloat(i.cost) || 0, 
              qty: i.quantity || i.qty || 1, 
              customization: i.customization || null 
           })) : [{ 
-             title: title || 'Custom Frame', 
+             title: String(title || 'Custom Frame'), 
              cost: basePriceRaw || 0, 
              qty: 1, 
              customization: getCurrentCustomizationSummary() 
