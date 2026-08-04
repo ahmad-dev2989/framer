@@ -6788,9 +6788,8 @@
           return role !== 'frame' && role !== 'middle-frame' && role !== 'inner-frame' && role !== 'artwork' &&
             (parseFloat(item.dataset.cost) || 0) >= 0 && item.dataset.itemName;
         })
-        .map(item => ({ name: item.dataset.itemName, price: parseFloat(item.dataset.cost) || 0 }));
+        .map(item => ({ name: item.dataset.itemName || 'Item', price: parseFloat(item.dataset.cost) || 0 }));
 
-      // Extract detailed layer specs for Admin preview
       const hasOuter = !!document.querySelector('#artwork-layer [data-frame-role="frame"]');
       const hasMiddle = !!document.querySelector('#artwork-layer [data-frame-role="middle-frame"]');
       const hasInner = !!document.querySelector('#artwork-layer [data-frame-role="inner-frame"]');
@@ -6799,38 +6798,64 @@
       let framesTotal = 0;
       
       if (hasOuter && product.outerFrame) {
-        const t = (product.outerFrame.thickness * ((config.thickness || 100) / 100)).toFixed(1);
+        const baseThick = parseFloat(product.outerFrame.thickness) || 2.0;
+        const mult = (parseFloat(config.thickness) || 100) / 100;
         const p = parseFloat(product.outerFrame.price) || 0;
         framesTotal += p;
-        layers.push({ role: 'Outer Frame', name: product.outerFrame.name, thickness: t, color: config.outerColour || config.colour, price: p });
+        layers.push({ 
+          role: 'Outer Frame', 
+          name: product.outerFrame.name || 'Frame', 
+          thickness: (baseThick * mult).toFixed(1), 
+          color: config.outerColour || config.colour || null, 
+          price: p 
+        });
       }
       if (hasMiddle && product.middleFrame) {
-        const t = (product.middleFrame.thickness * ((config.middleThickness || 100) / 100)).toFixed(1);
+        const baseThick = parseFloat(product.middleFrame.thickness) || 2.0;
+        const mult = (parseFloat(config.middleThickness) || 100) / 100;
         const p = parseFloat(product.middleFrame.price) || 0;
         framesTotal += p;
-        layers.push({ role: 'Middle Frame', name: product.middleFrame.name, thickness: t, color: config.middleColour, price: p });
+        layers.push({ 
+          role: 'Middle Frame', 
+          name: product.middleFrame.name || 'Matte', 
+          thickness: (baseThick * mult).toFixed(1), 
+          color: config.middleColour || null, 
+          price: p 
+        });
       }
       if (hasInner && product.innerFrame) {
-        const t = (product.innerFrame.thickness * ((config.innerThickness || 100) / 100)).toFixed(1);
+        const baseThick = parseFloat(product.innerFrame.thickness) || 2.0;
+        const mult = (parseFloat(config.innerThickness) || 100) / 100;
         const p = parseFloat(product.innerFrame.price) || 0;
         framesTotal += p;
-        layers.push({ role: 'Inner Frame', name: product.innerFrame.name, thickness: t, color: config.innerColour, price: p });
+        layers.push({ 
+          role: 'Inner Frame', 
+          name: product.innerFrame.name || 'Inner', 
+          thickness: (baseThick * mult).toFixed(1), 
+          color: config.innerColour || null, 
+          price: p 
+        });
       }
 
+      // Deep clone to aggressively strip out any accidental undefined attributes
+      const safeConfig = JSON.parse(JSON.stringify(config || {}));
+      const safeProduct = JSON.parse(JSON.stringify(product || {}));
+      const titleEl = document.getElementById('editor-project-title');
+
       return { 
-        product: config.productName || document.getElementById('editor-project-title').innerText, 
+        product: config.productName || (titleEl ? titleEl.innerText : 'Custom Frame'), 
         frame: config.productName || 'Custom Frame', 
-        size: config.size ? { width: config.size.width, height: config.size.height, name: config.size.name || `${config.size.width} × ${config.size.height}` } : null, 
-        layers,
-        framesTotal,
-        decor, 
+        size: config.size ? { width: config.size.width || 0, height: config.size.height || 0, name: config.size.name || `${config.size.width} × ${config.size.height}` } : null, 
+        layers: layers,
+        framesTotal: framesTotal,
+        decor: decor, 
         quantity: 1, 
         pricing: calculateCanvasCost(),
         editorState: {
-          config: JSON.parse(JSON.stringify(config)),
-          product: JSON.parse(JSON.stringify(product)),
-          canvasHtml: document.getElementById('artwork-layer').innerHTML,
-          canvasBg: document.getElementById('design-canvas').style.backgroundColor || '#ffffff'
+          config: safeConfig,
+          product: safeProduct,
+          canvasHtml: document.getElementById('artwork-layer')?.innerHTML || '',
+          canvasBg: document.getElementById('design-canvas')?.style.backgroundColor || '#ffffff'
         }
       };
     }
@@ -14865,61 +14890,74 @@
     };
 
     async function processFinalCheckoutOrderCreation(method, paymentStatus, meta) {
-      const name = document.getElementById('chk-name').value || "Guest User";
-      const email = document.getElementById('chk-email').value || "processing@studio.com";
-      const phone = document.getElementById('chk-phone').value || "N/A";
-      const province = document.getElementById('chk-province').value || "";
-      const city = document.getElementById('chk-city').value || "";
-      const street = document.getElementById('chk-address').value || "";
-      const address = `${street}, ${city}, ${province}`;
-      const title = document.getElementById('editor-project-title').innerText;
+      try {
+        const name = document.getElementById('chk-name').value || "Guest User";
+        const email = document.getElementById('chk-email').value || "processing@studio.com";
+        const phone = document.getElementById('chk-phone').value || "N/A";
+        const province = document.getElementById('chk-province').value || "";
+        const city = document.getElementById('chk-city').value || "";
+        const street = document.getElementById('chk-address').value || "";
+        const address = `${street}, ${city}, ${province}`;
+        
+        const titleEl = document.getElementById('editor-project-title');
+        const title = titleEl ? titleEl.innerText : "Custom Frame";
 
-      const basePriceRaw = parseFloat(document.getElementById('chk-total').innerText.replace(/[^0-9.]/g, '')) || 0;
-      const shippingRateValue = method === 'CARD' ? (basePriceRaw > 150 ? 0 : 15.00) : 0;
-      const structuralGrandTotal = basePriceRaw + shippingRateValue;
+        const basePriceRaw = parseFloat(document.getElementById('chk-total').innerText.replace(/[^0-9.]/g, '')) || 0;
+        const shippingRateValue = method === 'CARD' ? (basePriceRaw > 150 ? 0 : 15.00) : 0;
+        const structuralGrandTotal = basePriceRaw + shippingRateValue;
 
-      const orderId = 'ORD-' + Math.floor(10000 + Math.random() * 90000);
-      const estDeliveryTimestampString = new Date(Date.now() + 5 * 86400000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const orderId = 'ORD-' + Math.floor(10000 + Math.random() * 90000);
+        const estDeliveryTimestampString = new Date(Date.now() + 5 * 86400000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
-      // Automatically capture the user's live editor workspace if they are purchasing from the builder
-      let activePreviewUrl = 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=400';
-      if (window.isDirectBuyCheckout) {
-        try {
-          const editorCanvas = document.getElementById('design-canvas');
-          const canvasShot = await html2canvas(editorCanvas, { scale: 1, useCORS: true });
-          activePreviewUrl = canvasShot.toDataURL('image/jpeg', 0.8);
-        } catch (e) { }
-      } else if (cartItems.length > 0) {
-        activePreviewUrl = cartItems[0].imageURL || activePreviewUrl;
-      }
+        // Automatically capture the user's live editor workspace if they are purchasing from the builder
+        let activePreviewUrl = 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=400';
+        if (window.isDirectBuyCheckout) {
+          try {
+            const editorCanvas = document.getElementById('design-canvas');
+            const canvasShot = await html2canvas(editorCanvas, { scale: 1, useCORS: true });
+            activePreviewUrl = canvasShot.toDataURL('image/jpeg', 0.8);
+          } catch (e) { }
+        } else if (cartItems.length > 0) {
+          activePreviewUrl = cartItems[0].imageURL || activePreviewUrl;
+        }
 
-      const structuredDatabaseOrderRecordPayload = {
-        id: orderId,
-        uid: currentUser ? currentUser.uid : 'GUEST-AUTHENTICATION-CONTEXT',
-        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        status: 'Pending',
-        customer: name,
-        email: email,
-        phone: phone,
-        address: address,
-        previewImageURL: activePreviewUrl,
+        const structuredDatabaseOrderRecordPayload = {
+          id: orderId,
+          uid: currentUser ? currentUser.uid : 'GUEST-AUTHENTICATION-CONTEXT',
+          date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          status: 'Pending',
+          customer: name,
+          email: email,
+          phone: phone,
+          address: address,
+          previewImageURL: activePreviewUrl || 'https://via.placeholder.com/400',
 
-        orderedProducts: cartItems.length > 0 ? cartItems.map(i => ({ title: i.title, cost: parseFloat(i.cost) || 0, qty: i.quantity || i.qty || 1, customization: i.customization || null })) : [{ title: title, cost: basePriceRaw, qty: 1, customization: getCurrentCustomizationSummary() }],
-        baseAmount: basePriceRaw,
-        shippingCharges: shippingRateValue,
-        total: `${window.appCurrency || '$'}${structuralGrandTotal.toFixed(2)}`,
+          orderedProducts: cartItems.length > 0 ? cartItems.map(i => ({ 
+             title: i.title || 'Product', 
+             cost: parseFloat(i.cost) || 0, 
+             qty: i.quantity || i.qty || 1, 
+             customization: i.customization || null 
+          })) : [{ 
+             title: title || 'Custom Frame', 
+             cost: basePriceRaw || 0, 
+             qty: 1, 
+             customization: getCurrentCustomizationSummary() 
+          }],
+          baseAmount: basePriceRaw || 0,
+          shippingCharges: shippingRateValue || 0,
+          total: `${window.appCurrency || '$'}${(structuralGrandTotal || 0).toFixed(2)}`,
 
-        paymentMethod: method,
-        paymentStatus: paymentStatus,
-        paymentProvider: method === 'CARD' ? 'StripeEngineAbstractionAdapter' : 'None',
-        paymentIntentId: meta.intentId,
-        transactionId: meta.transactionId,
-        cardBrand: meta.brand,
-        cardLast4: meta.last4,
-        paidAt: method === 'CARD' ? firebase.firestore.FieldValue.serverTimestamp() : null,
-        estimatedDelivery: estDeliveryTimestampString
-      };
+          paymentMethod: method || 'COD',
+          paymentStatus: paymentStatus || 'Pending',
+          paymentProvider: method === 'CARD' ? 'StripeEngineAbstractionAdapter' : 'None',
+          paymentIntentId: meta.intentId || 'None',
+          transactionId: meta.transactionId || 'None',
+          cardBrand: meta.brand || 'None',
+          cardLast4: meta.last4 || 'None',
+          paidAt: method === 'CARD' ? firebase.firestore.FieldValue.serverTimestamp() : null,
+          estimatedDelivery: estDeliveryTimestampString || 'N/A'
+        };
 
       const orderPdf = await generateOrderConfirmationPdf(structuredDatabaseOrderRecordPayload);
       structuredDatabaseOrderRecordPayload.pdfFileName = `FrameCraft-Invoice-${orderId}.pdf`;
@@ -15031,6 +15069,11 @@
         if (window.lucide) lucide.createIcons();
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
+      } catch (e) {
+        console.error("Critical Order Failure:", e);
+        window.hideGlobalLoader();
+        showToast("Failed to submit order: " + e.message);
+      }
     }
 
 
