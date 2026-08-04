@@ -14744,16 +14744,48 @@
     };
 
     async function handleBuyNow() {
-      if (!currentUser) { pendingAction = 'buy'; toggleModal('login-modal'); }
-      else { 
+      if (!currentUser) { 
+        pendingAction = 'buy'; 
+        toggleModal('login-modal'); 
+      } else { 
+        showToast("Saving your work...");
         try {
+          if (typeof deselectAll === 'function') deselectAll();
+          
           const editorCanvas = document.getElementById('design-canvas');
-          // Capture the canvas while it is still fully visible before the view switches
-          if (editorCanvas && editorCanvas.offsetParent !== null) {
-            const canvasShot = await html2canvas(editorCanvas, { scale: 2, useCORS: true });
-            window.directBuyPreviewUrl = canvasShot.toDataURL('image/jpeg', 0.9);
+          
+          // Pre-emptively grab the actual artwork image as a safe fallback
+          let safeFallbackUrl = '';
+          const artBg = document.querySelector('#artwork-layer [data-frame-role="artwork"] img');
+          if (artBg && artBg.src) {
+            safeFallbackUrl = artBg.src;
           }
-        } catch(e) { console.warn("Canvas capture failed:", e); }
+
+          if (editorCanvas && editorCanvas.offsetParent !== null) {
+            await new Promise(r => setTimeout(r, 100));
+
+            try {
+              const canvasShot = await html2canvas(editorCanvas, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: editorCanvas.style.backgroundColor || '#ffffff',
+                onclone: function(clonedDoc) {
+                  const clonedCanvas = clonedDoc.getElementById('design-canvas');
+                  if (clonedCanvas) {
+                    clonedCanvas.style.transform = 'none';
+                  }
+                }
+              });
+              
+              window.directBuyPreviewUrl = canvasShot.toDataURL('image/jpeg', 0.9);
+            } catch (err) {
+              console.warn("Screenshot blocked by browser CORS. Using artwork fallback.");
+              window.directBuyPreviewUrl = safeFallbackUrl;
+            }
+          }
+        } catch(e) { 
+          console.warn("Canvas capture failed:", e); 
+        }
         proceedToCheckout(true); 
       }
     }
@@ -15240,7 +15272,7 @@
         try {
           const base64Img = await new Promise((res, rej) => {
             const img = new Image();
-            // Only apply crossOrigin if it's an external URL, to avoid blocking Base64 Data URIs
+            // IMPORTANT: Only apply crossOrigin if it's an external URL, otherwise base64 data URIs are rejected
             if (!previewUrl.startsWith('data:')) {
               img.crossOrigin = "Anonymous";
             }
@@ -15253,9 +15285,9 @@
               c.height = img.height * scale;
               const cx = c.getContext('2d');
               cx.drawImage(img, 0, 0, c.width, c.height);
-              res(c.toDataURL('image/jpeg', 0.4)); // 40% quality compression
+              res(c.toDataURL('image/jpeg', 0.6)); // Upped quality slightly for better print clarity
             };
-            img.onerror = rej;
+            img.onerror = () => rej(new Error("Image load failed due to CORS or broken URL"));
             img.src = previewUrl;
           });
           pdf.addImage(base64Img, 'JPEG', 15, y, 70, 70);
@@ -15329,12 +15361,27 @@
         const orderId = 'ORD-' + Math.floor(10000 + Math.random() * 90000);
         const estDeliveryTimestampString = new Date(Date.now() + 5 * 86400000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
-        // Use the pre-captured preview if they are purchasing from the builder
-        let activePreviewUrl = 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=400';
+        // Use the perfect screenshot we captured, or the user's actual artwork
+        let activePreviewUrl = '';
+        
         if (window.isDirectBuyCheckout && window.directBuyPreviewUrl) {
           activePreviewUrl = window.directBuyPreviewUrl;
         } else if (!window.isDirectBuyCheckout && cartItems.length > 0) {
-          activePreviewUrl = cartItems[0].imageURL || activePreviewUrl;
+          activePreviewUrl = cartItems[0].imageURL;
+        }
+
+        // AGGRESSIVE FALLBACK: Hunt for the user's actual image so the dining room NEVER appears
+        if (!activePreviewUrl || activePreviewUrl.includes('photo-1544457070-4cd773b4d71e') || activePreviewUrl === 'https://via.placeholder.com/400') {
+            const artBg = document.querySelector('#artwork-layer [data-frame-role="artwork"] img');
+            if (artBg && artBg.src) {
+                activePreviewUrl = artBg.src;
+            } else if (window.activeFrameProduct && window.activeFrameProduct.bgImage) {
+                activePreviewUrl = window.activeFrameProduct.bgImage;
+            } else if (window.activeFrameProduct && window.activeFrameProduct.galleryImages && window.activeFrameProduct.galleryImages.length > 0) {
+                activePreviewUrl = window.activeFrameProduct.galleryImages[0];
+            } else {
+                activePreviewUrl = 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&q=80&w=400'; // Generic abstract art
+            }
         }
 
         const structuredDatabaseOrderRecordPayload = {
