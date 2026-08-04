@@ -14753,39 +14753,32 @@
           if (typeof deselectAll === 'function') deselectAll();
           
           const editorCanvas = document.getElementById('design-canvas');
-          
-          // Pre-emptively grab the actual artwork image as a safe fallback
-          let safeFallbackUrl = '';
-          const artBg = document.querySelector('#artwork-layer [data-frame-role="artwork"] img');
-          if (artBg && artBg.src) {
-            safeFallbackUrl = artBg.src;
-          }
-
           if (editorCanvas && editorCanvas.offsetParent !== null) {
-            await new Promise(r => setTimeout(r, 100));
-
-            try {
-              const canvasShot = await html2canvas(editorCanvas, { 
-                scale: 2, 
-                useCORS: true,
-                backgroundColor: editorCanvas.style.backgroundColor || '#ffffff',
-                onclone: function(clonedDoc) {
-                  const clonedCanvas = clonedDoc.getElementById('design-canvas');
-                  if (clonedCanvas) {
-                    clonedCanvas.style.transform = 'none';
-                  }
-                }
-              });
-              
-              window.directBuyPreviewUrl = canvasShot.toDataURL('image/jpeg', 0.9);
-            } catch (err) {
-              console.warn("Screenshot blocked by browser CORS. Using artwork fallback.");
-              window.directBuyPreviewUrl = safeFallbackUrl;
-            }
+            
+            // 1. Remove the scale scaling temporarily on the live DOM
+            const originalTransform = editorCanvas.style.transform;
+            editorCanvas.style.transform = 'scale(1)';
+            
+            // 2. Give the browser time to repaint the screen at 1:1 scale
+            await new Promise(r => setTimeout(r, 200));
+            
+            // 3. Take the screenshot
+            const canvasShot = await html2canvas(editorCanvas, { 
+              scale: 2, 
+              useCORS: true, 
+              backgroundColor: editorCanvas.style.backgroundColor || '#ffffff'
+            });
+            
+            // 4. Save the Base64 image
+            window.directBuyPreviewUrl = canvasShot.toDataURL('image/jpeg', 0.9);
+            
+            // 5. Restore the editor scaling immediately
+            editorCanvas.style.transform = originalTransform;
           }
         } catch(e) { 
           console.warn("Canvas capture failed:", e); 
         }
+        
         proceedToCheckout(true); 
       }
     }
@@ -15270,28 +15263,35 @@
       const previewUrl = order.previewImageURL;
       if (previewUrl && !previewUrl.includes('via.placeholder.com')) {
         try {
-          const base64Img = await new Promise((res, rej) => {
-            const img = new Image();
-            // IMPORTANT: Only apply crossOrigin if it's an external URL, otherwise base64 data URIs are rejected
-            if (!previewUrl.startsWith('data:')) {
+          let finalBase64Img = previewUrl;
+
+          // If the image is a URL (not a screenshot), convert it to Base64 first
+          if (!previewUrl.startsWith('data:image')) {
+            finalBase64Img = await new Promise((res, rej) => {
+              const img = new Image();
               img.crossOrigin = "Anonymous";
-            }
-            img.onload = () => {
-              const c = document.createElement('canvas');
-              // DOWNSCALE heavily to keep PDF under EmailJS 50KB Free Tier limit
-              const maxW = 200;
-              const scale = Math.min(1, maxW / img.width);
-              c.width = img.width * scale;
-              c.height = img.height * scale;
-              const cx = c.getContext('2d');
-              cx.drawImage(img, 0, 0, c.width, c.height);
-              res(c.toDataURL('image/jpeg', 0.6)); // Upped quality slightly for better print clarity
-            };
-            img.onerror = () => rej(new Error("Image load failed due to CORS or broken URL"));
-            img.src = previewUrl;
-          });
-          pdf.addImage(base64Img, 'JPEG', 15, y, 70, 70);
-        } catch (e) { console.warn("Could not embed image in PDF:", e); }
+              img.onload = () => {
+                const c = document.createElement('canvas');
+                const maxW = 200;
+                const scale = Math.min(1, maxW / img.width);
+                c.width = img.width * scale;
+                c.height = img.height * scale;
+                const cx = c.getContext('2d');
+                cx.drawImage(img, 0, 0, c.width, c.height);
+                res(c.toDataURL('image/jpeg', 0.6)); 
+              };
+              img.onerror = () => rej(new Error("Image load failed due to CORS"));
+              img.src = previewUrl;
+            });
+          }
+
+          // Directly inject the Base64 image into the PDF
+          if (finalBase64Img && finalBase64Img.startsWith('data:image')) {
+            pdf.addImage(finalBase64Img, 'JPEG', 15, y, 70, 70);
+          }
+        } catch (e) { 
+          console.warn("Could not embed image in PDF:", e); 
+        }
       }
 
       // Totals on the right
