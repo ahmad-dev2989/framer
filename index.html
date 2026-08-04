@@ -6790,19 +6790,31 @@
         })
         .map(item => ({ name: item.dataset.itemName, price: parseFloat(item.dataset.cost) || 0 }));
 
+      // Extract detailed layer specs for Admin preview
       const hasOuter = !!document.querySelector('#artwork-layer [data-frame-role="frame"]');
       const hasMiddle = !!document.querySelector('#artwork-layer [data-frame-role="middle-frame"]');
       const hasInner = !!document.querySelector('#artwork-layer [data-frame-role="inner-frame"]');
 
       const layers = [];
+      let framesTotal = 0;
+      
       if (hasOuter && product.outerFrame) {
-        layers.push({ role: 'Outer Frame', name: product.outerFrame.name, thickness: (product.outerFrame.thickness * ((config.thickness || 100) / 100)).toFixed(1), color: config.outerColour || config.colour });
+        const t = (product.outerFrame.thickness * ((config.thickness || 100) / 100)).toFixed(1);
+        const p = parseFloat(product.outerFrame.price) || 0;
+        framesTotal += p;
+        layers.push({ role: 'Outer Frame', name: product.outerFrame.name, thickness: t, color: config.outerColour || config.colour, price: p });
       }
       if (hasMiddle && product.middleFrame) {
-        layers.push({ role: 'Middle Frame', name: product.middleFrame.name, thickness: (product.middleFrame.thickness * ((config.middleThickness || 100) / 100)).toFixed(1), color: config.middleColour });
+        const t = (product.middleFrame.thickness * ((config.middleThickness || 100) / 100)).toFixed(1);
+        const p = parseFloat(product.middleFrame.price) || 0;
+        framesTotal += p;
+        layers.push({ role: 'Middle Frame', name: product.middleFrame.name, thickness: t, color: config.middleColour, price: p });
       }
       if (hasInner && product.innerFrame) {
-        layers.push({ role: 'Inner Frame', name: product.innerFrame.name, thickness: (product.innerFrame.thickness * ((config.innerThickness || 100) / 100)).toFixed(1), color: config.innerColour });
+        const t = (product.innerFrame.thickness * ((config.innerThickness || 100) / 100)).toFixed(1);
+        const p = parseFloat(product.innerFrame.price) || 0;
+        framesTotal += p;
+        layers.push({ role: 'Inner Frame', name: product.innerFrame.name, thickness: t, color: config.innerColour, price: p });
       }
 
       return { 
@@ -6810,6 +6822,7 @@
         frame: config.productName || 'Custom Frame', 
         size: config.size ? { width: config.size.width, height: config.size.height, name: config.size.name || `${config.size.width} × ${config.size.height}` } : null, 
         layers,
+        framesTotal,
         decor, 
         quantity: 1, 
         pricing: calculateCanvasCost(),
@@ -15421,81 +15434,195 @@
       if (order.orderedProducts && order.orderedProducts.length > 0) {
         itemsHtml = order.orderedProducts.map((p, index) => {
           const cust = p.customization || order.customization;
-          let layersHtml = '';
+          let summaryCardHtml = '';
+          
           if (cust && cust.layers && cust.layers.length > 0) {
-            layersHtml = cust.layers.map(layer => `
-              <div class="ml-2 mb-1.5 border-l-2 border-flame/40 pl-2.5">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-slate">${layer.role}:</span> 
-                <span class="text-charcoal font-bold text-xs">${layer.name}</span><br>
-                <span class="text-[10px] text-slate font-medium">Thickness: <strong class="text-charcoal">${layer.thickness} cm</strong> | Finish: <strong class="text-charcoal">${layer.color ? layer.color.name : 'Original'}</strong></span>
-              </div>
-            `).join('');
-          } else if (cust) {
-            layersHtml = `
-              <div class="ml-2 mb-1.5 border-l-2 border-flame/40 pl-2.5">
-                <span class="text-charcoal font-bold text-xs">${cust.frame || 'Standard Frame'}</span><br>
-                <span class="text-[10px] text-slate font-medium">Outer Thickness: <strong class="text-charcoal">${cust.thickness ? cust.thickness + '%' : 'Standard'}</strong> | Finish: <strong class="text-charcoal">${cust.colour?.name || 'Original'}</strong></span>
+            summaryCardHtml = `
+              <div class="bg-white border border-sand/60 rounded-2xl p-5 mt-4 shadow-sm">
+                <div class="flex items-center gap-2 border-b border-sand/60 pb-3 mb-4">
+                  <i data-lucide="eye" class="w-4 h-4 text-flame"></i>
+                  <span class="text-xs font-black uppercase tracking-wider text-charcoal">Live Design Summary</span>
+                </div>
+                ${cust.layers.map(layer => {
+                  const colorDisplay = layer.color 
+                    ? `<span class="inline-block w-3 h-3 rounded-full border border-sand align-middle shadow-inner mr-1.5" style="background-color:${layer.color.value};"></span>${layer.color.name}` 
+                    : '<span class="text-slate italic">Original</span>';
+                  
+                  return `
+                    <div class="border-b border-sand/30 pb-3 mb-3 last:border-0 last:pb-0 last:mb-0">
+                      <div class="flex justify-between items-start mb-1">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate">${layer.role}</span>
+                        <span class="text-sm font-bold text-flame">${window.appCurrency || '$'}${(layer.price || 0).toFixed(2)}</span>
+                      </div>
+                      <div class="text-sm font-black text-charcoal mb-2">${layer.name}</div>
+                      <div class="flex justify-between items-center text-xs font-medium text-slate">
+                        <span>Profile: <strong class="text-charcoal">${layer.thickness} cm</strong></span>
+                        <span class="flex items-center">${colorDisplay}</span>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+                <div class="flex justify-between items-center pt-3 mt-1 border-t border-sand/60">
+                  <span class="text-xs font-black uppercase tracking-wider text-charcoal">Frames Total</span>
+                  <span class="text-lg font-black text-flame">${window.appCurrency || '$'}${(cust.framesTotal || 0).toFixed(2)}</span>
+                </div>
               </div>
             `;
+          } else if (cust) {
+             // Fallback for slightly older orders
+             summaryCardHtml = `
+              <div class="bg-white border border-sand/60 rounded-2xl p-5 mt-4 shadow-sm">
+                <div class="flex items-center gap-2 border-b border-sand/60 pb-3 mb-4">
+                  <i data-lucide="eye" class="w-4 h-4 text-flame"></i>
+                  <span class="text-xs font-black uppercase tracking-wider text-charcoal">Design Summary</span>
+                </div>
+                <div class="flex justify-between items-start mb-1">
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-slate">Frame</span>
+                </div>
+                <div class="text-sm font-black text-charcoal mb-2">${cust.frame || 'Standard Frame'}</div>
+                <div class="flex justify-between items-center text-xs font-medium text-slate">
+                  <span>Profile: <strong class="text-charcoal">${cust.thickness ? cust.thickness + '%' : 'Standard'}</strong></span>
+                  <span class="flex items-center">${cust.colour?.name || 'Original'}</span>
+                </div>
+              </div>
+             `;
           }
 
           return `
-            <div class="mb-3 bg-editorbg border border-sand/50 rounded-xl p-4">
-              <div class="flex justify-between items-start mb-3">
-                <span class="text-sm font-black text-charcoal">${p.title} <span class="text-slate font-medium text-xs">(x${p.qty || 1})</span></span>
-                ${(cust && cust.editorState) ? `<button onclick="window.loadAdminOrderInEditor('${order.id}', ${index})" class="px-3 py-1.5 bg-charcoal text-cream hover:bg-flame rounded flex items-center gap-1.5 text-[10px] font-bold transition shadow-sm"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Load in Editor</button>` : `<span class="text-[10px] text-slate italic">Legacy Order</span>`}
+            <div class="mb-4">
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-lg font-black text-charcoal">${p.title} <span class="text-slate font-bold text-xs ml-1">(x${p.qty || 1})</span></span>
+                ${(cust && cust.editorState) ? `<button onclick="window.loadAdminOrderInEditor('${order.id}', ${index})" class="px-4 py-2 bg-editorbg border border-sand hover:border-flame text-charcoal rounded-xl flex items-center gap-2 text-xs font-bold transition shadow-sm"><i data-lucide="external-link" class="w-3.5 h-3.5"></i> Open in Studio</button>` : `<span class="text-[10px] text-slate font-bold uppercase tracking-wider bg-sand/30 px-2 py-1 rounded">Legacy Order</span>`}
               </div>
-              <div class="text-xs text-charcoal leading-relaxed">
-                ${cust ? `
-                  <div class="mb-2.5 text-[11px]"><strong class="uppercase text-slate tracking-wider text-[9px]">Base Size:</strong> ${cust.size?.name || 'Original size'}</div>
-                  ${layersHtml}
-                  ${cust.decor?.length ? `<div class="mt-2 text-[11px]"><strong class="uppercase text-slate tracking-wider text-[9px]">Decor Elements:</strong> ${cust.decor.map(d => d.name).join(', ')}</div>` : ''}
-                ` : '<span class="text-slate italic">No advanced customization details saved.</span>'}
-              </div>
+              ${cust && cust.size ? `<div class="text-xs font-bold text-slate mb-2">Base Size: <span class="text-charcoal">${cust.size.name}</span></div>` : ''}
+              ${cust && cust.decor?.length ? `<div class="text-xs font-bold text-slate mb-2">Decor Elements: <span class="text-charcoal">${cust.decor.map(d => d.name).join(', ')}</span></div>` : ''}
+              
+              ${summaryCardHtml || '<div class="text-xs text-slate italic bg-sand/10 p-4 rounded-xl mt-3 border border-sand/50">No advanced customization details saved.</div>'}
             </div>
           `;
         }).join('');
-      } else {
-        itemsHtml = '<span class="text-slate italic text-xs block mt-2">No product specification details available.</span>';
       }
 
       document.getElementById('admin-order-content').innerHTML = `
-        <div class="grid grid-cols-2 gap-y-3 max-h-[70vh] overflow-y-auto no-scrollbar">
-          ${order.previewImageURL ? `
-          <div class="col-span-2 mb-2 flex justify-center bg-editorbg rounded-xl p-3 border border-sand/50 shadow-inner">
-            <img src="${order.previewImageURL}" class="max-h-56 object-contain drop-shadow-lg rounded" alt="Order Preview" />
+        <div class="max-h-[75vh] overflow-y-auto no-scrollbar pb-4 pr-2">
+          
+          ${order.previewImageURL && !order.previewImageURL.includes('via.placeholder.com') ? `
+          <div class="mb-6 flex justify-center bg-editorbg rounded-2xl p-4 border border-sand/50 shadow-inner relative group">
+            <img src="${order.previewImageURL}" class="max-h-64 object-contain drop-shadow-xl rounded-lg" alt="Order Preview" />
+            <div class="absolute top-2 right-2 bg-white/90 backdrop-blur text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded shadow-sm text-charcoal">Order Preview</div>
           </div>
           ` : ''}
-          <div><span class="block text-[9px] uppercase text-slate font-bold">Order ID</span><span class="text-charcoal font-black text-sm">${order.id || 'N/A'}</span></div>
-          <div><span class="block text-[9px] uppercase text-slate font-bold">Settled Amount</span><span class="text-flame font-black text-sm">${order.total || '0.00'}</span></div>
-          <div class="col-span-2"><span class="block text-[9px] uppercase text-slate font-bold">Fulfillment Status</span><span class="text-charcoal font-extrabold bg-sand/20 px-2 py-0.5 rounded text-xs inline-block mt-0.5">${order.status || 'Pending'}</span></div>
+
+          <div class="grid grid-cols-2 gap-y-4">
+            <div class="bg-editorbg p-3 rounded-xl border border-sand/40"><span class="block text-[9px] uppercase text-slate font-bold mb-1">Order ID</span><span class="text-charcoal font-black text-base">${order.id || 'N/A'}</span></div>
+            <div class="bg-editorbg p-3 rounded-xl border border-sand/40"><span class="block text-[9px] uppercase text-slate font-bold mb-1">Settled Amount</span><span class="text-flame font-black text-base">${order.total || '0.00'}</span></div>
+            
+            <div class="col-span-2 flex justify-between items-center bg-sand/10 p-3 rounded-xl border border-sand/30">
+              <span class="text-[10px] uppercase text-slate font-bold">Fulfillment Status</span>
+              <span class="text-charcoal font-extrabold bg-white border border-sand px-3 py-1 rounded shadow-sm text-xs">${order.status || 'Pending'}</span>
+            </div>
+          </div>
           
-          <hr class="col-span-2 border-sand/40 my-1">
-          
-          <div><span class="block text-[9px] uppercase text-slate font-bold">Payment Method</span><span class="text-charcoal font-extrabold">${order.paymentMethod || 'COD'}</span></div>
-          <div><span class="block text-[9px] uppercase text-slate font-bold">Payment Status</span><span class="text-charcoal font-extrabold">${order.paymentStatus || 'Pending'}</span></div>
-          <div><span class="block text-[9px] uppercase text-slate font-bold">Card Network</span><span class="text-charcoal font-extrabold">${order.cardBrand || 'None'}</span></div>
-          <div><span class="block text-[9px] uppercase text-slate font-bold">Account Suffix</span><span class="text-charcoal font-mono font-bold">${order.cardLast4 && order.cardLast4 !== 'None' ? '•••• ' + order.cardLast4 : 'None'}</span></div>
-          <div class="col-span-2"><span class="block text-[9px] uppercase text-slate font-bold">Transaction Reference ID</span><span class="text-xs font-mono text-slate bg-editorbg p-1 rounded block truncate mt-0.5">${order.transactionId || 'None'}</span></div>
-          
-          <hr class="col-span-2 border-sand/40 my-1">
-          
-          <div class="col-span-2">
-            <span class="block text-[9px] uppercase text-slate font-bold mb-2">Items Spec Profile & Configuration</span>
+          <div class="mt-8 mb-2">
+            <span class="block text-xs uppercase tracking-widest text-slate font-black border-b border-sand/60 pb-2 mb-4">Items Spec Profile & Configuration</span>
             ${itemsHtml}
           </div>
-
-          <hr class="col-span-2 border-sand/40 my-1">
-
-          <div class="col-span-2"><span class="block text-[9px] uppercase text-slate font-bold">Customer Name</span><span class="text-charcoal font-bold">${order.customer || 'Guest'}</span></div>
-          <div><span class="block text-[9px] uppercase text-slate font-bold">Phone Number</span><span class="text-charcoal font-bold text-xs">${order.phone || 'N/A'}</span></div>
-          <div><span class="block text-[9px] uppercase text-slate font-bold">Fulfillment City</span><span class="text-charcoal font-bold text-xs">${order.address ? (order.address.split(',')[1] || 'Local').trim() : 'Local'}</span></div>
-          <div class="col-span-2"><span class="block text-[9px] uppercase text-slate font-bold">Full Street Address</span><span class="text-charcoal font-medium text-xs leading-tight block mt-0.5">${order.address || 'N/A'}</span></div>
+          
+          <div class="grid grid-cols-2 gap-y-4 mt-8 pt-6 border-t border-sand/60">
+            <div class="col-span-2"><span class="block text-xs uppercase tracking-widest text-slate font-black mb-3">Payment Info</span></div>
+            <div><span class="block text-[9px] uppercase text-slate font-bold">Payment Method</span><span class="text-charcoal font-extrabold">${order.paymentMethod || 'COD'}</span></div>
+            <div><span class="block text-[9px] uppercase text-slate font-bold">Payment Status</span><span class="text-charcoal font-extrabold">${order.paymentStatus || 'Pending'}</span></div>
+            <div><span class="block text-[9px] uppercase text-slate font-bold">Card Network</span><span class="text-charcoal font-extrabold">${order.cardBrand || 'None'}</span></div>
+            <div><span class="block text-[9px] uppercase text-slate font-bold">Account Suffix</span><span class="text-charcoal font-mono font-bold">${order.cardLast4 && order.cardLast4 !== 'None' ? '•••• ' + order.cardLast4 : 'None'}</span></div>
+            <div class="col-span-2"><span class="block text-[9px] uppercase text-slate font-bold">Transaction Ref</span><span class="text-xs font-mono text-slate bg-editorbg p-2 rounded-lg block truncate mt-1 border border-sand/40">${order.transactionId || 'None'}</span></div>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-y-4 mt-8 pt-6 border-t border-sand/60">
+            <div class="col-span-2"><span class="block text-xs uppercase tracking-widest text-slate font-black mb-3">Customer Info</span></div>
+            <div class="col-span-2"><span class="block text-[9px] uppercase text-slate font-bold">Name</span><span class="text-charcoal font-bold text-base">${order.customer || 'Guest'}</span></div>
+            <div><span class="block text-[9px] uppercase text-slate font-bold">Phone</span><span class="text-charcoal font-bold text-sm">${order.phone || 'N/A'}</span></div>
+            <div><span class="block text-[9px] uppercase text-slate font-bold">City</span><span class="text-charcoal font-bold text-sm">${order.address ? (order.address.split(',')[1] || 'Local').trim() : 'Local'}</span></div>
+            <div class="col-span-2"><span class="block text-[9px] uppercase text-slate font-bold">Full Address</span><span class="text-charcoal font-medium text-sm leading-tight block mt-1">${order.address || 'N/A'}</span></div>
+          </div>
         </div>
       `;
       toggleModal('admin-order-modal');
-      lucide.createIcons();
+      if(window.lucide) lucide.createIcons();
     }
+    window.loadAdminOrderInEditor = (orderId, productIndex = 0) => {
+      const order = globalOrders.find(o => o.id === orderId);
+      if (!order) return;
+      
+      const item = order.orderedProducts[productIndex];
+      const cust = item.customization || order.customization;
+
+      if (!cust || !cust.editorState) {
+        showToast("No editor state saved for this item.");
+        return;
+      }
+
+      toggleModal('admin-order-modal'); // Close the modal
+
+      // Restore Editor State from DB Storage
+      window.activeFrameConfiguration = cust.editorState.config;
+      window.activeFrameProduct = cust.editorState.product;
+      
+      document.getElementById('editor-project-title').innerText = `Order #${order.id} - ${item.title}`;
+      document.getElementById('artwork-layer').innerHTML = cust.editorState.canvasHtml;
+      document.getElementById('design-canvas').style.backgroundColor = cust.editorState.canvasBg || '#ffffff';
+      
+      if (window.rgbToHex) {
+        document.getElementById('canvas-bg-color').value = window.rgbToHex(cust.editorState.canvasBg || '#ffffff');
+      }
+
+      switchView('editor');
+      
+      setTimeout(() => {
+        window.updateCanvasScale();
+        if (window.syncFrameCustomizationPanels) window.syncFrameCustomizationPanels();
+        if (window.updateLiveFramePreview) window.updateLiveFramePreview();
+        if (typeof recordState === 'function') recordState();
+        showToast("Order loaded into editor successfully!");
+      }, 50);
+    };
+
+    // Attach the new Open in Studio function below viewOrderDetails
+    window.loadAdminOrderInEditor = (orderId, productIndex = 0) => {
+      const order = globalOrders.find(o => o.id === orderId);
+      if (!order) return;
+      
+      const item = order.orderedProducts[productIndex];
+      const cust = item.customization || order.customization;
+
+      if (!cust || !cust.editorState) {
+        showToast("No editor state saved for this item.");
+        return;
+      }
+
+      toggleModal('admin-order-modal'); // Close the modal
+
+      // Restore Editor State from DB Storage
+      window.activeFrameConfiguration = cust.editorState.config;
+      window.activeFrameProduct = cust.editorState.product;
+      
+      document.getElementById('editor-project-title').innerText = \`Order #\${order.id} - \${item.title}\`;
+      document.getElementById('artwork-layer').innerHTML = cust.editorState.canvasHtml;
+      document.getElementById('design-canvas').style.backgroundColor = cust.editorState.canvasBg || '#ffffff';
+      
+      if (window.rgbToHex) {
+        document.getElementById('canvas-bg-color').value = window.rgbToHex(cust.editorState.canvasBg || '#ffffff');
+      }
+
+      switchView('editor');
+      
+      setTimeout(() => {
+        window.updateCanvasScale();
+        if (window.syncFrameCustomizationPanels) window.syncFrameCustomizationPanels();
+        if (window.updateLiveFramePreview) window.updateLiveFramePreview();
+        if (typeof recordState === 'function') recordState();
+        showToast("Order loaded into editor successfully!");
+      }, 50);
+    };
 
     window.loadAdminOrderInEditor = (orderId, productIndex = 0) => {
       const order = globalOrders.find(o => o.id === orderId);
