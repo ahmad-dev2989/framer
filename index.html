@@ -6837,12 +6837,11 @@
         });
       }
 
-      // Deep clone to aggressively strip out any accidental undefined attributes
       const safeConfig = JSON.parse(JSON.stringify(config || {}));
       const safeProduct = JSON.parse(JSON.stringify(product || {}));
       const titleEl = document.getElementById('editor-project-title');
 
-      return { 
+      const rawSummary = { 
         product: config.productName || (titleEl ? titleEl.innerText : 'Custom Frame'), 
         frame: config.productName || 'Custom Frame', 
         size: config.size ? { width: config.size.width || 0, height: config.size.height || 0, name: config.size.name || `${config.size.width} × ${config.size.height}` } : null, 
@@ -6858,7 +6857,11 @@
           canvasBg: document.getElementById('design-canvas')?.style.backgroundColor || '#ffffff'
         }
       };
+
+      // CRITICAL: Strip out any accidental undefined attributes before returning
+      return JSON.parse(JSON.stringify(rawSummary));
     }
+
     function renderCheckoutCustomizationSummary() {
       const container = document.getElementById('checkout-customization-summary'); if (!container) return;
       const summaries = window.isDirectBuyCheckout ? [getCurrentCustomizationSummary()] : cartItems.map(item => item.customization || { product: item.title, frame: 'Custom frame', decor: [], quantity: 1, pricing: { total: parseFloat(item.cost) || 0, breakdown: [{ name: item.title, cost: parseFloat(item.cost) || 0 }] } });
@@ -14933,7 +14936,8 @@
           address: address,
           previewImageURL: activePreviewUrl || 'https://via.placeholder.com/400',
 
-          orderedProducts: cartItems.length > 0 ? cartItems.map(i => ({ 
+          // CRITICAL FIX: Deep parse to strictly enforce Firestore entity rules
+          orderedProducts: JSON.parse(JSON.stringify(cartItems.length > 0 ? cartItems.map(i => ({ 
              title: i.title || 'Product', 
              cost: parseFloat(i.cost) || 0, 
              qty: i.quantity || i.qty || 1, 
@@ -14943,7 +14947,7 @@
              cost: basePriceRaw || 0, 
              qty: 1, 
              customization: getCurrentCustomizationSummary() 
-          }],
+          }])),
           baseAmount: basePriceRaw || 0,
           shippingCharges: shippingRateValue || 0,
           total: `${window.appCurrency || '$'}${(structuralGrandTotal || 0).toFixed(2)}`,
