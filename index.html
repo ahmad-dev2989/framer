@@ -6155,7 +6155,7 @@
             <div id="artwork-layer" class="absolute inset-0 w-full h-full z-10 overflow-hidden"></div>
             <canvas id="drawing-layer" class="absolute inset-0 z-20 pointer-events-none" width="400"
               height="500"></canvas>
-
+            <div id="glass-overlay" class="absolute inset-0 z-30 pointer-events-none hidden" style="background: linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 35%, rgba(255,255,255,0) 65%, rgba(255,255,255,0.15) 100%); box-shadow: inset 0 0 20px rgba(255,255,255,0.3);"></div>
           </div>
         </div>
 
@@ -6292,25 +6292,37 @@
       </div>
     </div>
 
-    <!-- Matte Background Color Bar (Bottom Center) -->
-        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white shadow-lg border border-sand/40 rounded-full px-4 py-2 flex items-center gap-2.5 z-10 select-none hidden md:flex">
-          <span class="text-[10px] font-black uppercase tracking-wider text-slate mr-1">Matte Color</span>
-          <div class="h-4 w-px bg-sand mx-1"></div>
-          <button onclick="document.getElementById('design-canvas').style.backgroundColor='#744444'; document.getElementById('canvas-bg-color').value='#744444'; recordState();" title="Deep Mauve" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #744444;"></button>
-          <button onclick="document.getElementById('design-canvas').style.backgroundColor='#FAF9F6'; document.getElementById('canvas-bg-color').value='#FAF9F6'; recordState();" title="Off White" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #FAF9F6;"></button>
-          <button onclick="document.getElementById('design-canvas').style.backgroundColor='#F5F5DC'; document.getElementById('canvas-bg-color').value='#F5F5DC'; recordState();" title="Beige" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #F5F5DC;"></button>
-          <button onclick="document.getElementById('design-canvas').style.backgroundColor='#FFFDD0'; document.getElementById('canvas-bg-color').value='#FFFDD0'; recordState();" title="Cream" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #FFFDD0;"></button>
-          <button onclick="document.getElementById('design-canvas').style.backgroundColor='#EAE0C8'; document.getElementById('canvas-bg-color').value='#EAE0C8'; recordState();" title="Pearl" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #EAE0C8;"></button>
-          <button onclick="document.getElementById('design-canvas').style.backgroundColor='#F3E5AB'; document.getElementById('canvas-bg-color').value='#F3E5AB'; recordState();" title="Vanilla" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #F3E5AB;"></button>
-          <button onclick="document.getElementById('design-canvas').style.backgroundColor='#E8DCC4'; document.getElementById('canvas-bg-color').value='#E8DCC4'; recordState();" title="Alabaster" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #E8DCC4;"></button>
-          <button onclick="document.getElementById('design-canvas').style.backgroundColor='#DCD0C0'; document.getElementById('canvas-bg-color').value='#DCD0C0'; recordState();" title="Parchment" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #DCD0C0;"></button>
-          <button onclick="document.getElementById('design-canvas').style.backgroundColor='#F0ECE1'; document.getElementById('canvas-bg-color').value='#F0ECE1'; recordState();" title="Linen" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #F0ECE1;"></button>
-          <button onclick="document.getElementById('design-canvas').style.backgroundColor='#E2DFD2'; document.getElementById('canvas-bg-color').value='#E2DFD2'; recordState();" title="Bone" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #E2DFD2;"></button>
-          <div class="h-4 w-px bg-sand mx-1"></div>
-          <div class="relative w-6 h-6 rounded-full border border-sand/50 overflow-hidden hover:scale-110 transition-transform shadow-sm flex items-center justify-center bg-[conic-gradient(red,yellow,green,cyan,blue,magenta,red)]" title="Custom Color">
-              <input type="color" oninput="document.getElementById('design-canvas').style.backgroundColor=this.value; document.getElementById('canvas-bg-color').value=this.value;" onchange="recordState();" class="absolute inset-0 w-[200%] h-[200%] top-[-50%] left-[-50%] cursor-pointer opacity-0" title="Custom Color">
-          </div>
+    <!-- Floating Bottom Bars Container -->
+    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 z-10 select-none hidden md:flex">
+      
+      <!-- Matte Background Color Bar -->
+      <div class="bg-white shadow-lg border border-sand/40 rounded-full px-4 py-2 flex items-center gap-2.5">
+        <span class="text-[10px] font-black uppercase tracking-wider text-slate mr-1">Matte Color</span>
+        <div class="h-4 w-px bg-sand mx-1"></div>
+        <button onclick="document.getElementById('design-canvas').style.backgroundColor='#744444'; document.getElementById('canvas-bg-color').value='#744444'; recordState();" title="Deep Mauve" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #744444;"></button>
+        <button onclick="document.getElementById('design-canvas').style.backgroundColor='#FAF9F6'; document.getElementById('canvas-bg-color').value='#FAF9F6'; recordState();" title="Off White" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #FAF9F6;"></button>
+        <button onclick="document.getElementById('design-canvas').style.backgroundColor='#F5F5DC'; document.getElementById('canvas-bg-color').value='#F5F5DC'; recordState();" title="Beige" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #F5F5DC;"></button>
+        <button onclick="document.getElementById('design-canvas').style.backgroundColor='#FFFDD0'; document.getElementById('canvas-bg-color').value='#FFFDD0'; recordState();" title="Cream" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #FFFDD0;"></button>
+        <button onclick="document.getElementById('design-canvas').style.backgroundColor='#EAE0C8'; document.getElementById('canvas-bg-color').value='#EAE0C8'; recordState();" title="Pearl" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #EAE0C8;"></button>
+        <button onclick="document.getElementById('design-canvas').style.backgroundColor='#F3E5AB'; document.getElementById('canvas-bg-color').value='#F3E5AB'; recordState();" title="Vanilla" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #F3E5AB;"></button>
+        <button onclick="document.getElementById('design-canvas').style.backgroundColor='#E8DCC4'; document.getElementById('canvas-bg-color').value='#E8DCC4'; recordState();" title="Alabaster" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #E8DCC4;"></button>
+        <button onclick="document.getElementById('design-canvas').style.backgroundColor='#DCD0C0'; document.getElementById('canvas-bg-color').value='#DCD0C0'; recordState();" title="Parchment" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #DCD0C0;"></button>
+        <button onclick="document.getElementById('design-canvas').style.backgroundColor='#F0ECE1'; document.getElementById('canvas-bg-color').value='#F0ECE1'; recordState();" title="Linen" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #F0ECE1;"></button>
+        <button onclick="document.getElementById('design-canvas').style.backgroundColor='#E2DFD2'; document.getElementById('canvas-bg-color').value='#E2DFD2'; recordState();" title="Bone" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #E2DFD2;"></button>
+        <div class="h-4 w-px bg-sand mx-1"></div>
+        <div class="relative w-6 h-6 rounded-full border border-sand/50 overflow-hidden hover:scale-110 transition-transform shadow-sm flex items-center justify-center bg-[conic-gradient(red,yellow,green,cyan,blue,magenta,red)]" title="Custom Color">
+            <input type="color" oninput="document.getElementById('design-canvas').style.backgroundColor=this.value; document.getElementById('canvas-bg-color').value=this.value;" onchange="recordState();" class="absolute inset-0 w-[200%] h-[200%] top-[-50%] left-[-50%] cursor-pointer opacity-0" title="Custom Color">
         </div>
+      </div>
+
+      <!-- Glass Type Bar -->
+      <div class="bg-white shadow-lg border border-sand/40 rounded-full px-4 py-2 flex items-center gap-2.5 hidden" id="floating-glass-bar-container">
+        <span class="text-[10px] font-black uppercase tracking-wider text-slate mr-1">Glass</span>
+        <div class="h-4 w-px bg-sand mx-1"></div>
+        <div id="floating-glass-options" class="flex items-center gap-2.5"></div>
+      </div>
+      
+    </div>
 
         <!-- Zoom Controls -->
         <div
@@ -10340,12 +10352,29 @@
         // Glass Selection
         const glassWrapper = document.getElementById('properties-glass-type-wrapper');
         const glassSelect = document.getElementById('editor-glass-select');
+        const floatingGlassBar = document.getElementById('floating-glass-bar-container');
+        const floatingGlassOpts = document.getElementById('floating-glass-options');
+
         if (glassWrapper && glassSelect && role === 'frame') { // Only show on Outer Frame Layer
            glassWrapper.classList.remove('hidden');
+           if (floatingGlassBar && window.globalGlassTypes && window.globalGlassTypes.length > 0) {
+               floatingGlassBar.classList.remove('hidden');
+           }
            
-           // Populate dropdown if not already populated
+           // Populate dropdown and floating bar if not already populated
            if (glassSelect.options.length <= 1 && window.globalGlassTypes && window.globalGlassTypes.length > 0) {
               glassSelect.innerHTML = '<option value="">No Glass</option>' + window.globalGlassTypes.map(g => `<option value="${g.id}">${g.name} (+${window.appCurrency || '$'}${parseFloat(g.price).toFixed(2)})</option>`).join('');
+              
+              if(floatingGlassOpts) {
+                 floatingGlassOpts.innerHTML = `
+                    <button onclick="window.selectGlassType('')" title="No Glass" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm flex items-center justify-center bg-gray-100"><i data-lucide="ban" class="w-3 h-3 text-slate"></i></button>
+                 ` + window.globalGlassTypes.map(g => `
+                    <button onclick="window.selectGlassType('${g.id}')" title="${g.name}" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm bg-gradient-to-br from-white/80 to-transparent backdrop-blur-sm shadow-inner relative overflow-hidden">
+                       <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent -rotate-45"></div>
+                    </button>
+                 `).join('');
+                 lucide.createIcons();
+              }
            }
            
            if (config.glass) {
@@ -10353,11 +10382,36 @@
            } else {
               glassSelect.value = "";
            }
+
+           // Highlight active floating option
+           if (floatingGlassOpts) {
+               const activeId = config.glass ? config.glass.id : '';
+               Array.from(floatingGlassOpts.children).forEach(btn => {
+                   if (btn.getAttribute('onclick').includes(`'${activeId}'`) || (activeId==='' && btn.getAttribute('onclick').includes(`('')`))) {
+                       btn.classList.add('ring-2', 'ring-flame', 'ring-offset-1');
+                   } else {
+                       btn.classList.remove('ring-2', 'ring-flame', 'ring-offset-1');
+                   }
+               });
+           }
         } else if (glassWrapper) {
            glassWrapper.classList.add('hidden');
+           if (floatingGlassBar) floatingGlassBar.classList.add('hidden');
         }
       }
       window.updateLiveFramePreview();
+    };
+
+    window.applyGlassVisualEffect = () => {
+      const config = window.activeFrameConfiguration;
+      const overlay = document.getElementById('glass-overlay');
+      if (!overlay) return;
+      
+      if (config && config.glass) {
+          overlay.classList.remove('hidden');
+      } else {
+          overlay.classList.add('hidden');
+      }
     };
 
     window.selectGlassType = (glassId) => {
@@ -10371,12 +10425,15 @@
         if (glass) config.glass = glass;
       }
       
+      window.applyGlassVisualEffect();
       window.updateLiveFramePreview();
+      window.syncFrameCustomizationPanels();
       recordState();
     };
 
     // NEW: Live Preview Updates & Tooltip Mouse Tracking Engine
     window.updateLiveFramePreview = () => {
+      window.applyGlassVisualEffect();
       const config = window.activeFrameConfiguration;
       const product = window.activeFrameProduct;
       // Target both left and right panel summary containers via class instead of ID
