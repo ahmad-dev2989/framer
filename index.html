@@ -6299,19 +6299,19 @@
       <div class="bg-white shadow-lg border border-sand/40 rounded-full px-4 py-2 flex items-center gap-2.5">
         <span class="text-[10px] font-black uppercase tracking-wider text-slate mr-1">Matte Color</span>
         <div class="h-4 w-px bg-sand mx-1"></div>
-        <button onclick="document.getElementById('design-canvas').style.backgroundColor='#744444'; document.getElementById('canvas-bg-color').value='#744444'; recordState();" title="Deep Mauve" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #744444;"></button>
-        <button onclick="document.getElementById('design-canvas').style.backgroundColor='#FAF9F6'; document.getElementById('canvas-bg-color').value='#FAF9F6'; recordState();" title="Off White" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #FAF9F6;"></button>
-        <button onclick="document.getElementById('design-canvas').style.backgroundColor='#F5F5DC'; document.getElementById('canvas-bg-color').value='#F5F5DC'; recordState();" title="Beige" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #F5F5DC;"></button>
-        <button onclick="document.getElementById('design-canvas').style.backgroundColor='#FFFDD0'; document.getElementById('canvas-bg-color').value='#FFFDD0'; recordState();" title="Cream" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #FFFDD0;"></button>
-        <button onclick="document.getElementById('design-canvas').style.backgroundColor='#EAE0C8'; document.getElementById('canvas-bg-color').value='#EAE0C8'; recordState();" title="Pearl" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #EAE0C8;"></button>
-        <button onclick="document.getElementById('design-canvas').style.backgroundColor='#F3E5AB'; document.getElementById('canvas-bg-color').value='#F3E5AB'; recordState();" title="Vanilla" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #F3E5AB;"></button>
-        <button onclick="document.getElementById('design-canvas').style.backgroundColor='#E8DCC4'; document.getElementById('canvas-bg-color').value='#E8DCC4'; recordState();" title="Alabaster" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #E8DCC4;"></button>
-        <button onclick="document.getElementById('design-canvas').style.backgroundColor='#DCD0C0'; document.getElementById('canvas-bg-color').value='#DCD0C0'; recordState();" title="Parchment" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #DCD0C0;"></button>
-        <button onclick="document.getElementById('design-canvas').style.backgroundColor='#F0ECE1'; document.getElementById('canvas-bg-color').value='#F0ECE1'; recordState();" title="Linen" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #F0ECE1;"></button>
-        <button onclick="document.getElementById('design-canvas').style.backgroundColor='#E2DFD2'; document.getElementById('canvas-bg-color').value='#E2DFD2'; recordState();" title="Bone" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #E2DFD2;"></button>
+        <button onclick="window.activeMatteColor='#744444'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#744444'; recordState();" title="Deep Mauve" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #744444;"></button>
+        <button onclick="window.activeMatteColor='#FAF9F6'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#FAF9F6'; recordState();" title="Off White" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #FAF9F6;"></button>
+        <button onclick="window.activeMatteColor='#F5F5DC'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#F5F5DC'; recordState();" title="Beige" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #F5F5DC;"></button>
+        <button onclick="window.activeMatteColor='#FFFDD0'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#FFFDD0'; recordState();" title="Cream" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #FFFDD0;"></button>
+        <button onclick="window.activeMatteColor='#EAE0C8'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#EAE0C8'; recordState();" title="Pearl" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #EAE0C8;"></button>
+        <button onclick="window.activeMatteColor='#F3E5AB'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#F3E5AB'; recordState();" title="Vanilla" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #F3E5AB;"></button>
+        <button onclick="window.activeMatteColor='#E8DCC4'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#E8DCC4'; recordState();" title="Alabaster" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #E8DCC4;"></button>
+        <button onclick="window.activeMatteColor='#DCD0C0'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#DCD0C0'; recordState();" title="Parchment" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #DCD0C0;"></button>
+        <button onclick="window.activeMatteColor='#F0ECE1'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#F0ECE1'; recordState();" title="Linen" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #F0ECE1;"></button>
+        <button onclick="window.activeMatteColor='#E2DFD2'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#E2DFD2'; recordState();" title="Bone" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #E2DFD2;"></button>
         <div class="h-4 w-px bg-sand mx-1"></div>
         <div class="relative w-6 h-6 rounded-full border border-sand/50 overflow-hidden hover:scale-110 transition-transform shadow-sm flex items-center justify-center bg-[conic-gradient(red,yellow,green,cyan,blue,magenta,red)]" title="Custom Color">
-            <input type="color" oninput="document.getElementById('design-canvas').style.backgroundColor=this.value; document.getElementById('canvas-bg-color').value=this.value;" onchange="recordState();" class="absolute inset-0 w-[200%] h-[200%] top-[-50%] left-[-50%] cursor-pointer opacity-0" title="Custom Color">
+            <input type="color" oninput="window.activeMatteColor=this.value; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor=this.value;" onchange="recordState();" class="absolute inset-0 w-[200%] h-[200%] top-[-50%] left-[-50%] cursor-pointer opacity-0" title="Custom Color">
         </div>
       </div>
 
@@ -10066,6 +10066,16 @@
           lastHoleHeight = innerHoleHeight;
         }
 
+        // --- NEW MATTE LAYER ---
+        const matteWrap = document.createElement('div');
+        matteWrap.id = 'matte-layer';
+        matteWrap.className = 'absolute pointer-events-none';
+        matteWrap.style.width = lastHoleWidth + 'px';
+        matteWrap.style.height = lastHoleHeight + 'px';
+        matteWrap.style.left = lastHoleLeft + 'px';
+        matteWrap.style.top = lastHoleTop + 'px';
+        matteWrap.style.backgroundColor = window.activeMatteColor || '#ffffff';
+
         // Calculate a responsive 1.5cm gap (approx 28px in scaled canvas coordinates)
         const gapPx = 28;
         const artworkWidth = Math.max(10, lastHoleWidth - (gapPx * 2));
@@ -10073,7 +10083,7 @@
         const artworkLeft = lastHoleLeft + gapPx;
         const artworkTop = lastHoleTop + gapPx;
 
-        // Background Artwork fits innermost opening leaving a clean gap for the canvas BG
+        // Background Artwork fits inside the matte leaving a gap
         const bgWrap = document.createElement('div');
         bgWrap.className = 'canvas-item absolute cursor-move select-none bg-transparent';
         bgWrap.dataset.type = 'image';
@@ -10091,10 +10101,11 @@
 
         const glassOverlay = document.getElementById('glass-overlay');
         if (glassOverlay) {
-          glassOverlay.style.width = artworkWidth + 'px';
-          glassOverlay.style.height = artworkHeight + 'px';
-          glassOverlay.style.left = artworkLeft + 'px';
-          glassOverlay.style.top = artworkTop + 'px';
+          // Glass starts from the edge of the matte (innermost frame hole)
+          glassOverlay.style.width = lastHoleWidth + 'px';
+          glassOverlay.style.height = lastHoleHeight + 'px';
+          glassOverlay.style.left = lastHoleLeft + 'px';
+          glassOverlay.style.top = lastHoleTop + 'px';
         }
 
         // Outer Frame Element
@@ -10135,6 +10146,7 @@
         frameWrap.innerHTML = `<img src="${outImgSrc}" ${isExtOut ? 'crossorigin="anonymous"' : ''} style="position: absolute; left: 0px; top: 0px; width: 100%; height: 100%;" class="pointer-events-none block drop-shadow-xl">`;
 
         // Append in bottom-to-top order
+        artLayer.appendChild(matteWrap);
         artLayer.appendChild(bgWrap);
         if (innerElement) artLayer.appendChild(innerElement);
         if (middleElement) artLayer.appendChild(middleElement);
@@ -16373,6 +16385,7 @@
       historyStack.push({
         art: artLayer.innerHTML,
         canvasBg: document.getElementById('design-canvas').style.backgroundColor || '#ffffff',
+        matteColor: window.activeMatteColor || '#ffffff',
         canvasDraw: document.getElementById('drawing-layer').toDataURL(),
         configState: window.activeFrameConfiguration ? JSON.parse(JSON.stringify(window.activeFrameConfiguration)) : null,
         productState: window.activeFrameProduct ? JSON.parse(JSON.stringify(window.activeFrameProduct)) : null
@@ -16386,6 +16399,7 @@
       artLayer.innerHTML = s.art;
       document.getElementById('design-canvas').style.backgroundColor = s.canvasBg;
       document.getElementById('canvas-bg-color').value = rgbToHex(s.canvasBg);
+      window.activeMatteColor = s.matteColor;
 
       if (s.configState) window.activeFrameConfiguration = JSON.parse(JSON.stringify(s.configState));
       if (s.productState) window.activeFrameProduct = JSON.parse(JSON.stringify(s.productState));
