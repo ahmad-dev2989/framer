@@ -6841,24 +6841,22 @@
       const safeProduct = JSON.parse(JSON.stringify(product || {}));
       const titleEl = document.getElementById('editor-project-title');
 
+      // Ensure a project ID exists and autosave it to the cloud
+      if (!currentProjectId) currentProjectId = generateId();
+      if (typeof window.saveProjectToDB === 'function') window.saveProjectToDB(true);
+
       const rawSummary = { 
-        product: config.productName || (titleEl ? titleEl.innerText : 'Custom Frame'), 
-        frame: config.productName || 'Custom Frame', 
-        size: config.size ? { width: config.size.width || 0, height: config.size.height || 0, name: config.size.name || `${config.size.width} × ${config.size.height}` } : null, 
+        product: safeConfig.productName || (titleEl ? titleEl.innerText : 'Custom Frame'), 
+        frame: safeConfig.productName || 'Custom Frame', 
+        size: safeConfig.size ? { width: safeConfig.size.width || 0, height: safeConfig.size.height || 0, name: safeConfig.size.name || `${safeConfig.size.width} × ${safeConfig.size.height}` } : null, 
         layers: layers,
         framesTotal: framesTotal,
         decor: decor, 
         quantity: 1, 
         pricing: calculateCanvasCost(),
-        editorState: {
-          config: safeConfig,
-          product: safeProduct,
-          canvasHtml: document.getElementById('artwork-layer')?.innerHTML || '',
-          canvasBg: document.getElementById('design-canvas')?.style.backgroundColor || '#ffffff'
-        }
+        projectId: currentProjectId // Just link the ID! Much cleaner.
       };
 
-      // CRITICAL: Strip out any accidental undefined attributes before returning
       return JSON.parse(JSON.stringify(rawSummary));
     }
 
@@ -12242,7 +12240,7 @@
 
       const productsListEl = document.getElementById('detail-products-list');
       productsListEl.innerHTML = (o.orderedProducts || []).map(p => {
-        let c = p.customization || o.customization || {};
+        let c = p.customizationString ? JSON.parse(p.customizationString) : (p.customization || o.customization || {});
         let frameStr = c.frame || 'Standard Frame';
         let sizeStr = c.size?.name || 'Original size';
         let colorStr = c.colour?.name || 'Original color';
@@ -13192,7 +13190,73 @@
       }
     };
 
+    window.loadReadOnlyPreview = async (projectId) => {
+        const views = ['landing', 'dashboard', 'admin', 'checkout', 'editor'];
+        views.forEach(v => {
+            const el = document.getElementById(v + '-view');
+            if (el) el.classList.add('hidden');
+        });
+        
+        const editorView = document.getElementById('editor-view');
+        if(editorView) editorView.classList.remove('hidden');
+
+        // Hide tools and buttons to make it read-only
+        document.getElementById('design-canvas').style.pointerEvents = 'none';
+        
+        const leftSidebar = document.querySelector('#editor-view aside:not(#flyout-panel)');
+        if(leftSidebar) leftSidebar.style.display = 'none';
+        
+        const topControls = document.querySelector('#editor-view header');
+        if (topControls) {
+            topControls.innerHTML = `<div class="w-full flex justify-between items-center px-4 h-full"><span class="font-bold text-charcoal" id="editor-project-title">Read-Only Preview</span><button type="button" onclick="window.close()" class="px-4 py-2 bg-charcoal text-cream rounded-xl font-bold text-xs cursor-pointer">Close Preview</button></div>`;
+        }
+        
+        const toolsRow = document.getElementById('dynamic-tools-row');
+        if (toolsRow) toolsRow.style.display = 'none';
+        
+        window.playGlobalLoader("Loading read-only preview...", async () => {
+            try {
+                const doc = await db.collection('projects').doc(projectId).get();
+                if (!doc.exists) {
+                    window.hideGlobalLoader();
+                    alert("Preview project not found.");
+                    return;
+                }
+                const proj = doc.data();
+                
+                if (proj.configState) window.activeFrameConfiguration = proj.configState;
+                if (proj.productState) window.activeFrameProduct = proj.productState;
+
+                document.getElementById('editor-project-title').innerText = `Read-Only Preview - ${proj.title || 'Studio'}`;
+                document.getElementById('artwork-layer').innerHTML = proj.canvasData || '';
+                document.getElementById('design-canvas').style.backgroundColor = proj.backgroundColor || '#ffffff';
+                if (window.rgbToHex) {
+                    document.getElementById('canvas-bg-color').value = window.rgbToHex(proj.backgroundColor || '#ffffff');
+                }
+
+                window.hideGlobalLoader();
+                
+                setTimeout(() => {
+                    if (window.updateCanvasScale) window.updateCanvasScale();
+                    if (window.syncFrameCustomizationPanels) window.syncFrameCustomizationPanels();
+                    if (window.updateLiveFramePreview) window.updateLiveFramePreview();
+                }, 50);
+                
+            } catch (e) {
+                window.hideGlobalLoader();
+                alert("Error loading preview: " + e.message);
+            }
+        });
+    };
+
     window.addEventListener('DOMContentLoaded', async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const previewProjectId = urlParams.get('previewProject');
+      if (previewProjectId) {
+         window.loadReadOnlyPreview(previewProjectId);
+         return; 
+      }
+
       // Init CMS engine
       try {
         await window.initCms();
@@ -14936,26 +15000,17 @@
           address: address,
           previewImageURL: activePreviewUrl || 'https://via.placeholder.com/400',
 
-          // CRITICAL FIX: Stringify deeply nested editor state to bypass Firestore array nesting limits
-          orderedProducts: (!window.isDirectBuyCheckout && cartItems.length > 0) ? cartItems.map(i => {
-             let safeCust = i.customization ? JSON.parse(JSON.stringify(i.customization)) : null;
-             if (safeCust && safeCust.editorState) safeCust.editorState = JSON.stringify(safeCust.editorState);
-             return {
-                 title: String(i.title || 'Product'), 
-                 cost: parseFloat(i.cost) || 0, 
-                 qty: parseInt(i.quantity || i.qty || 1), 
-                 customization: safeCust
-             };
-          }) : [{ 
-             title: String(title || 'Custom Frame'), 
-             cost: parseFloat(basePriceRaw) || 0, 
+          orderedProducts: JSON.parse(JSON.stringify((!window.isDirectBuyCheckout && cartItems.length > 0) ? cartItems.map(i => ({ 
+             title: i.title || 'Product', 
+             cost: parseFloat(i.cost) || 0, 
+             qty: i.quantity || i.qty || 1, 
+             customization: i.customization || null 
+          })) : [{ 
+             title: title || 'Custom Frame', 
+             cost: basePriceRaw || 0, 
              qty: 1, 
-             customization: (() => {
-                 let safeCust = JSON.parse(JSON.stringify(getCurrentCustomizationSummary()));
-                 if (safeCust && safeCust.editorState) safeCust.editorState = JSON.stringify(safeCust.editorState);
-                 return safeCust;
-             })()
-          }],
+             customization: getCurrentCustomizationSummary() 
+          }])),
           baseAmount: basePriceRaw || 0,
           shippingCharges: shippingRateValue || 0,
           total: `${window.appCurrency || '$'}${(structuralGrandTotal || 0).toFixed(2)}`,
@@ -15547,7 +15602,7 @@
             <div class="mb-4">
               <div class="flex justify-between items-center mb-1">
                 <span class="text-lg font-black text-charcoal">${p.title} <span class="text-slate font-bold text-xs ml-1">(x${p.qty || 1})</span></span>
-                ${(cust && cust.editorState) ? `<button onclick="window.loadAdminOrderInEditor('${order.id}', ${index})" class="px-4 py-2 bg-editorbg border border-sand hover:border-flame text-charcoal rounded-xl flex items-center gap-2 text-xs font-bold transition shadow-sm"><i data-lucide="external-link" class="w-3.5 h-3.5"></i> Open in Studio</button>` : `<span class="text-[10px] text-slate font-bold uppercase tracking-wider bg-sand/30 px-2 py-1 rounded">Legacy Order</span>`}
+                ${(cust && cust.projectId) ? `<button type="button" onclick="window.open('?previewProject=${cust.projectId}', '_blank')" class="px-4 py-2 bg-editorbg border border-sand hover:border-flame text-charcoal rounded-xl flex items-center gap-2 text-xs font-bold transition shadow-sm cursor-pointer" style="pointer-events: auto;"><i data-lucide="external-link" class="w-3.5 h-3.5"></i> View Preview</button>` : `<span class="text-[10px] text-slate font-bold uppercase tracking-wider bg-sand/30 px-2 py-1 rounded">Legacy Order</span>`}
               </div>
               ${cust && cust.size ? `<div class="text-xs font-bold text-slate mb-2">Base Size: <span class="text-charcoal">${cust.size.name}</span></div>` : ''}
               ${cust && cust.decor?.length ? `<div class="text-xs font-bold text-slate mb-2">Decor Elements: <span class="text-charcoal">${cust.decor.map(d => d.name).join(', ')}</span></div>` : ''}
@@ -15561,13 +15616,6 @@
       document.getElementById('admin-order-content').innerHTML = `
         <div class="max-h-[75vh] overflow-y-auto no-scrollbar pb-4 pr-2">
           
-          ${order.previewImageURL && !order.previewImageURL.includes('via.placeholder.com') ? `
-          <div class="mb-6 flex justify-center bg-editorbg rounded-2xl p-4 border border-sand/50 shadow-inner relative group">
-            <img src="${order.previewImageURL}" class="max-h-64 object-contain drop-shadow-xl rounded-lg" alt="Order Preview" />
-            <div class="absolute top-2 right-2 bg-white/90 backdrop-blur text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded shadow-sm text-charcoal">Order Preview</div>
-          </div>
-          ` : ''}
-
           <div class="grid grid-cols-2 gap-y-4">
             <div class="bg-editorbg p-3 rounded-xl border border-sand/40"><span class="block text-[9px] uppercase text-slate font-bold mb-1">Order ID</span><span class="text-charcoal font-black text-base">${order.id || 'N/A'}</span></div>
             <div class="bg-editorbg p-3 rounded-xl border border-sand/40"><span class="block text-[9px] uppercase text-slate font-bold mb-1">Settled Amount</span><span class="text-flame font-black text-base">${order.total || '0.00'}</span></div>
@@ -15604,45 +15652,49 @@
       toggleModal('admin-order-modal');
       if(window.lucide) lucide.createIcons();
     }
-    window.loadAdminOrderInEditor = (orderId, productIndex = 0) => {
-      const order = globalOrders.find(o => o.id === orderId);
-      if (!order) return;
-      
-      const item = order.orderedProducts[productIndex];
-      const cust = item.customization || order.customization;
+    window.loadAdminOrderProject = (projectId) => {
+      toggleModal('admin-order-modal');
+      window.playGlobalLoader("Loading customer design...", async () => {
+        try {
+          const doc = await db.collection('projects').doc(projectId).get();
+          if (!doc.exists) {
+            window.hideGlobalLoader();
+            showToast("Design project not found. It may have been deleted.");
+            return;
+          }
+          
+          const proj = doc.data();
+          currentProjectId = proj.id;
+          
+          if (proj.configState) window.activeFrameConfiguration = proj.configState;
+          if (proj.productState) window.activeFrameProduct = proj.productState;
 
-      if (!cust || !cust.editorState) {
-        showToast("No editor state saved for this item.");
-        return;
-      }
+          document.getElementById('editor-project-title').innerText = `Order Design - ${proj.title || 'Studio'}`;
+          document.getElementById('artwork-layer').innerHTML = proj.canvasData || '';
+          document.getElementById('design-canvas').style.backgroundColor = proj.backgroundColor || '#ffffff';
+          
+          if (window.rgbToHex) {
+            document.getElementById('canvas-bg-color').value = window.rgbToHex(proj.backgroundColor || '#ffffff');
+          }
 
-      // Parse the stringified editorState back into a usable object
-      const editorState = typeof cust.editorState === 'string' ? JSON.parse(cust.editorState) : cust.editorState;
-
-      toggleModal('admin-order-modal'); // Close the modal
-
-      // Restore Editor State from DB Storage
-      window.activeFrameConfiguration = editorState.config;
-      window.activeFrameProduct = editorState.product;
-      
-      document.getElementById('editor-project-title').innerText = `Order #${order.id} - ${item.title}`;
-      document.getElementById('artwork-layer').innerHTML = editorState.canvasHtml;
-      document.getElementById('design-canvas').style.backgroundColor = editorState.canvasBg || '#ffffff';
-      
-      if (window.rgbToHex) {
-        document.getElementById('canvas-bg-color').value = window.rgbToHex(editorState.canvasBg || '#ffffff');
-      }
-
-      switchView('editor');
-      
-      setTimeout(() => {
-        window.updateCanvasScale();
-        if (window.syncFrameCustomizationPanels) window.syncFrameCustomizationPanels();
-        if (window.updateLiveFramePreview) window.updateLiveFramePreview();
-        if (typeof recordState === 'function') recordState();
-        showToast("Order loaded into editor successfully!");
-      }, 50);
+          window.hideGlobalLoader();
+          switchView('editor');
+          
+          setTimeout(() => {
+            window.updateCanvasScale();
+            if (window.syncFrameCustomizationPanels) window.syncFrameCustomizationPanels();
+            if (window.updateLiveFramePreview) window.updateLiveFramePreview();
+            if (typeof recordState === 'function') recordState();
+            showToast("Design loaded into studio!");
+          }, 50);
+        } catch (e) {
+          window.hideGlobalLoader();
+          showToast("Error loading design: " + e.message);
+        }
+      });
     };
+    
+      
 
     window.loadAdminOrderInEditor = (orderId, productIndex = 0) => {
       const order = globalOrders.find(o => o.id === orderId);
@@ -15664,7 +15716,6 @@
       // Restore Editor State from DB Storage
       window.activeFrameConfiguration = editorState.config;
       window.activeFrameProduct = editorState.product;
-      
       document.getElementById('editor-project-title').innerText = `Order #${order.id} - ${item.title}`;
       document.getElementById('artwork-layer').innerHTML = editorState.canvasHtml;
       document.getElementById('design-canvas').style.backgroundColor = editorState.canvasBg || '#ffffff';
@@ -17334,6 +17385,8 @@
           canvasData: canvasHtml,
           backgroundColor: bgColor,
           imageURLs: imageURLs,
+          configState: window.activeFrameConfiguration ? JSON.parse(JSON.stringify(window.activeFrameConfiguration)) : null,
+          productState: window.activeFrameProduct ? JSON.parse(JSON.stringify(window.activeFrameProduct)) : null,
           date: firebase.firestore.FieldValue.serverTimestamp()
         };
 
