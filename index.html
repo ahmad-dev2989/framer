@@ -6227,14 +6227,16 @@
       </div>
     </div>
 
-    <!-- PERMANENT Live Design Summary (Desktop Right) -->
-    <div id="permanent-live-summary-panel"
-      class="hidden md:flex absolute top-1/2 -translate-y-1/2 right-6 bg-white shadow-xl border border-sand/60 rounded-2xl p-5 w-64 z-30 flex-col">
+    
+
+    <!-- PERMANENT Live Frame Preview Section (Desktop Bottom Right) -->
+    <div id="live-frame-preview-section"
+      class="hidden md:flex absolute bottom-[76px] right-6 bg-white shadow-xl border border-sand/60 rounded-2xl p-5 w-64 z-30 flex-col">
       <span
         class="text-[11px] font-black uppercase tracking-wider text-charcoal block border-b border-sand/60 pb-3 mb-2 flex items-center gap-2">
         <i data-lucide="eye" class="w-4 h-4 text-flame"></i> Live Design Summary
       </span>
-      <div class="live-frame-preview-target space-y-1">
+      <div id="live-frame-preview-content" class="space-y-1">
         <p class="text-xs text-slate font-medium py-2">Select a template to view details.</p>
       </div>
     </div>
@@ -9826,7 +9828,9 @@
             middleElement.dataset.frameSlices = JSON.stringify({ sliceLeft, sliceTop, sliceRight, sliceBottom, srcW: middle.visibleW, srcH: middle.visibleH });
           }
 
-          middleElement.innerHTML = `<img src="${croppedMidSrc || middleFrameData.image}" crossorigin="anonymous" style="position: absolute; left: 0px; top: 0px; width: 100%; height: 100%;" class="pointer-events-none block drop-shadow-lg">`;
+          const midImgSrc = croppedMidSrc || middleFrameData.image;
+          const isExtMid = midImgSrc && midImgSrc.startsWith('http') && !midImgSrc.includes(window.location.host);
+          middleElement.innerHTML = `<img src="${midImgSrc}" ${isExtMid ? 'crossorigin="anonymous"' : ''} style="position: absolute; left: 0px; top: 0px; width: 100%; height: 100%;" class="pointer-events-none block drop-shadow-lg">`;
 
           lastHoleLeft = lastHoleLeft + midHoleLeft;
           lastHoleTop = lastHoleTop + midHoleTop;
@@ -9882,7 +9886,9 @@
             innerElement.dataset.frameSlices = JSON.stringify({ sliceLeft, sliceTop, sliceRight, sliceBottom, srcW: inner.visibleW, srcH: inner.visibleH });
           }
 
-          innerElement.innerHTML = `<img src="${croppedInnerSrc || innerFrameData.image}" crossorigin="anonymous" style="position: absolute; left: 0px; top: 0px; width: 100%; height: 100%;" class="pointer-events-none block drop-shadow-md">`;
+          const inImgSrc = croppedInnerSrc || innerFrameData.image;
+          const isExtIn = inImgSrc && inImgSrc.startsWith('http') && !inImgSrc.includes(window.location.host);
+          innerElement.innerHTML = `<img src="${inImgSrc}" ${isExtIn ? 'crossorigin="anonymous"' : ''} style="position: absolute; left: 0px; top: 0px; width: 100%; height: 100%;" class="pointer-events-none block drop-shadow-md">`;
 
           lastHoleLeft = lastHoleLeft + innerHoleLeft;
           lastHoleTop = lastHoleTop + innerHoleTop;
@@ -9908,7 +9914,10 @@
         bgWrap.dataset.cost = 0;
         bgWrap.dataset.itemName = "Background Artwork";
         bgWrap.dataset.frameRole = 'artwork';
-        bgWrap.innerHTML = `<img src="${normProduct.bgImage}" crossorigin="anonymous" class="w-full h-full object-fill pointer-events-none block rounded-md">`;
+        
+        const isExternalBg = normProduct.bgImage && normProduct.bgImage.startsWith('http') && !normProduct.bgImage.includes(window.location.host);
+        const bgCrossorigin = isExternalBg ? 'crossorigin="anonymous"' : '';
+        bgWrap.innerHTML = `<img src="${normProduct.bgImage}" ${bgCrossorigin} class="w-full h-full object-fill pointer-events-none block rounded-md">`;
 
         // Outer Frame Element
         const frameWrap = document.createElement('div');
@@ -9942,7 +9951,10 @@
           const sliceBottom = Math.max(1, outer.visibleH - (outer.holeMaxY - outer.minY));
           frameWrap.dataset.frameSlices = JSON.stringify({ sliceLeft, sliceTop, sliceRight, sliceBottom, srcW: outer.visibleW, srcH: outer.visibleH });
         }
-        frameWrap.innerHTML = `<img src="${croppedFrameSrc || outerFrameData.image}" crossorigin="anonymous" style="position: absolute; left: 0px; top: 0px; width: 100%; height: 100%;" class="pointer-events-none block drop-shadow-xl">`;
+        
+        const outImgSrc = croppedFrameSrc || outerFrameData.image;
+        const isExtOut = outImgSrc && outImgSrc.startsWith('http') && !outImgSrc.includes(window.location.host);
+        frameWrap.innerHTML = `<img src="${outImgSrc}" ${isExtOut ? 'crossorigin="anonymous"' : ''} style="position: absolute; left: 0px; top: 0px; width: 100%; height: 100%;" class="pointer-events-none block drop-shadow-xl">`;
 
         // Append in bottom-to-top order
         artLayer.appendChild(bgWrap);
@@ -16852,7 +16864,8 @@
         wrap.style.left = -(minX * scaleX) + 'px';
         wrap.style.top = -(minY * scaleY) + 'px';
 
-        wrap.innerHTML = `<img src="${src}" crossorigin="anonymous" style="width:100%; height:100%;" class="pointer-events-none block">`;
+        const isExtSrc = src && src.startsWith('http') && !src.includes(window.location.host);
+        wrap.innerHTML = `<img src="${src}" ${isExtSrc ? 'crossorigin="anonymous"' : ''} style="width:100%; height:100%;" class="pointer-events-none block">`;
         artLayer.appendChild(wrap);
         selectElement(wrap, 'image');
         recordState();
