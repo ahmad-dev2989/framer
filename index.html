@@ -6155,7 +6155,7 @@
             <div id="artwork-layer" class="absolute inset-0 w-full h-full z-10 overflow-hidden"></div>
             <canvas id="drawing-layer" class="absolute inset-0 z-20 pointer-events-none" width="400"
               height="500"></canvas>
-            <div id="glass-overlay" class="absolute inset-0 z-30 pointer-events-none hidden" style="background: linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 35%, rgba(255,255,255,0) 65%, rgba(255,255,255,0.15) 100%); box-shadow: inset 0 0 20px rgba(255,255,255,0.3);"></div>
+            <div id="glass-overlay" class="absolute z-30 pointer-events-none hidden" style="background: linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 35%, rgba(255,255,255,0) 65%, rgba(255,255,255,0.15) 100%); box-shadow: inset 0 0 20px rgba(255,255,255,0.3);"></div>
           </div>
         </div>
 
@@ -10089,6 +10089,14 @@
         const bgCrossorigin = isExternalBg ? 'crossorigin="anonymous"' : '';
         bgWrap.innerHTML = `<img src="${normProduct.bgImage}" ${bgCrossorigin} class="w-full h-full object-fill pointer-events-none block rounded-md">`;
 
+        const glassOverlay = document.getElementById('glass-overlay');
+        if (glassOverlay) {
+          glassOverlay.style.width = artworkWidth + 'px';
+          glassOverlay.style.height = artworkHeight + 'px';
+          glassOverlay.style.left = artworkLeft + 'px';
+          glassOverlay.style.top = artworkTop + 'px';
+        }
+
         // Outer Frame Element
         const frameWrap = document.createElement('div');
         frameWrap.className = 'canvas-item absolute cursor-move select-none bg-transparent';
@@ -10205,6 +10213,38 @@
       const frameCustomPanel = document.getElementById('frame-customization-panel');
 
       const role = selectedItem?.dataset?.frameRole;
+
+      // -- Global Floating Glass Bar Logic (Independent of selected item) --
+      const floatingGlassBar = document.getElementById('floating-glass-bar-container');
+      const floatingGlassOpts = document.getElementById('floating-glass-options');
+      
+      if (floatingGlassBar && window.globalGlassTypes && window.globalGlassTypes.length > 0 && config) {
+         floatingGlassBar.classList.remove('hidden');
+         
+         if (floatingGlassOpts && floatingGlassOpts.children.length === 0) {
+            floatingGlassOpts.innerHTML = `
+               <button onclick="window.selectGlassType('')" title="No Glass" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm flex items-center justify-center bg-gray-100"><i data-lucide="ban" class="w-3 h-3 text-slate"></i></button>
+            ` + window.globalGlassTypes.map(g => `
+               <button onclick="window.selectGlassType('${g.id}')" title="${g.name}" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm bg-gradient-to-br from-white/80 to-transparent backdrop-blur-sm shadow-inner relative overflow-hidden">
+                  <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent -rotate-45"></div>
+               </button>
+            `).join('');
+            lucide.createIcons();
+         }
+
+         if (floatingGlassOpts) {
+             const activeId = config.glass ? config.glass.id : '';
+             Array.from(floatingGlassOpts.children).forEach(btn => {
+                 if (btn.getAttribute('onclick').includes(`'${activeId}'`) || (activeId==='' && btn.getAttribute('onclick').includes(`('')`))) {
+                     btn.classList.add('ring-2', 'ring-flame', 'ring-offset-1');
+                 } else {
+                     btn.classList.remove('ring-2', 'ring-flame', 'ring-offset-1');
+                 }
+             });
+         }
+      } else if (floatingGlassBar) {
+         floatingGlassBar.classList.add('hidden');
+      }
 
       // Only show if a frame element is selected
       if (!selectedItem || (role !== 'frame' && role !== 'middle-frame' && role !== 'inner-frame') || !config) {
@@ -10349,32 +10389,16 @@
           }
         }
 
-        // Glass Selection
+        // Glass Selection (Sidebar Dropdown only)
         const glassWrapper = document.getElementById('properties-glass-type-wrapper');
         const glassSelect = document.getElementById('editor-glass-select');
-        const floatingGlassBar = document.getElementById('floating-glass-bar-container');
-        const floatingGlassOpts = document.getElementById('floating-glass-options');
 
         if (glassWrapper && glassSelect && role === 'frame') { // Only show on Outer Frame Layer
            glassWrapper.classList.remove('hidden');
-           if (floatingGlassBar && window.globalGlassTypes && window.globalGlassTypes.length > 0) {
-               floatingGlassBar.classList.remove('hidden');
-           }
            
-           // Populate dropdown and floating bar if not already populated
+           // Populate dropdown if not already populated
            if (glassSelect.options.length <= 1 && window.globalGlassTypes && window.globalGlassTypes.length > 0) {
               glassSelect.innerHTML = '<option value="">No Glass</option>' + window.globalGlassTypes.map(g => `<option value="${g.id}">${g.name} (+${window.appCurrency || '$'}${parseFloat(g.price).toFixed(2)})</option>`).join('');
-              
-              if(floatingGlassOpts) {
-                 floatingGlassOpts.innerHTML = `
-                    <button onclick="window.selectGlassType('')" title="No Glass" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm flex items-center justify-center bg-gray-100"><i data-lucide="ban" class="w-3 h-3 text-slate"></i></button>
-                 ` + window.globalGlassTypes.map(g => `
-                    <button onclick="window.selectGlassType('${g.id}')" title="${g.name}" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm bg-gradient-to-br from-white/80 to-transparent backdrop-blur-sm shadow-inner relative overflow-hidden">
-                       <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent -rotate-45"></div>
-                    </button>
-                 `).join('');
-                 lucide.createIcons();
-              }
            }
            
            if (config.glass) {
@@ -10382,21 +10406,8 @@
            } else {
               glassSelect.value = "";
            }
-
-           // Highlight active floating option
-           if (floatingGlassOpts) {
-               const activeId = config.glass ? config.glass.id : '';
-               Array.from(floatingGlassOpts.children).forEach(btn => {
-                   if (btn.getAttribute('onclick').includes(`'${activeId}'`) || (activeId==='' && btn.getAttribute('onclick').includes(`('')`))) {
-                       btn.classList.add('ring-2', 'ring-flame', 'ring-offset-1');
-                   } else {
-                       btn.classList.remove('ring-2', 'ring-flame', 'ring-offset-1');
-                   }
-               });
-           }
         } else if (glassWrapper) {
            glassWrapper.classList.add('hidden');
-           if (floatingGlassBar) floatingGlassBar.classList.add('hidden');
         }
       }
       window.updateLiveFramePreview();
