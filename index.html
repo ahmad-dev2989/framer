@@ -1522,32 +1522,32 @@
         <form class="space-y-4" id="authForm" onsubmit="event.preventDefault(); handleLogin();">
           <!-- Email Field -->
           <div class="text-left">
-            <label class="font-[Inter] text-[13px] font-medium text-white block mb-1.5 drop-shadow-sm"
+            <label class="font-[Inter] text-[13px] font-medium text-white block mb-1 drop-shadow-sm"
               for="login-email">Email Address</label>
             <input
-              class="w-full bg-white border-none rounded px-4 py-3 font-[Inter] text-base text-black focus:ring-2 focus:ring-[#eb5e28] outline-none shadow-md"
+              class="w-full bg-transparent border-0 border-b-2 border-white/40 rounded-none px-0 py-2 font-[Inter] text-base text-white focus:ring-0 focus:border-[#eb5e28] outline-none transition-colors"
               id="login-email" name="email" type="email" required />
           </div>
 
           <!-- Password Field -->
-          <div class="text-left">
-            <label class="font-[Inter] text-[13px] font-medium text-white block mb-1.5 drop-shadow-sm"
+          <div class="text-left mt-6">
+            <label class="font-[Inter] text-[13px] font-medium text-white block mb-1 drop-shadow-sm"
               for="login-pass">Password</label>
             <input
-              class="w-full bg-white border-none rounded px-4 py-3 font-[Inter] text-base text-black focus:ring-2 focus:ring-[#eb5e28] outline-none shadow-md"
+              class="w-full bg-transparent border-0 border-b-2 border-white/40 rounded-none px-0 py-2 font-[Inter] text-base text-white focus:ring-0 focus:border-[#eb5e28] outline-none transition-colors"
               id="login-pass" name="password" type="password" required />
           </div>
 
           <!-- Remember Me -->
-          <div class="flex items-center text-left pt-1">
+          <div class="flex items-center text-left pt-3">
             <input type="checkbox" id="remember-me"
-              class="w-3.5 h-3.5 rounded-sm border-none bg-white text-[#eb5e28] focus:ring-0 cursor-pointer shadow-sm">
+              class="w-3.5 h-3.5 rounded-sm border border-white/40 bg-transparent text-[#eb5e28] focus:ring-0 cursor-pointer shadow-sm">
             <label for="remember-me"
               class="ml-2 text-[13px] font-medium text-gray-200 cursor-pointer drop-shadow-sm">Remember Me</label>
           </div>
 
           <!-- Primary Action -->
-          <div class="pt-3">
+          <div class="pt-4">
             <button type="button" onclick="handleLogin()"
               class="px-8 py-3 bg-[#eb5e28] text-white font-[Inter] text-sm font-semibold rounded hover:bg-[#d14f1c] transition-all shadow-lg"
               data-cms="pages.login_signup.sections.login.elements.btn_text">
@@ -1564,7 +1564,7 @@
           <!-- Social Login / Sign up link -->
           <div class="pt-5 space-y-4">
             <button type="button" onclick="handleGoogleAuth()"
-              class="w-full h-12 bg-white text-gray-900 font-[Inter] text-sm font-bold rounded hover:bg-gray-100 transition-all flex items-center justify-center gap-3 shadow-md">
+              class="w-full h-12 bg-white/10 backdrop-blur-md border border-white/20 text-white font-[Inter] text-sm font-bold rounded hover:bg-white/20 transition-all flex items-center justify-center gap-3 shadow-lg">
               <svg class="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4"
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -1637,37 +1637,37 @@
         </div>
         <h2 class="font-[Inter] text-3xl md:text-4xl font-extrabold text-white mb-6 drop-shadow-md">Create Account</h2>
 
-        <form class="space-y-4" id="signupForm" onsubmit="event.preventDefault(); handleSignup();">
-          <div id="signup-action-buttons" class="space-y-4">
+        <form class="space-y-6" id="signupForm" onsubmit="event.preventDefault(); handleSignup();">
+          <div id="signup-action-buttons" class="space-y-6">
             <!-- Name Field -->
             <div class="text-left">
-              <label class="font-[Inter] text-[13px] font-medium text-white block mb-1.5 drop-shadow-sm">Full
+              <label class="font-[Inter] text-[13px] font-medium text-white block mb-1 drop-shadow-sm">Full
                 Name</label>
               <input
-                class="w-full bg-white border-none rounded px-4 py-3 font-[Inter] text-base text-black focus:ring-2 focus:ring-[#eb5e28] outline-none shadow-md"
+                class="w-full bg-transparent border-0 border-b-2 border-white/40 rounded-none px-0 py-2 font-[Inter] text-base text-white focus:ring-0 focus:border-[#eb5e28] outline-none transition-colors"
                 id="signup-name" type="text" required />
             </div>
 
             <!-- Email Field -->
             <div class="text-left">
-              <label class="font-[Inter] text-[13px] font-medium text-white block mb-1.5 drop-shadow-sm">Email
+              <label class="font-[Inter] text-[13px] font-medium text-white block mb-1 drop-shadow-sm">Email
                 Address</label>
               <input
-                class="w-full bg-white border-none rounded px-4 py-3 font-[Inter] text-base text-black focus:ring-2 focus:ring-[#eb5e28] outline-none shadow-md"
+                class="w-full bg-transparent border-0 border-b-2 border-white/40 rounded-none px-0 py-2 font-[Inter] text-base text-white focus:ring-0 focus:border-[#eb5e28] outline-none transition-colors"
                 id="signup-email" type="email" required />
             </div>
 
             <!-- Password Field -->
             <div class="text-left">
               <label
-                class="font-[Inter] text-[13px] font-medium text-white block mb-1.5 drop-shadow-sm">Password</label>
+                class="font-[Inter] text-[13px] font-medium text-white block mb-1 drop-shadow-sm">Password</label>
               <input
-                class="w-full bg-white border-none rounded px-4 py-3 font-[Inter] text-base text-black focus:ring-2 focus:ring-[#eb5e28] outline-none shadow-md"
+                class="w-full bg-transparent border-0 border-b-2 border-white/40 rounded-none px-0 py-2 font-[Inter] text-base text-white focus:ring-0 focus:border-[#eb5e28] outline-none transition-colors"
                 id="signup-pass" type="password" required />
             </div>
 
             <!-- Primary Action -->
-            <div class="pt-3">
+            <div class="pt-4">
               <button type="button" onclick="handleSignup()"
                 class="w-full px-8 py-3 bg-[#eb5e28] text-white font-[Inter] text-sm font-semibold rounded hover:bg-[#d14f1c] transition-all shadow-lg"
                 data-cms="pages.login_signup.sections.signup.elements.btn_text">
@@ -1675,7 +1675,7 @@
               </button>
               <!-- Social Login -->
               <button type="button" onclick="handleGoogleAuth()"
-                class="w-full mt-4 h-12 bg-white text-gray-900 font-[Inter] text-sm font-bold rounded hover:bg-gray-100 transition-all flex items-center justify-center gap-3 shadow-md">
+                class="w-full mt-4 h-12 bg-white/10 backdrop-blur-md border border-white/20 text-white font-[Inter] text-sm font-bold rounded hover:bg-white/20 transition-all flex items-center justify-center gap-3 shadow-lg">
                 <svg class="w-5 h-5" viewBox="0 0 24 24">
                   <path fill="#4285F4"
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
