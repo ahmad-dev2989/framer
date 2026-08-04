@@ -9883,14 +9883,21 @@
           lastHoleHeight = innerHoleHeight;
         }
 
-        // Background Artwork fits innermost opening
+        // Calculate a responsive 1.5cm gap (approx 28px in scaled canvas coordinates)
+        const gapPx = 28;
+        const artworkWidth = Math.max(10, lastHoleWidth - (gapPx * 2));
+        const artworkHeight = Math.max(10, lastHoleHeight - (gapPx * 2));
+        const artworkLeft = lastHoleLeft + gapPx;
+        const artworkTop = lastHoleTop + gapPx;
+
+        // Background Artwork fits innermost opening leaving a clean gap for the canvas BG
         const bgWrap = document.createElement('div');
         bgWrap.className = 'canvas-item absolute cursor-move select-none bg-transparent';
         bgWrap.dataset.type = 'image';
-        bgWrap.style.width = lastHoleWidth + 'px';
-        bgWrap.style.height = lastHoleHeight + 'px';
-        bgWrap.style.left = lastHoleLeft + 'px';
-        bgWrap.style.top = lastHoleTop + 'px';
+        bgWrap.style.width = artworkWidth + 'px';
+        bgWrap.style.height = artworkHeight + 'px';
+        bgWrap.style.left = artworkLeft + 'px';
+        bgWrap.style.top = artworkTop + 'px';
         bgWrap.dataset.cost = 0;
         bgWrap.dataset.itemName = "Background Artwork";
         bgWrap.dataset.frameRole = 'artwork';
