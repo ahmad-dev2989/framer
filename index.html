@@ -10074,7 +10074,7 @@
         matteWrap.style.height = lastHoleHeight + 'px';
         matteWrap.style.left = lastHoleLeft + 'px';
         matteWrap.style.top = lastHoleTop + 'px';
-        matteWrap.style.backgroundColor = window.activeMatteColor || '#ffffff';
+        matteWrap.style.backgroundColor = window.activeMatteColor || '#744444';
 
         // Calculate a responsive 1.5cm gap (approx 28px in scaled canvas coordinates)
         const gapPx = 28;
@@ -10200,8 +10200,9 @@
 
       const artLayer = document.getElementById('artwork-layer');
       if (artLayer) artLayer.innerHTML = '';
-      document.getElementById('design-canvas').style.backgroundColor = '#744444';
-      document.getElementById('canvas-bg-color').value = '#744444';
+      document.getElementById('design-canvas').style.backgroundColor = '#ffffff';
+      document.getElementById('canvas-bg-color').value = '#ffffff';
+      window.activeMatteColor = '#744444';
 
       triggerTransition('editor', `${normProduct.name} Customization`);
 
@@ -16385,7 +16386,7 @@
       historyStack.push({
         art: artLayer.innerHTML,
         canvasBg: document.getElementById('design-canvas').style.backgroundColor || '#ffffff',
-        matteColor: window.activeMatteColor || '#ffffff',
+        matteColor: window.activeMatteColor || '#744444',
         canvasDraw: document.getElementById('drawing-layer').toDataURL(),
         configState: window.activeFrameConfiguration ? JSON.parse(JSON.stringify(window.activeFrameConfiguration)) : null,
         productState: window.activeFrameProduct ? JSON.parse(JSON.stringify(window.activeFrameProduct)) : null
@@ -16399,7 +16400,7 @@
       artLayer.innerHTML = s.art;
       document.getElementById('design-canvas').style.backgroundColor = s.canvasBg;
       document.getElementById('canvas-bg-color').value = rgbToHex(s.canvasBg);
-      window.activeMatteColor = s.matteColor;
+      window.activeMatteColor = s.matteColor || '#744444';
 
       if (s.configState) window.activeFrameConfiguration = JSON.parse(JSON.stringify(s.configState));
       if (s.productState) window.activeFrameProduct = JSON.parse(JSON.stringify(s.productState));
