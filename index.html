@@ -2261,6 +2261,9 @@
           <button onclick="switchAdminSubTab('products', 'manage-elements')" id="tab-products-manage-elements"
             class="px-4 py-2 bg-editorbg text-slate border border-sand rounded-lg text-xs font-bold transition hover:bg-sand/30 whitespace-nowrap">Manage
             Elements</button>
+          <button onclick="switchAdminSubTab('products', 'manage-glass')" id="tab-products-manage-glass"
+            class="px-4 py-2 bg-editorbg text-slate border border-sand rounded-lg text-xs font-bold transition hover:bg-sand/30 whitespace-nowrap">Manage
+            Glass</button>
         </div>
 
         <!-- Add Product Tab -->
@@ -3005,6 +3008,45 @@
             </table>
           </div>
         </div>
+
+        <!-- Manage Glass Tab -->
+        <div id="view-products-manage-glass"
+          class="hidden glass-card bg-white p-8 rounded-3xl border border-sand/60 shadow-sm w-full">
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+            <h2 class="text-2xl font-extrabold text-charcoal">Manage Glass Types</h2>
+          </div>
+          
+          <form id="admin-add-glass-form" onsubmit="window.handleAddGlass(event)" class="flex items-end gap-4 mb-8 bg-editorbg p-5 rounded-2xl border border-sand/50">
+            <input type="hidden" id="edit-glass-id">
+            <div class="flex-1">
+              <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1.5 block">Glass Name</label>
+              <input type="text" id="glass-name-input" class="w-full px-4 py-2.5 bg-white border border-sand rounded-xl font-bold text-sm text-charcoal focus:outline-none focus:border-flame transition" placeholder="e.g. Premium Museum Glass" required>
+            </div>
+            <div class="w-32">
+              <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1.5 block">Price</label>
+              <input type="number" step="0.01" min="0" id="glass-price-input" class="w-full px-4 py-2.5 bg-white border border-sand rounded-xl font-bold text-sm text-charcoal focus:outline-none focus:border-flame transition" placeholder="0.00" required>
+            </div>
+            <button type="submit" id="glass-submit-btn" class="btn-solid-orange px-6 py-2.5 rounded-xl text-cream font-extrabold text-sm shadow-md transition whitespace-nowrap h-[42px]">Add Glass</button>
+            <button type="button" onclick="window.resetGlassForm()" class="px-4 py-2.5 bg-white border border-sand text-slate hover:text-charcoal rounded-xl text-sm font-bold transition h-[42px]">Cancel</button>
+          </form>
+
+          <div class="overflow-x-auto border border-sand/50 rounded-2xl w-full">
+            <table class="w-full text-left text-sm min-w-max">
+              <thead class="bg-editorbg text-slate font-bold uppercase text-[10px] tracking-wider">
+                <tr>
+                  <th class="px-6 py-4">Glass Type</th>
+                  <th class="px-6 py-4">Price</th>
+                  <th class="px-6 py-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-manage-glass-table-body"
+                class="divide-y divide-sand/40 bg-white font-medium text-charcoal">
+                <!-- Javascript will populate this -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
 
       <!-- 4. SALES MANAGEMENT SECTION -->
@@ -6073,6 +6115,15 @@
                 oninput="applyFrameThickness(this.value, false)" onchange="recordState()">
             </div>
 
+            <!-- Glass Type Selection -->
+            <div id="properties-glass-type-wrapper" class="hidden space-y-3 pt-3 border-t border-sand/40">
+              <span class="text-xs font-black uppercase tracking-wider text-charcoal block">Glass Type</span>
+              <select id="editor-glass-select" onchange="window.selectGlassType(this.value)" class="w-full px-4 py-2.5 bg-white border border-sand rounded-xl text-xs font-bold text-charcoal focus:outline-none focus:border-flame cursor-pointer shadow-sm">
+                <option value="">No Glass</option>
+                <!-- populated by JS -->
+              </select>
+            </div>
+
             <!-- NEW: Live Frame Preview Section -->
             <div id="live-frame-preview-section"
               class="hidden md:block bg-white p-4 rounded-xl border border-sand/60 space-y-3 mt-4 shadow-sm">
@@ -6794,6 +6845,13 @@
         }
       });
 
+      // Add Glass Price if selected
+      if (window.activeFrameConfiguration && window.activeFrameConfiguration.glass) {
+        const glassCost = parseFloat(window.activeFrameConfiguration.glass.price) || 0;
+        total += glassCost;
+        breakdown.push({ name: window.activeFrameConfiguration.glass.name, cost: glassCost });
+      }
+
       return { total: total + baseCost, breakdown };
     }
 
@@ -6853,6 +6911,18 @@
           thickness: (baseThick * mult).toFixed(1), 
           color: config.innerColour || null, 
           price: p 
+        });
+      }
+      
+      if (config.glass) {
+        const p = parseFloat(config.glass.price) || 0;
+        framesTotal += p;
+        layers.push({
+          role: 'Glass Type',
+          name: config.glass.name,
+          thickness: 'N/A',
+          color: null,
+          price: p
         });
       }
 
@@ -7115,6 +7185,7 @@
         if (tab === 'manage-product') loadAdminManageProductsTable();
         if (tab === 'manage-elements') loadAdminManageElementsTable();
         if (tab === 'manage-category') loadCategoriesTable();
+        if (tab === 'manage-glass') window.loadAdminManageGlassTable();
         if (tab === 'add-product') populateProductCategoryDropdown();
         if (tab === 'add-element') {
           document.getElementById('admin-upload-form').reset();
@@ -7483,6 +7554,93 @@
           loadAdminManageElementsTable();
         } catch (e) {
           showToast("Error updating stock: " + e.message);
+        }
+      }
+    };
+
+    window.globalGlassTypes = [];
+
+    window.loadAdminManageGlassTable = async () => {
+      const tbody = document.getElementById('admin-manage-glass-table-body');
+      if (!tbody) return;
+      try {
+        const snap = await db.collection('glass_types').orderBy('price', 'asc').get();
+        window.globalGlassTypes = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        if (window.globalGlassTypes.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="3" class="px-6 py-4 text-center text-slate font-bold">No glass types added yet.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = window.globalGlassTypes.map(g => `
+          <tr class="hover:bg-sand/10 transition border-b border-sand/30">
+            <td class="px-6 py-4 font-bold text-charcoal">${g.name}</td>
+            <td class="px-6 py-4 font-bold text-flame">${window.appCurrency || '$'}${parseFloat(g.price).toFixed(2)}</td>
+            <td class="px-6 py-4 text-right">
+              <button type="button" onclick="window.editGlassType('${g.id}', '${g.name.replace(/'/g, "\\'")}', ${g.price})" class="px-3 py-1.5 bg-editorbg hover:bg-sand/40 border border-sand rounded-lg text-xs font-bold text-charcoal transition mr-1">Edit</button>
+              <button type="button" onclick="window.deleteGlassType('${g.id}')" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg text-xs font-bold text-red-600 transition">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="3" class="px-6 py-4 text-center text-red-500 font-bold">Error loading glass types.</td></tr>`;
+      }
+    };
+
+    window.handleAddGlass = async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('edit-glass-id').value;
+      const name = document.getElementById('glass-name-input').value.trim();
+      const price = parseFloat(document.getElementById('glass-price-input').value);
+
+      if (!name || isNaN(price)) return showToast("Please provide a valid name and price.");
+
+      const btn = document.getElementById('glass-submit-btn');
+      const origText = btn.innerText;
+      btn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin inline-block"></i>`;
+      btn.disabled = true;
+
+      try {
+        if (id) {
+          await db.collection('glass_types').doc(id).update({ name, price });
+          showToast("Glass type updated!");
+        } else {
+          await db.collection('glass_types').add({ name, price, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+          showToast("Glass type added!");
+        }
+        window.resetGlassForm();
+        window.loadAdminManageGlassTable();
+      } catch (err) {
+        showToast("Error saving glass: " + err.message);
+      } finally {
+        btn.innerText = origText;
+        btn.disabled = false;
+        if(window.lucide) lucide.createIcons();
+      }
+    };
+
+    window.editGlassType = (id, name, price) => {
+      document.getElementById('edit-glass-id').value = id;
+      document.getElementById('glass-name-input').value = name;
+      document.getElementById('glass-price-input').value = price;
+      document.getElementById('glass-submit-btn').innerText = "Update Glass";
+      document.getElementById('admin-products-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    window.resetGlassForm = () => {
+      document.getElementById('admin-add-glass-form').reset();
+      document.getElementById('edit-glass-id').value = '';
+      document.getElementById('glass-submit-btn').innerText = "Add Glass";
+    };
+
+    window.deleteGlassType = async (id) => {
+      if (confirm("Are you sure you want to delete this glass type?")) {
+        try {
+          await db.collection('glass_types').doc(id).delete();
+          showToast("Glass type deleted.");
+          window.loadAdminManageGlassTable();
+        } catch (e) {
+          showToast("Error deleting: " + e.message);
         }
       }
     };
@@ -10178,8 +10336,43 @@
             thicknessControl.classList.add('hidden');
           }
         }
+
+        // Glass Selection
+        const glassWrapper = document.getElementById('properties-glass-type-wrapper');
+        const glassSelect = document.getElementById('editor-glass-select');
+        if (glassWrapper && glassSelect && role === 'frame') { // Only show on Outer Frame Layer
+           glassWrapper.classList.remove('hidden');
+           
+           // Populate dropdown if not already populated
+           if (glassSelect.options.length <= 1 && window.globalGlassTypes && window.globalGlassTypes.length > 0) {
+              glassSelect.innerHTML = '<option value="">No Glass</option>' + window.globalGlassTypes.map(g => `<option value="${g.id}">${g.name} (+${window.appCurrency || '$'}${parseFloat(g.price).toFixed(2)})</option>`).join('');
+           }
+           
+           if (config.glass) {
+              glassSelect.value = config.glass.id;
+           } else {
+              glassSelect.value = "";
+           }
+        } else if (glassWrapper) {
+           glassWrapper.classList.add('hidden');
+        }
       }
       window.updateLiveFramePreview();
+    };
+
+    window.selectGlassType = (glassId) => {
+      const config = window.activeFrameConfiguration;
+      if (!config) return;
+      
+      if (!glassId) {
+        config.glass = null;
+      } else {
+        const glass = window.globalGlassTypes.find(g => g.id === glassId);
+        if (glass) config.glass = glass;
+      }
+      
+      window.updateLiveFramePreview();
+      recordState();
     };
 
     // NEW: Live Preview Updates & Tooltip Mouse Tracking Engine
@@ -10229,6 +10422,22 @@
       }
       if (hasInner && product.innerFrame && product.innerFrame.name) {
         html += renderLayer(product.innerFrame.name, product.innerFrame.thickness || 2.0, config.innerThickness || 100, config.innerColour, 'Inner Frame', product.innerFrame.price);
+      }
+
+      if (config.glass) {
+        const priceVal = parseFloat(config.glass.price) || 0;
+        totalPrice += priceVal;
+        html += `
+          <div class="flex flex-col gap-0.5 border-b border-sand/30 pb-2 last:border-0 last:pb-0 mt-1.5">
+            <div class="flex justify-between items-start">
+              <div class="flex flex-col">
+                <span class="text-[9px] font-bold uppercase tracking-wider text-slate leading-tight">Glass Type</span>
+                <span class="text-xs font-black text-charcoal truncate max-w-[120px] leading-tight" title="${config.glass.name}">${config.glass.name}</span>
+              </div>
+              <span class="text-xs font-bold text-flame">${window.appCurrency || '$'}${priceVal.toFixed(2)}</span>
+            </div>
+          </div>
+        `;
       }
 
       html += `
@@ -13286,6 +13495,12 @@
     };
 
     window.addEventListener('DOMContentLoaded', async () => {
+      // Load Glass Types into memory
+      try {
+        const gSnap = await db.collection('glass_types').get();
+        window.globalGlassTypes = gSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      } catch(e) {}
+
       const urlParams = new URLSearchParams(window.location.search);
       const previewProjectId = urlParams.get('previewProject');
       if (previewProjectId) {
