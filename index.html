@@ -1517,10 +1517,13 @@
         <div class="text-white mb-8 md:hidden">
           <h1 class="font-[Inter] text-4xl font-extrabold mb-2 drop-shadow-md">Welcome Back</h1>
         </div>
-        <h2 class="font-[Inter] text-3xl md:text-4xl font-extrabold text-white mb-6 drop-shadow-md">Sign in</h2>
+        
+        <!-- Glassy Frame Wrapper -->
+        <div class="bg-white/10 backdrop-blur-xl border border-white/20 p-8 sm:p-10 rounded-3xl shadow-2xl">
+          <h2 class="font-[Inter] text-3xl md:text-4xl font-extrabold text-white mb-6 drop-shadow-md">Sign in</h2>
 
-        <form class="space-y-4" id="authForm" onsubmit="event.preventDefault(); handleLogin();">
-          <!-- Email Field -->
+          <form class="space-y-4" id="authForm" onsubmit="event.preventDefault(); handleLogin();">
+            <!-- Email Field -->
           <div class="text-left">
             <label class="font-[Inter] text-[13px] font-medium text-white block mb-1 drop-shadow-sm"
               for="login-email">Email Address</label>
@@ -1596,6 +1599,7 @@
                 href="#" class="underline hover:text-gray-200 transition">Privacy Policy</a></p>
           </div>
         </form>
+        </div> <!-- End of Glassy Frame Wrapper -->
       </div>
     </div>
   </div>
@@ -1640,10 +1644,13 @@
         <div class="text-white mb-8 md:hidden">
           <h1 class="font-[Inter] text-4xl font-extrabold mb-2 drop-shadow-md">Join FrameCraft</h1>
         </div>
-        <h2 class="font-[Inter] text-3xl md:text-4xl font-extrabold text-white mb-6 drop-shadow-md">Create Account</h2>
+        
+        <!-- Glassy Frame Wrapper -->
+        <div class="bg-white/10 backdrop-blur-xl border border-white/20 p-8 sm:p-10 rounded-3xl shadow-2xl">
+          <h2 class="font-[Inter] text-3xl md:text-4xl font-extrabold text-white mb-6 drop-shadow-md">Create Account</h2>
 
-        <form class="space-y-6" id="signupForm" onsubmit="event.preventDefault(); handleSignup();">
-          <div id="signup-action-buttons" class="space-y-6">
+          <form class="space-y-6" id="signupForm" onsubmit="event.preventDefault(); handleSignup();">
+            <div id="signup-action-buttons" class="space-y-6">
             <!-- Name Field -->
             <div class="text-left">
               <label class="font-[Inter] text-[13px] font-medium text-white block mb-1 drop-shadow-sm">Full
@@ -1722,6 +1729,7 @@
             </p>
           </div>
         </form>
+        </div> <!-- End of Glassy Frame Wrapper -->
       </div>
     </div>
   </div>
