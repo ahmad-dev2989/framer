@@ -15586,44 +15586,6 @@
       }, 50);
     };
 
-    // Attach the new Open in Studio function below viewOrderDetails
-    window.loadAdminOrderInEditor = (orderId, productIndex = 0) => {
-      const order = globalOrders.find(o => o.id === orderId);
-      if (!order) return;
-      
-      const item = order.orderedProducts[productIndex];
-      const cust = item.customization || order.customization;
-
-      if (!cust || !cust.editorState) {
-        showToast("No editor state saved for this item.");
-        return;
-      }
-
-      toggleModal('admin-order-modal'); // Close the modal
-
-      // Restore Editor State from DB Storage
-      window.activeFrameConfiguration = cust.editorState.config;
-      window.activeFrameProduct = cust.editorState.product;
-      
-      document.getElementById('editor-project-title').innerText = \`Order #\${order.id} - \${item.title}\`;
-      document.getElementById('artwork-layer').innerHTML = cust.editorState.canvasHtml;
-      document.getElementById('design-canvas').style.backgroundColor = cust.editorState.canvasBg || '#ffffff';
-      
-      if (window.rgbToHex) {
-        document.getElementById('canvas-bg-color').value = window.rgbToHex(cust.editorState.canvasBg || '#ffffff');
-      }
-
-      switchView('editor');
-      
-      setTimeout(() => {
-        window.updateCanvasScale();
-        if (window.syncFrameCustomizationPanels) window.syncFrameCustomizationPanels();
-        if (window.updateLiveFramePreview) window.updateLiveFramePreview();
-        if (typeof recordState === 'function') recordState();
-        showToast("Order loaded into editor successfully!");
-      }, 50);
-    };
-
     window.loadAdminOrderInEditor = (orderId, productIndex = 0) => {
       const order = globalOrders.find(o => o.id === orderId);
       if (!order) return;
