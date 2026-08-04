@@ -6780,6 +6780,8 @@
 
     function getCurrentCustomizationSummary() {
       const config = window.activeFrameConfiguration || {};
+      const product = window.activeFrameProduct || {};
+      
       const decor = Array.from(document.querySelectorAll('#artwork-layer .canvas-item'))
         .filter(item => {
           const role = item.dataset.frameRole;
@@ -6787,17 +6789,36 @@
             (parseFloat(item.dataset.cost) || 0) >= 0 && item.dataset.itemName;
         })
         .map(item => ({ name: item.dataset.itemName, price: parseFloat(item.dataset.cost) || 0 }));
+
+      const hasOuter = !!document.querySelector('#artwork-layer [data-frame-role="frame"]');
+      const hasMiddle = !!document.querySelector('#artwork-layer [data-frame-role="middle-frame"]');
+      const hasInner = !!document.querySelector('#artwork-layer [data-frame-role="inner-frame"]');
+
+      const layers = [];
+      if (hasOuter && product.outerFrame) {
+        layers.push({ role: 'Outer Frame', name: product.outerFrame.name, thickness: (product.outerFrame.thickness * ((config.thickness || 100) / 100)).toFixed(1), color: config.outerColour || config.colour });
+      }
+      if (hasMiddle && product.middleFrame) {
+        layers.push({ role: 'Middle Frame', name: product.middleFrame.name, thickness: (product.middleFrame.thickness * ((config.middleThickness || 100) / 100)).toFixed(1), color: config.middleColour });
+      }
+      if (hasInner && product.innerFrame) {
+        layers.push({ role: 'Inner Frame', name: product.innerFrame.name, thickness: (product.innerFrame.thickness * ((config.innerThickness || 100) / 100)).toFixed(1), color: config.innerColour });
+      }
+
       return { 
         product: config.productName || document.getElementById('editor-project-title').innerText, 
         frame: config.productName || 'Custom Frame', 
         size: config.size ? { width: config.size.width, height: config.size.height, name: config.size.name || `${config.size.width} × ${config.size.height}` } : null, 
-        colour: config.colour || null, 
-        thickness: config.dynamicThickness ? config.thickness || 100 : null, 
-        middleThickness: config.middleThickness || null,
-        innerThickness: config.innerThickness || null,
+        layers,
         decor, 
         quantity: 1, 
-        pricing: calculateCanvasCost() 
+        pricing: calculateCanvasCost(),
+        editorState: {
+          config: JSON.parse(JSON.stringify(config)),
+          product: JSON.parse(JSON.stringify(product)),
+          canvasHtml: document.getElementById('artwork-layer').innerHTML,
+          canvasBg: document.getElementById('design-canvas').style.backgroundColor || '#ffffff'
+        }
       };
     }
     function renderCheckoutCustomizationSummary() {
@@ -14871,7 +14892,7 @@
         address: address,
         previewImageURL: activePreviewUrl,
 
-        orderedProducts: cartItems.length > 0 ? cartItems.map(i => ({ title: i.title, cost: parseFloat(i.cost) || 0, qty: 1 })) : [{ title: title, cost: basePriceRaw, qty: 1 }],
+        orderedProducts: cartItems.length > 0 ? cartItems.map(i => ({ title: i.title, cost: parseFloat(i.cost) || 0, qty: i.quantity || i.qty || 1, customization: i.customization || null })) : [{ title: title, cost: basePriceRaw, qty: 1, customization: getCurrentCustomizationSummary() }],
         baseAmount: basePriceRaw,
         shippingCharges: shippingRateValue,
         total: `${window.appCurrency || '$'}${structuralGrandTotal.toFixed(2)}`,
@@ -15396,6 +15417,48 @@
       const order = globalOrders.find(o => o.id === id);
       if (!order) return;
 
+      let itemsHtml = '';
+      if (order.orderedProducts && order.orderedProducts.length > 0) {
+        itemsHtml = order.orderedProducts.map((p, index) => {
+          const cust = p.customization || order.customization;
+          let layersHtml = '';
+          if (cust && cust.layers && cust.layers.length > 0) {
+            layersHtml = cust.layers.map(layer => `
+              <div class="ml-2 mb-1.5 border-l-2 border-flame/40 pl-2.5">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate">${layer.role}:</span> 
+                <span class="text-charcoal font-bold text-xs">${layer.name}</span><br>
+                <span class="text-[10px] text-slate font-medium">Thickness: <strong class="text-charcoal">${layer.thickness} cm</strong> | Finish: <strong class="text-charcoal">${layer.color ? layer.color.name : 'Original'}</strong></span>
+              </div>
+            `).join('');
+          } else if (cust) {
+            layersHtml = `
+              <div class="ml-2 mb-1.5 border-l-2 border-flame/40 pl-2.5">
+                <span class="text-charcoal font-bold text-xs">${cust.frame || 'Standard Frame'}</span><br>
+                <span class="text-[10px] text-slate font-medium">Outer Thickness: <strong class="text-charcoal">${cust.thickness ? cust.thickness + '%' : 'Standard'}</strong> | Finish: <strong class="text-charcoal">${cust.colour?.name || 'Original'}</strong></span>
+              </div>
+            `;
+          }
+
+          return `
+            <div class="mb-3 bg-editorbg border border-sand/50 rounded-xl p-4">
+              <div class="flex justify-between items-start mb-3">
+                <span class="text-sm font-black text-charcoal">${p.title} <span class="text-slate font-medium text-xs">(x${p.qty || 1})</span></span>
+                ${(cust && cust.editorState) ? `<button onclick="window.loadAdminOrderInEditor('${order.id}', ${index})" class="px-3 py-1.5 bg-charcoal text-cream hover:bg-flame rounded flex items-center gap-1.5 text-[10px] font-bold transition shadow-sm"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Load in Editor</button>` : `<span class="text-[10px] text-slate italic">Legacy Order</span>`}
+              </div>
+              <div class="text-xs text-charcoal leading-relaxed">
+                ${cust ? `
+                  <div class="mb-2.5 text-[11px]"><strong class="uppercase text-slate tracking-wider text-[9px]">Base Size:</strong> ${cust.size?.name || 'Original size'}</div>
+                  ${layersHtml}
+                  ${cust.decor?.length ? `<div class="mt-2 text-[11px]"><strong class="uppercase text-slate tracking-wider text-[9px]">Decor Elements:</strong> ${cust.decor.map(d => d.name).join(', ')}</div>` : ''}
+                ` : '<span class="text-slate italic">No advanced customization details saved.</span>'}
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else {
+        itemsHtml = '<span class="text-slate italic text-xs block mt-2">No product specification details available.</span>';
+      }
+
       document.getElementById('admin-order-content').innerHTML = `
         <div class="grid grid-cols-2 gap-y-3 max-h-[70vh] overflow-y-auto no-scrollbar">
           ${order.previewImageURL ? `
@@ -15417,19 +15480,13 @@
           
           <hr class="col-span-2 border-sand/40 my-1">
           
-          <div class="col-span-2"><span class="block text-[9px] uppercase text-slate font-bold">Items Spec Profile</span><span class="text-charcoal font-bold text-xs">${(order.orderedProducts && order.orderedProducts.length > 0) ? order.orderedProducts.map(p => p.title + ' (x' + (p.qty || 1) + ')').join(', ') : 'Custom Frame'}</span></div>
-          <div class="col-span-2"><span class="block text-[9px] uppercase text-slate font-bold">Customization</span><span class="text-charcoal font-medium text-xs leading-relaxed inline-block mt-1">
-            ${order.customization ? `
-              <b>Frame:</b> ${order.customization.frame} <br>
-              <b>Size:</b> ${order.customization.size?.name || 'Original size'} <br>
-              <b>Colour:</b> ${order.customization.colour?.name || 'Original finish'} <br>
-              <b>Outer Thickness:</b> ${order.customization.thickness ? `${order.customization.thickness}%` : 'Standard'} <br>
-              ${order.customization.middleThickness ? `<b>Middle Thickness:</b> ${order.customization.middleThickness}% <br>` : ''}
-              ${order.customization.innerThickness ? `<b>Inner Thickness:</b> ${order.customization.innerThickness}% <br>` : ''}
-              <b>Decor:</b> ${order.customization.decor?.length ? order.customization.decor.map(d => d.name).join(', ') : 'None'} <br>
-              <b>Quantity:</b> ${order.customization.quantity || 1}
-            ` : 'No saved customization details'}
-          </span></div>
+          <div class="col-span-2">
+            <span class="block text-[9px] uppercase text-slate font-bold mb-2">Items Spec Profile & Configuration</span>
+            ${itemsHtml}
+          </div>
+
+          <hr class="col-span-2 border-sand/40 my-1">
+
           <div class="col-span-2"><span class="block text-[9px] uppercase text-slate font-bold">Customer Name</span><span class="text-charcoal font-bold">${order.customer || 'Guest'}</span></div>
           <div><span class="block text-[9px] uppercase text-slate font-bold">Phone Number</span><span class="text-charcoal font-bold text-xs">${order.phone || 'N/A'}</span></div>
           <div><span class="block text-[9px] uppercase text-slate font-bold">Fulfillment City</span><span class="text-charcoal font-bold text-xs">${order.address ? (order.address.split(',')[1] || 'Local').trim() : 'Local'}</span></div>
@@ -15437,7 +15494,45 @@
         </div>
       `;
       toggleModal('admin-order-modal');
+      lucide.createIcons();
     }
+
+    window.loadAdminOrderInEditor = (orderId, productIndex = 0) => {
+      const order = globalOrders.find(o => o.id === orderId);
+      if (!order) return;
+      
+      const item = order.orderedProducts[productIndex];
+      const cust = item.customization || order.customization;
+
+      if (!cust || !cust.editorState) {
+        showToast("No editor state saved for this item.");
+        return;
+      }
+
+      toggleModal('admin-order-modal'); // Close the modal
+
+      // Restore Editor State from DB Storage
+      window.activeFrameConfiguration = cust.editorState.config;
+      window.activeFrameProduct = cust.editorState.product;
+      
+      document.getElementById('editor-project-title').innerText = `Order #${order.id} - ${item.title}`;
+      document.getElementById('artwork-layer').innerHTML = cust.editorState.canvasHtml;
+      document.getElementById('design-canvas').style.backgroundColor = cust.editorState.canvasBg || '#ffffff';
+      
+      if (window.rgbToHex) {
+        document.getElementById('canvas-bg-color').value = window.rgbToHex(cust.editorState.canvasBg || '#ffffff');
+      }
+
+      switchView('editor');
+      
+      setTimeout(() => {
+        window.updateCanvasScale();
+        if (window.syncFrameCustomizationPanels) window.syncFrameCustomizationPanels();
+        if (window.updateLiveFramePreview) window.updateLiveFramePreview();
+        if (typeof recordState === 'function') recordState();
+        showToast("Order loaded into editor successfully!");
+      }, 50);
+    };
 
     function switchElementCategory(cat) {
       document.querySelectorAll('.elem-tab').forEach(t => {
