@@ -6091,7 +6091,7 @@
 
       <!-- 3. The Canvas Workspace -->
       <main id="editor-workspace-main"
-        class="flex-1 bg-editorbg relative overflow-auto flex items-center justify-center p-8 pb-32 md:pb-8">
+        class="flex-1 bg-editorbg relative overflow-auto flex items-center justify-center p-8 pb-32 md:pb-28">
         <div class="absolute inset-0 pointer-events-none"
           style="background-image: radial-gradient(#ccc5b9 1px, transparent 1px); background-size: 24px 24px; opacity: 0.3;">
         </div>
@@ -6229,25 +6229,12 @@
 
     <!-- PERMANENT Live Design Summary (Desktop Right) -->
     <div id="permanent-live-summary-panel"
-      class="hidden md:flex absolute top-[280px] right-6 bg-white shadow-xl border border-sand/60 rounded-2xl p-5 w-64 z-30 flex-col">
+      class="hidden md:flex absolute top-1/2 -translate-y-1/2 right-6 bg-white shadow-xl border border-sand/60 rounded-2xl p-5 w-64 z-30 flex-col">
       <span
         class="text-[11px] font-black uppercase tracking-wider text-charcoal block border-b border-sand/60 pb-3 mb-2 flex items-center gap-2">
         <i data-lucide="eye" class="w-4 h-4 text-flame"></i> Live Design Summary
       </span>
-      <!-- Changed ID to Class to prevent duplicate ID conflicts -->
       <div class="live-frame-preview-target space-y-1">
-        <p class="text-xs text-slate font-medium py-2">Select a template to view details.</p>
-      </div>
-    </div>
-
-    <!-- PERMANENT Live Frame Preview Section (Desktop Bottom Right) -->
-    <div id="live-frame-preview-section"
-      class="hidden md:flex absolute bottom-[76px] right-6 bg-white shadow-xl border border-sand/60 rounded-2xl p-5 w-64 z-30 flex-col">
-      <span
-        class="text-[11px] font-black uppercase tracking-wider text-charcoal block border-b border-sand/60 pb-3 mb-2 flex items-center gap-2">
-        <i data-lucide="eye" class="w-4 h-4 text-flame"></i> Live Design Summary
-      </span>
-      <div id="live-frame-preview-content" class="space-y-1">
         <p class="text-xs text-slate font-medium py-2">Select a template to view details.</p>
       </div>
     </div>
@@ -10775,7 +10762,7 @@
       const canvasH = parseFloat(canvas.style.height) || canvas.offsetHeight || 500;
 
       const paddingX = 48;
-      const paddingY = window.innerWidth < 768 ? 160 : 64;
+      const paddingY = window.innerWidth < 768 ? 160 : 120;
       const availableW = Math.max(100, main.clientWidth - paddingX);
       const availableH = Math.max(100, main.clientHeight - paddingY);
 
