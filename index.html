@@ -7048,6 +7048,17 @@
         });
       }
 
+      const matteHex = window.activeMatteColor || (document.getElementById('matte-layer') ? document.getElementById('matte-layer').style.backgroundColor : '#744444') || '#744444';
+      const matteColorObj = (config.matteColor && typeof config.matteColor === 'object') ? config.matteColor : { name: `Matte (${matteHex})`, value: matteHex };
+
+      layers.push({
+        role: 'Matte Board',
+        name: 'Matte Layer',
+        thickness: 'Standard',
+        color: matteColorObj,
+        price: 0
+      });
+
       if (config.glass) {
         const p = parseFloat(config.glass.price) || 0;
         framesTotal += p;
@@ -7073,6 +7084,7 @@
         frame: safeConfig.productName || 'Custom Frame',
         size: safeConfig.size ? { width: safeConfig.size.width || 0, height: safeConfig.size.height || 0, name: safeConfig.size.name || `${safeConfig.size.width} × ${safeConfig.size.height}` } : null,
         layers: layers,
+        matteColor: matteColorObj,
         framesTotal: framesTotal,
         decor: decor,
         quantity: 1,
@@ -7086,7 +7098,10 @@
     function renderCheckoutCustomizationSummary() {
       const container = document.getElementById('checkout-customization-summary'); if (!container) return;
       const summaries = window.isDirectBuyCheckout ? [getCurrentCustomizationSummary()] : cartItems.map(item => item.customization || { product: item.title, frame: 'Custom frame', decor: [], quantity: 1, pricing: { total: parseFloat(item.cost) || 0, breakdown: [{ name: item.title, cost: parseFloat(item.cost) || 0 }] } });
-      container.innerHTML = `<p class="font-black text-slate uppercase tracking-wider text-[10px] mb-3">Order customization summary</p>${summaries.map(summary => `<div class="border-t border-sand/40 pt-2 mt-2"><div class="flex justify-between font-extrabold text-charcoal"><span>${summary.product}</span><span>${window.appCurrency || '$'}${summary.pricing.total.toFixed(2)}</span></div><div class="text-slate leading-relaxed mt-1">Frame: ${summary.frame}${summary.size ? ` · Size: ${summary.size.name}` : ''}${summary.colour ? ` · Colour: ${summary.colour.name}` : ''}${summary.thickness ? ` · Thickness: ${summary.thickness}%` : ''}<br>Decor: ${summary.decor.length ? summary.decor.map(d => d.name).join(', ') : 'None'} · Quantity: ${summary.quantity}</div></div>`).join('')}`;
+      container.innerHTML = `<p class="font-black text-slate uppercase tracking-wider text-[10px] mb-3">Order customization summary</p>${summaries.map(summary => {
+        const matteStr = summary.matteColor ? (summary.matteColor.name || summary.matteColor.value || summary.matteColor) : '';
+        return `<div class="border-t border-sand/40 pt-2 mt-2"><div class="flex justify-between font-extrabold text-charcoal"><span>${summary.product}</span><span>${window.appCurrency || '$'}${summary.pricing.total.toFixed(2)}</span></div><div class="text-slate leading-relaxed mt-1">Frame: ${summary.frame}${summary.size ? ` · Size: ${summary.size.name}` : ''}${summary.colour ? ` · Colour: ${summary.colour.name}` : ''}${summary.thickness ? ` · Thickness: ${summary.thickness}%` : ''}${matteStr ? ` · Matte Color: ${matteStr}` : ''}<br>Decor: ${summary.decor.length ? summary.decor.map(d => d.name).join(', ') : 'None'} · Quantity: ${summary.quantity}</div></div>`;
+      }).join('')}`;
     }
 
     window.showPricePreview = () => {
@@ -15413,6 +15428,8 @@
       pdf.setFontSize(11);
       (order.orderedProducts || []).forEach(p => {
         pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(11);
+        pdf.setTextColor(43, 61, 70);
         const splitTitle = pdf.splitTextToSize(p.title, 110);
         pdf.text(splitTitle, 15, y);
 
@@ -15422,7 +15439,41 @@
         pdf.setFont('helvetica', 'bold');
         pdf.text(`${window.appCurrency || '$'}${(p.cost || 0).toFixed(2)}`, pageWidth - 15, y, { align: 'right' });
 
-        y += (splitTitle.length * 6) + 4;
+        y += (splitTitle.length * 5) + 3;
+
+        const cust = p.customization || order.customization;
+        if (cust) {
+          pdf.setFont('helvetica', 'normal');
+          pdf.setFontSize(8.5);
+
+          if (cust.size) {
+            pdf.setTextColor(100, 116, 139);
+            pdf.text(`Base Size: ${cust.size.name || (cust.size.width + 'x' + cust.size.height)}`, 18, y);
+            y += 4;
+          }
+
+          if (cust.layers && cust.layers.length > 0) {
+            pdf.setTextColor(70, 80, 90);
+            cust.layers.forEach(layer => {
+              const colorStr = layer.color ? (layer.color.name || layer.color.value || layer.color) : 'Original';
+              const thickStr = layer.thickness && layer.thickness !== 'N/A' ? `${layer.thickness}${layer.thickness !== 'Standard' ? ' cm' : ''}` : 'Standard';
+              const lineText = `• ${layer.role}: ${layer.name} (${thickStr}, Color: ${colorStr})`;
+              const splitLine = pdf.splitTextToSize(lineText, 110);
+              pdf.text(splitLine, 18, y);
+              y += (splitLine.length * 3.8) + 1;
+            });
+          }
+
+          if (cust.decor && cust.decor.length > 0) {
+            pdf.setTextColor(70, 80, 90);
+            const decorText = `• Decor: ${cust.decor.map(d => d.name).join(', ')}`;
+            const splitDecor = pdf.splitTextToSize(decorText, 110);
+            pdf.text(splitDecor, 18, y);
+            y += (splitDecor.length * 3.8) + 1;
+          }
+        }
+
+        y += 3;
       });
 
       pdf.line(15, y, pageWidth - 15, y);
