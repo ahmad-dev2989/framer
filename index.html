@@ -14879,10 +14879,12 @@
             if (editorView && editorView.classList.contains('hidden')) {
               wasHidden = true;
               editorView.classList.remove('hidden');
-              editorView.style.position = 'absolute';
+              editorView.style.position = 'fixed';
               editorView.style.left = '-9999px';
               editorView.style.top = '-9999px';
-              editorView.style.opacity = '0';
+              editorView.style.zIndex = '-9999';
+              editorView.style.opacity = '1';
+              editorView.style.visibility = 'visible';
               editorView.style.pointerEvents = 'none';
             }
 
@@ -14914,14 +14916,17 @@
             const dataUrl = canvasShot.toDataURL('image/png');
             window.directBuyPreviewUrl = dataUrl;
 
-            try {
-              const blob = await new Promise(res => canvasShot.toBlob(res, 'image/png'));
-              if (blob && typeof uploadToCloudinary === 'function') {
-                const cloudUrl = await uploadToCloudinary(blob);
-                if (cloudUrl) window.directBuyPreviewUrl = cloudUrl;
-              }
-            } catch (cloudErr) {
-              console.warn("Cloudinary upload fallback to dataUrl:", cloudErr);
+            // Non-blocking background upload to Cloudinary
+            if (typeof uploadToCloudinary === 'function') {
+              canvasShot.toBlob(blob => {
+                if (blob) {
+                  uploadToCloudinary(blob).then(cloudUrl => {
+                    if (cloudUrl) window.directBuyPreviewUrl = cloudUrl;
+                  }).catch(cloudErr => {
+                    console.warn("Background Cloudinary upload error:", cloudErr);
+                  });
+                }
+              }, 'image/png');
             }
 
             editorCanvas.style.transform = originalTransform;
@@ -14930,7 +14935,9 @@
               editorView.style.position = '';
               editorView.style.left = '';
               editorView.style.top = '';
+              editorView.style.zIndex = '';
               editorView.style.opacity = '';
+              editorView.style.visibility = '';
               editorView.style.pointerEvents = '';
               editorView.classList.add('hidden');
             }
@@ -15623,10 +15630,24 @@
           estimatedDelivery: estDeliveryTimestampString || 'N/A'
         };
 
+        const removeUndefinedFields = (obj) => {
+          if (obj === null || typeof obj !== 'object') return obj;
+          if (Array.isArray(obj)) return obj.map(removeUndefinedFields);
+          const clean = {};
+          for (const key of Object.keys(obj)) {
+            const val = obj[key];
+            if (val !== undefined) {
+              clean[key] = removeUndefinedFields(val);
+            }
+          }
+          return clean;
+        };
+
         const orderPdf = await generateOrderConfirmationPdf(structuredDatabaseOrderRecordPayload);
         structuredDatabaseOrderRecordPayload.pdfFileName = `FrameCraft-Invoice-${orderId}.pdf`;
 
-        await db.collection('orders').doc(orderId).set(structuredDatabaseOrderRecordPayload);
+        const cleanedPayload = removeUndefinedFields(structuredDatabaseOrderRecordPayload);
+        await db.collection('orders').doc(orderId).set(cleanedPayload);
 
         // Create a gorgeous visual HTML email including the product image
         let emailTemplateAggregationOutputBlock = `
