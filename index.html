@@ -7048,8 +7048,26 @@
         });
       }
 
-      const matteHex = window.activeMatteColor || (document.getElementById('matte-layer') ? document.getElementById('matte-layer').style.backgroundColor : '#744444') || '#744444';
-      const matteColorObj = (config.matteColor && typeof config.matteColor === 'object') ? config.matteColor : { name: `Matte (${matteHex})`, value: matteHex };
+      const getMatteColorObject = () => {
+        const hex = window.activeMatteColor || (document.getElementById('matte-layer') ? document.getElementById('matte-layer').style.backgroundColor : '#744444') || '#744444';
+        const colorNames = {
+          '#744444': 'Deep Mauve',
+          '#FAF9F6': 'Off White',
+          '#F5F5DC': 'Beige',
+          '#FFFDD0': 'Cream',
+          '#EAE0C8': 'Pearl',
+          '#F3E5AB': 'Vanilla',
+          '#E8DCC4': 'Alabaster',
+          '#DCD0C0': 'Parchment',
+          '#F0ECE1': 'Linen',
+          '#E2DFD2': 'Bone'
+        };
+        const norm = (hex || '').toUpperCase();
+        const foundName = colorNames[hex] || colorNames[norm] || `Matte (${hex})`;
+        return { name: foundName, value: hex };
+      };
+
+      const matteColorObj = getMatteColorObject();
 
       layers.push({
         role: 'Matte Board',
@@ -16219,17 +16237,33 @@
           const cust = p.customization || order.customization;
           let summaryCardHtml = '';
 
-          if (cust && cust.layers && cust.layers.length > 0) {
+          if (cust && (cust.layers || cust.matteColor)) {
+            const allLayers = [...(cust.layers || [])];
+            if (cust.matteColor && !allLayers.find(l => l.role === 'Matte Board')) {
+              const mVal = typeof cust.matteColor === 'object' ? (cust.matteColor.value || cust.matteColor.name) : cust.matteColor;
+              const mName = typeof cust.matteColor === 'object' ? (cust.matteColor.name || cust.matteColor.value) : `Matte (${cust.matteColor})`;
+              allLayers.push({
+                role: 'Matte Board',
+                name: 'Matte Layer',
+                thickness: 'Standard',
+                color: { name: mName, value: mVal },
+                price: 0
+              });
+            }
+
             summaryCardHtml = `
               <div class="bg-white border border-sand/60 rounded-2xl p-5 mt-4 shadow-sm">
                 <div class="flex items-center gap-2 border-b border-sand/60 pb-3 mb-4">
                   <i data-lucide="eye" class="w-4 h-4 text-flame"></i>
                   <span class="text-xs font-black uppercase tracking-wider text-charcoal">Live Design Summary</span>
                 </div>
-                ${cust.layers.map(layer => {
-              const colorDisplay = layer.color
-                ? `<span class="inline-block w-3 h-3 rounded-full border border-sand align-middle shadow-inner mr-1.5" style="background-color:${layer.color.value};"></span>${layer.color.name}`
+                ${allLayers.map(layer => {
+              const cVal = layer.color ? (layer.color.value || layer.color.name || layer.color) : null;
+              const cName = layer.color ? (layer.color.name || layer.color.value || layer.color) : 'Original';
+              const colorDisplay = cVal
+                ? `<span class="inline-block w-3 h-3 rounded-full border border-sand align-middle shadow-inner mr-1.5" style="background-color:${cVal};"></span>${cName}`
                 : '<span class="text-slate italic">Original</span>';
+              const thickDisplay = layer.thickness && layer.thickness !== 'N/A' ? `${layer.thickness}${layer.thickness !== 'Standard' ? ' cm' : ''}` : 'Standard';
 
               return `
                     <div class="border-b border-sand/30 pb-3 mb-3 last:border-0 last:pb-0 last:mb-0">
@@ -16239,7 +16273,7 @@
                       </div>
                       <div class="text-sm font-black text-charcoal mb-2">${layer.name}</div>
                       <div class="flex justify-between items-center text-xs font-medium text-slate">
-                        <span>Profile: <strong class="text-charcoal">${layer.thickness} cm</strong></span>
+                        <span>Profile: <strong class="text-charcoal">${thickDisplay}</strong></span>
                         <span class="flex items-center">${colorDisplay}</span>
                       </div>
                     </div>
