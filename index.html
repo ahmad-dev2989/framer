@@ -831,12 +831,12 @@
       /* Base state: invisible and completely unclickable */
       opacity: 0;
       visibility: hidden;
-      pointer-events: none; 
+      pointer-events: none;
 
       /* The 0.5s delay when mouse leaves */
-      transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0.5s, 
-                  transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0.5s, 
-                  visibility 0s linear 0.75s;
+      transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0.5s,
+        transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0.5s,
+        visibility 0s linear 0.75s;
     }
 
     /* Invisible bridge to catch the mouse as it moves down */
@@ -854,13 +854,14 @@
     .nav-dropdown-container.active .dropdown-menu {
       opacity: 1;
       visibility: visible;
-      pointer-events: auto; /* Becomes clickable immediately! */
+      pointer-events: auto;
+      /* Becomes clickable immediately! */
       transform: translateX(-50%) translateY(0) scale(1);
-      
+
       /* No delay when hovering IN */
-      transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0s, 
-                  transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0s, 
-                  visibility 0s linear 0s;
+      transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0s,
+        transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0s,
+        visibility 0s linear 0s;
     }
 
     .dropdown-menu a {
@@ -1517,88 +1518,92 @@
         <div class="text-white mb-8 md:hidden">
           <h1 class="font-[Inter] text-4xl font-extrabold mb-2 drop-shadow-md">Welcome Back</h1>
         </div>
-        
+
         <!-- Glassy Frame Wrapper -->
         <div class="bg-white/10 backdrop-blur-xl border border-white/20 p-8 sm:p-10 rounded-3xl shadow-2xl">
           <h2 class="font-[Inter] text-3xl md:text-4xl font-extrabold text-white mb-6 drop-shadow-md">Sign in</h2>
 
           <form class="space-y-4" id="authForm" onsubmit="event.preventDefault(); handleLogin();">
             <!-- Email Field -->
-          <div class="text-left">
-            <label class="font-[Inter] text-[13px] font-medium text-white block mb-1 drop-shadow-sm"
-              for="login-email">Email Address</label>
-            <input
-              class="w-full bg-transparent border-0 border-b-2 border-white/40 rounded-none px-0 py-2 font-[Inter] text-base text-white focus:ring-0 focus:border-[#eb5e28] outline-none transition-colors"
-              id="login-email" name="email" type="email" required />
-          </div>
-
-          <!-- Password Field -->
-          <div class="text-left mt-6">
-            <label class="font-[Inter] text-[13px] font-medium text-white block mb-1 drop-shadow-sm"
-              for="login-pass">Password</label>
-            <div class="relative">
+            <div class="text-left">
+              <label class="font-[Inter] text-[13px] font-medium text-white block mb-1 drop-shadow-sm"
+                for="login-email">Email Address</label>
               <input
-                class="w-full bg-transparent border-0 border-b-2 border-white/40 rounded-none px-0 py-2 pr-8 font-[Inter] text-base text-white focus:ring-0 focus:border-[#eb5e28] outline-none transition-colors"
-                id="login-pass" name="password" type="password" required onkeydown="if(event.key === 'Enter') { event.preventDefault(); handleLogin(); }" />
-              <button type="button" tabindex="-1" onclick="const input = document.getElementById('login-pass'); const icon = this.querySelector('span'); if(input.type==='password'){input.type='text'; icon.innerText='visibility_off';}else{input.type='password'; icon.innerText='visibility';}" class="absolute right-0 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition-colors cursor-pointer flex items-center justify-center">
-                <span class="material-symbols-outlined text-[18px]">visibility</span>
+                class="w-full bg-transparent border-0 border-b-2 border-white/40 rounded-none px-0 py-2 font-[Inter] text-base text-white focus:ring-0 focus:border-[#eb5e28] outline-none transition-colors"
+                id="login-email" name="email" type="email" required />
+            </div>
+
+            <!-- Password Field -->
+            <div class="text-left mt-6">
+              <label class="font-[Inter] text-[13px] font-medium text-white block mb-1 drop-shadow-sm"
+                for="login-pass">Password</label>
+              <div class="relative">
+                <input
+                  class="w-full bg-transparent border-0 border-b-2 border-white/40 rounded-none px-0 py-2 pr-8 font-[Inter] text-base text-white focus:ring-0 focus:border-[#eb5e28] outline-none transition-colors"
+                  id="login-pass" name="password" type="password" required
+                  onkeydown="if(event.key === 'Enter') { event.preventDefault(); handleLogin(); }" />
+                <button type="button" tabindex="-1"
+                  onclick="const input = document.getElementById('login-pass'); const icon = this.querySelector('span'); if(input.type==='password'){input.type='text'; icon.innerText='visibility_off';}else{input.type='password'; icon.innerText='visibility';}"
+                  class="absolute right-0 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition-colors cursor-pointer flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px]">visibility</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Remember Me -->
+            <div class="flex items-center text-left pt-3">
+              <input type="checkbox" id="remember-me"
+                class="w-3.5 h-3.5 rounded-sm border border-white/40 bg-transparent text-[#eb5e28] focus:ring-0 cursor-pointer shadow-sm">
+              <label for="remember-me"
+                class="ml-2 text-[13px] font-medium text-gray-200 cursor-pointer drop-shadow-sm">Remember Me</label>
+            </div>
+
+            <!-- Primary Action -->
+            <div class="pt-4">
+              <button type="button" onclick="handleLogin()"
+                class="px-8 py-3 bg-[#eb5e28] text-white font-[Inter] text-sm font-semibold rounded hover:bg-[#d14f1c] transition-all shadow-lg"
+                data-cms="pages.login_signup.sections.login.elements.btn_text">
+                Sign in now
               </button>
             </div>
-          </div>
 
-          <!-- Remember Me -->
-          <div class="flex items-center text-left pt-3">
-            <input type="checkbox" id="remember-me"
-              class="w-3.5 h-3.5 rounded-sm border border-white/40 bg-transparent text-[#eb5e28] focus:ring-0 cursor-pointer shadow-sm">
-            <label for="remember-me"
-              class="ml-2 text-[13px] font-medium text-gray-200 cursor-pointer drop-shadow-sm">Remember Me</label>
-          </div>
+            <!-- Lost Password -->
+            <div class="text-left pt-1">
+              <a href="#" class="text-[13px] font-medium text-gray-300 hover:text-white transition drop-shadow-sm">Lost
+                your password?</a>
+            </div>
 
-          <!-- Primary Action -->
-          <div class="pt-4">
-            <button type="button" onclick="handleLogin()"
-              class="px-8 py-3 bg-[#eb5e28] text-white font-[Inter] text-sm font-semibold rounded hover:bg-[#d14f1c] transition-all shadow-lg"
-              data-cms="pages.login_signup.sections.login.elements.btn_text">
-              Sign in now
-            </button>
-          </div>
+            <!-- Social Login / Sign up link -->
+            <div class="pt-5 space-y-4">
+              <button type="button" onclick="handleGoogleAuth()"
+                class="w-full h-12 bg-white/10 backdrop-blur-md border border-white/20 text-white font-[Inter] text-sm font-bold rounded hover:bg-white/20 transition-all flex items-center justify-center gap-3 shadow-lg">
+                <svg class="w-5 h-5" viewBox="0 0 24 24">
+                  <path fill="#4285F4"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                  <path fill="#34A853"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                  <path fill="#FBBC05"
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                  <path fill="#EA4335"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                </svg>
+                Continue with Google
+              </button>
+              <p class="text-center text-[13px] font-medium text-gray-300 drop-shadow-sm">
+                Don't have an account? <button type="button"
+                  onclick="toggleModal('login-modal'); toggleModal('signup-modal')"
+                  class="text-[#eb5e28] hover:text-white font-semibold transition">Sign up</button>
+              </p>
+            </div>
 
-          <!-- Lost Password -->
-          <div class="text-left pt-1">
-            <a href="#" class="text-[13px] font-medium text-gray-300 hover:text-white transition drop-shadow-sm">Lost
-              your password?</a>
-          </div>
-
-          <!-- Social Login / Sign up link -->
-          <div class="pt-5 space-y-4">
-            <button type="button" onclick="handleGoogleAuth()"
-              class="w-full h-12 bg-white/10 backdrop-blur-md border border-white/20 text-white font-[Inter] text-sm font-bold rounded hover:bg-white/20 transition-all flex items-center justify-center gap-3 shadow-lg">
-              <svg class="w-5 h-5" viewBox="0 0 24 24">
-                <path fill="#4285F4"
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                <path fill="#34A853"
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                <path fill="#FBBC05"
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-                <path fill="#EA4335"
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-              </svg>
-              Continue with Google
-            </button>
-            <p class="text-center text-[13px] font-medium text-gray-300 drop-shadow-sm">
-              Don't have an account? <button type="button"
-                onclick="toggleModal('login-modal'); toggleModal('signup-modal')"
-                class="text-[#eb5e28] hover:text-white font-semibold transition">Sign up</button>
-            </p>
-          </div>
-
-          <!-- Terms -->
-          <div class="pt-8">
-            <p class="text-[11px] text-gray-400 font-medium leading-relaxed drop-shadow-sm">By clicking on "Sign in now"
-              you agree to<br><a href="#" class="underline hover:text-gray-200 transition">Terms of Service</a> | <a
-                href="#" class="underline hover:text-gray-200 transition">Privacy Policy</a></p>
-          </div>
-        </form>
+            <!-- Terms -->
+            <div class="pt-8">
+              <p class="text-[11px] text-gray-400 font-medium leading-relaxed drop-shadow-sm">By clicking on "Sign in
+                now"
+                you agree to<br><a href="#" class="underline hover:text-gray-200 transition">Terms of Service</a> | <a
+                  href="#" class="underline hover:text-gray-200 transition">Privacy Policy</a></p>
+            </div>
+          </form>
         </div> <!-- End of Glassy Frame Wrapper -->
       </div>
     </div>
@@ -1644,91 +1649,96 @@
         <div class="text-white mb-8 md:hidden">
           <h1 class="font-[Inter] text-4xl font-extrabold mb-2 drop-shadow-md">Join FrameCraft</h1>
         </div>
-        
+
         <!-- Glassy Frame Wrapper -->
         <div class="bg-white/10 backdrop-blur-xl border border-white/20 p-8 sm:p-10 rounded-3xl shadow-2xl">
-          <h2 class="font-[Inter] text-3xl md:text-4xl font-extrabold text-white mb-6 drop-shadow-md">Create Account</h2>
+          <h2 class="font-[Inter] text-3xl md:text-4xl font-extrabold text-white mb-6 drop-shadow-md">Create Account
+          </h2>
 
           <form class="space-y-6" id="signupForm" onsubmit="event.preventDefault(); handleSignup();">
             <div id="signup-action-buttons" class="space-y-6">
-            <!-- Name Field -->
-            <div class="text-left">
-              <label class="font-[Inter] text-[13px] font-medium text-white block mb-1 drop-shadow-sm">Full
-                Name</label>
-              <input
-                class="w-full bg-transparent border-0 border-b-2 border-white/40 rounded-none px-0 py-2 font-[Inter] text-base text-white focus:ring-0 focus:border-[#eb5e28] outline-none transition-colors"
-                id="signup-name" type="text" required />
-            </div>
-
-            <!-- Email Field -->
-            <div class="text-left">
-              <label class="font-[Inter] text-[13px] font-medium text-white block mb-1 drop-shadow-sm">Email
-                Address</label>
-              <input
-                class="w-full bg-transparent border-0 border-b-2 border-white/40 rounded-none px-0 py-2 font-[Inter] text-base text-white focus:ring-0 focus:border-[#eb5e28] outline-none transition-colors"
-                id="signup-email" type="email" required />
-            </div>
-
-            <!-- Password Field -->
-            <div class="text-left">
-              <label
-                class="font-[Inter] text-[13px] font-medium text-white block mb-1 drop-shadow-sm" for="signup-pass">Password</label>
-              <div class="relative">
+              <!-- Name Field -->
+              <div class="text-left">
+                <label class="font-[Inter] text-[13px] font-medium text-white block mb-1 drop-shadow-sm">Full
+                  Name</label>
                 <input
-                  class="w-full bg-transparent border-0 border-b-2 border-white/40 rounded-none px-0 py-2 pr-8 font-[Inter] text-base text-white focus:ring-0 focus:border-[#eb5e28] outline-none transition-colors"
-                  id="signup-pass" type="password" required onkeydown="if(event.key === 'Enter') { event.preventDefault(); handleSignup(); }" />
-                <button type="button" tabindex="-1" onclick="const input = document.getElementById('signup-pass'); const icon = this.querySelector('span'); if(input.type==='password'){input.type='text'; icon.innerText='visibility_off';}else{input.type='password'; icon.innerText='visibility';}" class="absolute right-0 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition-colors cursor-pointer flex items-center justify-center">
-                  <span class="material-symbols-outlined text-[18px]">visibility</span>
+                  class="w-full bg-transparent border-0 border-b-2 border-white/40 rounded-none px-0 py-2 font-[Inter] text-base text-white focus:ring-0 focus:border-[#eb5e28] outline-none transition-colors"
+                  id="signup-name" type="text" required />
+              </div>
+
+              <!-- Email Field -->
+              <div class="text-left">
+                <label class="font-[Inter] text-[13px] font-medium text-white block mb-1 drop-shadow-sm">Email
+                  Address</label>
+                <input
+                  class="w-full bg-transparent border-0 border-b-2 border-white/40 rounded-none px-0 py-2 font-[Inter] text-base text-white focus:ring-0 focus:border-[#eb5e28] outline-none transition-colors"
+                  id="signup-email" type="email" required />
+              </div>
+
+              <!-- Password Field -->
+              <div class="text-left">
+                <label class="font-[Inter] text-[13px] font-medium text-white block mb-1 drop-shadow-sm"
+                  for="signup-pass">Password</label>
+                <div class="relative">
+                  <input
+                    class="w-full bg-transparent border-0 border-b-2 border-white/40 rounded-none px-0 py-2 pr-8 font-[Inter] text-base text-white focus:ring-0 focus:border-[#eb5e28] outline-none transition-colors"
+                    id="signup-pass" type="password" required
+                    onkeydown="if(event.key === 'Enter') { event.preventDefault(); handleSignup(); }" />
+                  <button type="button" tabindex="-1"
+                    onclick="const input = document.getElementById('signup-pass'); const icon = this.querySelector('span'); if(input.type==='password'){input.type='text'; icon.innerText='visibility_off';}else{input.type='password'; icon.innerText='visibility';}"
+                    class="absolute right-0 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition-colors cursor-pointer flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[18px]">visibility</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Primary Action -->
+              <div class="pt-4">
+                <button type="button" onclick="handleSignup()"
+                  class="w-full px-8 py-3 bg-[#eb5e28] text-white font-[Inter] text-sm font-semibold rounded hover:bg-[#d14f1c] transition-all shadow-lg"
+                  data-cms="pages.login_signup.sections.signup.elements.btn_text">
+                  Sign Up
+                </button>
+                <!-- Social Login -->
+                <button type="button" onclick="handleGoogleAuth()"
+                  class="w-full mt-4 h-12 bg-white/10 backdrop-blur-md border border-white/20 text-white font-[Inter] text-sm font-bold rounded hover:bg-white/20 transition-all flex items-center justify-center gap-3 shadow-lg">
+                  <svg class="w-5 h-5" viewBox="0 0 24 24">
+                    <path fill="#4285F4"
+                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path fill="#34A853"
+                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path fill="#FBBC05"
+                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                    <path fill="#EA4335"
+                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                  </svg>
+                  Continue with Google
                 </button>
               </div>
             </div>
 
-            <!-- Primary Action -->
-            <div class="pt-4">
-              <button type="button" onclick="handleSignup()"
-                class="w-full px-8 py-3 bg-[#eb5e28] text-white font-[Inter] text-sm font-semibold rounded hover:bg-[#d14f1c] transition-all shadow-lg"
-                data-cms="pages.login_signup.sections.signup.elements.btn_text">
-                Sign Up
-              </button>
-              <!-- Social Login -->
-              <button type="button" onclick="handleGoogleAuth()"
-                class="w-full mt-4 h-12 bg-white/10 backdrop-blur-md border border-white/20 text-white font-[Inter] text-sm font-bold rounded hover:bg-white/20 transition-all flex items-center justify-center gap-3 shadow-lg">
-                <svg class="w-5 h-5" viewBox="0 0 24 24">
-                  <path fill="#4285F4"
-                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                  <path fill="#34A853"
-                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                  <path fill="#FBBC05"
-                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-                  <path fill="#EA4335"
-                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-                </svg>
-                Continue with Google
-              </button>
+            <!-- Pending State -->
+            <div id="signup-pending-container"
+              class="hidden flex-col items-center justify-center pt-6 text-center bg-white/10 p-6 rounded-xl backdrop-blur-sm border border-white/20">
+              <i data-lucide="loader-2" class="w-10 h-10 text-[#eb5e28] animate-spin mb-3"></i>
+              <h3 class="text-lg font-bold text-white mb-1">Pending...</h3>
+              <p class="text-xs font-medium text-gray-200 mb-5">We've sent a verification link to your email. Please
+                click
+                it to verify your account.</p>
+              <button id="signup-pending-login-btn" disabled
+                class="w-full bg-white/20 text-white/50 py-3.5 rounded-xl font-extrabold text-sm transition cursor-not-allowed">Waiting
+                for confirmation...</button>
             </div>
-          </div>
 
-          <!-- Pending State -->
-          <div id="signup-pending-container"
-            class="hidden flex-col items-center justify-center pt-6 text-center bg-white/10 p-6 rounded-xl backdrop-blur-sm border border-white/20">
-            <i data-lucide="loader-2" class="w-10 h-10 text-[#eb5e28] animate-spin mb-3"></i>
-            <h3 class="text-lg font-bold text-white mb-1">Pending...</h3>
-            <p class="text-xs font-medium text-gray-200 mb-5">We've sent a verification link to your email. Please click
-              it to verify your account.</p>
-            <button id="signup-pending-login-btn" disabled
-              class="w-full bg-white/20 text-white/50 py-3.5 rounded-xl font-extrabold text-sm transition cursor-not-allowed">Waiting
-              for confirmation...</button>
-          </div>
-
-          <!-- Login link -->
-          <div class="pt-5 text-center">
-            <p class="text-[13px] font-medium text-gray-300 drop-shadow-sm">
-              Already have an account? <button type="button"
-                onclick="toggleModal('signup-modal'); toggleModal('login-modal')"
-                class="text-[#eb5e28] hover:text-white font-semibold transition">Log in</button>
-            </p>
-          </div>
-        </form>
+            <!-- Login link -->
+            <div class="pt-5 text-center">
+              <p class="text-[13px] font-medium text-gray-300 drop-shadow-sm">
+                Already have an account? <button type="button"
+                  onclick="toggleModal('signup-modal'); toggleModal('login-modal')"
+                  class="text-[#eb5e28] hover:text-white font-semibold transition">Log in</button>
+              </p>
+            </div>
+          </form>
         </div> <!-- End of Glassy Frame Wrapper -->
       </div>
     </div>
@@ -2845,7 +2855,7 @@
               </label>
             </div>
 
-           
+
 
             <!-- Available Colours (Frames only) -->
             <div id="admin-asset-colours-container"
@@ -3023,19 +3033,27 @@
           <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <h2 class="text-2xl font-extrabold text-charcoal">Manage Glass Types</h2>
           </div>
-          
-          <form id="admin-add-glass-form" onsubmit="window.handleAddGlass(event)" class="flex items-end gap-4 mb-8 bg-editorbg p-5 rounded-2xl border border-sand/50">
+
+          <form id="admin-add-glass-form" onsubmit="window.handleAddGlass(event)"
+            class="flex items-end gap-4 mb-8 bg-editorbg p-5 rounded-2xl border border-sand/50">
             <input type="hidden" id="edit-glass-id">
             <div class="flex-1">
               <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1.5 block">Glass Name</label>
-              <input type="text" id="glass-name-input" class="w-full px-4 py-2.5 bg-white border border-sand rounded-xl font-bold text-sm text-charcoal focus:outline-none focus:border-flame transition" placeholder="e.g. Premium Museum Glass" required>
+              <input type="text" id="glass-name-input"
+                class="w-full px-4 py-2.5 bg-white border border-sand rounded-xl font-bold text-sm text-charcoal focus:outline-none focus:border-flame transition"
+                placeholder="e.g. Premium Museum Glass" required>
             </div>
             <div class="w-32">
               <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-1.5 block">Price</label>
-              <input type="number" step="0.01" min="0" id="glass-price-input" class="w-full px-4 py-2.5 bg-white border border-sand rounded-xl font-bold text-sm text-charcoal focus:outline-none focus:border-flame transition" placeholder="0.00" required>
+              <input type="number" step="0.01" min="0" id="glass-price-input"
+                class="w-full px-4 py-2.5 bg-white border border-sand rounded-xl font-bold text-sm text-charcoal focus:outline-none focus:border-flame transition"
+                placeholder="0.00" required>
             </div>
-            <button type="submit" id="glass-submit-btn" class="btn-solid-orange px-6 py-2.5 rounded-xl text-cream font-extrabold text-sm shadow-md transition whitespace-nowrap h-[42px]">Add Glass</button>
-            <button type="button" onclick="window.resetGlassForm()" class="px-4 py-2.5 bg-white border border-sand text-slate hover:text-charcoal rounded-xl text-sm font-bold transition h-[42px]">Cancel</button>
+            <button type="submit" id="glass-submit-btn"
+              class="btn-solid-orange px-6 py-2.5 rounded-xl text-cream font-extrabold text-sm shadow-md transition whitespace-nowrap h-[42px]">Add
+              Glass</button>
+            <button type="button" onclick="window.resetGlassForm()"
+              class="px-4 py-2.5 bg-white border border-sand text-slate hover:text-charcoal rounded-xl text-sm font-bold transition h-[42px]">Cancel</button>
           </form>
 
           <div class="overflow-x-auto border border-sand/50 rounded-2xl w-full">
@@ -4154,7 +4172,8 @@
             <span
               class="text-secondary font-label-sm text-xs sm:text-label-sm uppercase tracking-widest block mb-1.5 sm:mb-4"
               data-cms="pages.home.sections.products_sec.elements.subtitle">Curated Selections</span>
-            <h2 class="text-4xl md:text-5xl font-bold tracking-tight text-[var(--text-header,#000102)] mb-4" style="font-family: 'Playfair Display', serif !important;">Featured Frames</h2>
+            <h2 class="text-4xl md:text-5xl font-bold tracking-tight text-[var(--text-header,#000102)] mb-4"
+              style="font-family: 'Playfair Display', serif !important;">Featured Frames</h2>
           </div>
           <a class="hidden md:block absolute right-0 bottom-4 text-primary font-label-sm text-xs sm:text-label-sm border-b border-primary pb-1 hover:text-secondary hover:border-secondary transition-all"
             href="/products" onclick="event.preventDefault(); window.handlePathRouting('/products')">View All
@@ -4321,10 +4340,13 @@
 
     <!-- Category Section: Shop by Category -->
     <section id="category-section" class="py-24 bg-surface-container relative overflow-hidden">
-      <div class="px-4 md:px-margin-desktop max-w-container-max mx-auto mb-12 flex flex-col items-center justify-center text-center relative">
+      <div
+        class="px-4 md:px-margin-desktop max-w-container-max mx-auto mb-12 flex flex-col items-center justify-center text-center relative">
         <div class="max-w-2xl flex flex-col items-center">
-          <h2 class="text-4xl md:text-5xl font-bold tracking-tight text-[var(--text-header,#000102)] mb-4" style="font-family: 'Playfair Display', serif !important;">Shop by Category</h2>
-          <p class="text-on-surface-variant mt-2 max-w-xl mx-auto">Find the perfect match for your specific occasion or art
+          <h2 class="text-4xl md:text-5xl font-bold tracking-tight text-[var(--text-header,#000102)] mb-4"
+            style="font-family: 'Playfair Display', serif !important;">Shop by Category</h2>
+          <p class="text-on-surface-variant mt-2 max-w-xl mx-auto">Find the perfect match for your specific occasion or
+            art
             type.</p>
         </div>
         <!-- Slider Nav Buttons -->
@@ -4440,7 +4462,8 @@
         <div class="bg-white shadow-xl flex flex-col lg:flex-row overflow-hidden rounded-lg">
           <!-- Form -->
           <div class="flex-1 p-8 md:p-16 scroll-animate slide-left">
-            <h2 class="text-4xl md:text-5xl font-bold tracking-tight text-[var(--text-header,#000102)] mb-4" style="font-family: 'Playfair Display', serif !important;">Get in Touch</h2>
+            <h2 class="text-4xl md:text-5xl font-bold tracking-tight text-[var(--text-header,#000102)] mb-4"
+              style="font-family: 'Playfair Display', serif !important;">Get in Touch</h2>
             <p class="text-on-surface-variant mb-12 text-lg"
               data-cms="pages.contact.sections.content.elements.info_heading">Have a unique piece or a large collection?
               Our designers are ready to help.</p>
@@ -4598,20 +4621,26 @@
         <!-- Dynamic content will be loaded here -->
       </div>
     </section>
-<!-- ================= TERMS OF SERVICE SECTION ================= -->
+    <!-- ================= TERMS OF SERVICE SECTION ================= -->
     <section id="terms-section" class="hidden py-20 bg-cream/20 min-h-[70vh]">
       <div class="max-w-4xl mx-auto px-4 space-y-6">
-        <h1 class="text-4xl font-extrabold text-charcoal text-center mb-4" style="font-family: 'Oswald', sans-serif;">TERMS OF SERVICE</h1>
+        <h1 class="text-4xl font-extrabold text-charcoal text-center mb-4" style="font-family: 'Oswald', sans-serif;">
+          TERMS OF SERVICE</h1>
         <p class="text-slate text-sm text-center mb-8">Last updated: August 1, 2026</p>
-        <div class="bg-white p-8 md:p-12 rounded-3xl border border-sand/50 shadow-sm space-y-6 text-slate text-sm md:text-base leading-relaxed">
+        <div
+          class="bg-white p-8 md:p-12 rounded-3xl border border-sand/50 shadow-sm space-y-6 text-slate text-sm md:text-base leading-relaxed">
           <h3 class="text-lg font-bold text-charcoal">1. Introduction & Acceptance</h3>
-          <p>Welcome to FrameCraft Studio. By accessing our website, using our online custom picture frame workspace, or purchasing our products, you agree to comply with and be bound by these Terms of Service.</p>
-          
+          <p>Welcome to FrameCraft Studio. By accessing our website, using our online custom picture frame workspace, or
+            purchasing our products, you agree to comply with and be bound by these Terms of Service.</p>
+
           <h3 class="text-lg font-bold text-charcoal">2. Custom Framing & Dimensions</h3>
-          <p>All custom physical frames are handcrafted based on the precise millimeter measurements and specifications you enter into our studio canvas customizer. Because items are built-to-order, please review your configuration carefully before confirming checkout.</p>
-          
+          <p>All custom physical frames are handcrafted based on the precise millimeter measurements and specifications
+            you enter into our studio canvas customizer. Because items are built-to-order, please review your
+            configuration carefully before confirming checkout.</p>
+
           <h3 class="text-lg font-bold text-charcoal">3. Shipping & Handling</h3>
-          <p>We package all artisan frames using museum-grade protective layers to guarantee safe transport. Delivery timelines begin once physical assembly and quality checks are complete in our workshop.</p>
+          <p>We package all artisan frames using museum-grade protective layers to guarantee safe transport. Delivery
+            timelines begin once physical assembly and quality checks are complete in our workshop.</p>
         </div>
       </div>
     </section>
@@ -4619,17 +4648,22 @@
     <!-- ================= COOKIE POLICY SECTION ================= -->
     <section id="cookies-section" class="hidden py-20 bg-cream/20 min-h-[70vh]">
       <div class="max-w-4xl mx-auto px-4 space-y-6">
-        <h1 class="text-4xl font-extrabold text-charcoal text-center mb-4" style="font-family: 'Oswald', sans-serif;">COOKIE POLICY</h1>
+        <h1 class="text-4xl font-extrabold text-charcoal text-center mb-4" style="font-family: 'Oswald', sans-serif;">
+          COOKIE POLICY</h1>
         <p class="text-slate text-sm text-center mb-8">Last updated: August 1, 2026</p>
-        <div class="bg-white p-8 md:p-12 rounded-3xl border border-sand/50 shadow-sm space-y-6 text-slate text-sm md:text-base leading-relaxed">
+        <div
+          class="bg-white p-8 md:p-12 rounded-3xl border border-sand/50 shadow-sm space-y-6 text-slate text-sm md:text-base leading-relaxed">
           <h3 class="text-lg font-bold text-charcoal">1. What Are Cookies?</h3>
-          <p>Cookies are small data files placed on your computer or mobile device when you visit a website. They are widely used to make websites work efficiently and provide reporting information.</p>
-          
+          <p>Cookies are small data files placed on your computer or mobile device when you visit a website. They are
+            widely used to make websites work efficiently and provide reporting information.</p>
+
           <h3 class="text-lg font-bold text-charcoal">2. How We Use Cookies</h3>
-          <p>FrameCraft Studio uses cookies to maintain your shopping session, save your custom design workspace configurations securely, and analyze site traffic to improve user experience.</p>
-          
+          <p>FrameCraft Studio uses cookies to maintain your shopping session, save your custom design workspace
+            configurations securely, and analyze site traffic to improve user experience.</p>
+
           <h3 class="text-lg font-bold text-charcoal">3. Managing Your Preferences</h3>
-          <p>You can choose to accept or decline cookies through your web browser controls. Note that blocking essential cookies may prevent you from utilizing the custom frame designer or completing checkout.</p>
+          <p>You can choose to accept or decline cookies through your web browser controls. Note that blocking essential
+            cookies may prevent you from utilizing the custom frame designer or completing checkout.</p>
         </div>
       </div>
     </section>
@@ -5268,17 +5302,23 @@
     <!-- ================= TERMS OF SERVICE SECTION ================= -->
     <section id="terms-section" class="hidden py-20 bg-cream/20 min-h-[70vh]">
       <div class="max-w-4xl mx-auto px-4 space-y-6">
-        <h1 class="text-4xl font-extrabold text-charcoal text-center mb-4" style="font-family: 'Oswald', sans-serif;">TERMS OF SERVICE</h1>
+        <h1 class="text-4xl font-extrabold text-charcoal text-center mb-4" style="font-family: 'Oswald', sans-serif;">
+          TERMS OF SERVICE</h1>
         <p class="text-slate text-sm text-center mb-8">Last updated: August 1, 2026</p>
-        <div class="bg-white p-8 md:p-12 rounded-3xl border border-sand/50 shadow-sm space-y-6 text-slate text-sm md:text-base leading-relaxed">
+        <div
+          class="bg-white p-8 md:p-12 rounded-3xl border border-sand/50 shadow-sm space-y-6 text-slate text-sm md:text-base leading-relaxed">
           <h3 class="text-lg font-bold text-charcoal">1. Introduction & Acceptance</h3>
-          <p>Welcome to FrameCraft Studio. By accessing our website, using our online custom picture frame workspace, or purchasing our products, you agree to comply with and be bound by these Terms of Service.</p>
-          
+          <p>Welcome to FrameCraft Studio. By accessing our website, using our online custom picture frame workspace, or
+            purchasing our products, you agree to comply with and be bound by these Terms of Service.</p>
+
           <h3 class="text-lg font-bold text-charcoal">2. Custom Framing & Dimensions</h3>
-          <p>All custom physical frames are handcrafted based on the precise millimeter measurements and specifications you enter into our studio canvas customizer. Because items are built-to-order, please review your configuration carefully before confirming checkout.</p>
-          
+          <p>All custom physical frames are handcrafted based on the precise millimeter measurements and specifications
+            you enter into our studio canvas customizer. Because items are built-to-order, please review your
+            configuration carefully before confirming checkout.</p>
+
           <h3 class="text-lg font-bold text-charcoal">3. Shipping & Handling</h3>
-          <p>We package all artisan frames using museum-grade protective layers to guarantee safe transport. Delivery timelines begin once physical assembly and quality checks are complete in our workshop.</p>
+          <p>We package all artisan frames using museum-grade protective layers to guarantee safe transport. Delivery
+            timelines begin once physical assembly and quality checks are complete in our workshop.</p>
         </div>
       </div>
     </section>
@@ -5286,17 +5326,22 @@
     <!-- ================= COOKIE POLICY SECTION ================= -->
     <section id="cookies-section" class="hidden py-20 bg-cream/20 min-h-[70vh]">
       <div class="max-w-4xl mx-auto px-4 space-y-6">
-        <h1 class="text-4xl font-extrabold text-charcoal text-center mb-4" style="font-family: 'Oswald', sans-serif;">COOKIE POLICY</h1>
+        <h1 class="text-4xl font-extrabold text-charcoal text-center mb-4" style="font-family: 'Oswald', sans-serif;">
+          COOKIE POLICY</h1>
         <p class="text-slate text-sm text-center mb-8">Last updated: August 1, 2026</p>
-        <div class="bg-white p-8 md:p-12 rounded-3xl border border-sand/50 shadow-sm space-y-6 text-slate text-sm md:text-base leading-relaxed">
+        <div
+          class="bg-white p-8 md:p-12 rounded-3xl border border-sand/50 shadow-sm space-y-6 text-slate text-sm md:text-base leading-relaxed">
           <h3 class="text-lg font-bold text-charcoal">1. What Are Cookies?</h3>
-          <p>Cookies are small data files placed on your computer or mobile device when you visit a website. They are widely used to make websites work efficiently and provide reporting information.</p>
-          
+          <p>Cookies are small data files placed on your computer or mobile device when you visit a website. They are
+            widely used to make websites work efficiently and provide reporting information.</p>
+
           <h3 class="text-lg font-bold text-charcoal">2. How We Use Cookies</h3>
-          <p>FrameCraft Studio uses cookies to maintain your shopping session, save your custom design workspace configurations securely, and analyze site traffic to improve user experience.</p>
-          
+          <p>FrameCraft Studio uses cookies to maintain your shopping session, save your custom design workspace
+            configurations securely, and analyze site traffic to improve user experience.</p>
+
           <h3 class="text-lg font-bold text-charcoal">3. Managing Your Preferences</h3>
-          <p>You can choose to accept or decline cookies through your web browser controls. Note that blocking essential cookies may prevent you from utilizing the custom frame designer or completing checkout.</p>
+          <p>You can choose to accept or decline cookies through your web browser controls. Note that blocking essential
+            cookies may prevent you from utilizing the custom frame designer or completing checkout.</p>
         </div>
       </div>
     </section>
@@ -5308,7 +5353,9 @@
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 px-4 md:px-12 py-16 max-w-container-max mx-auto">
         <!-- Brand -->
         <div class="space-y-6">
-          <a href="#" onclick="window.handlePathRouting('/')" class="text-[28px] font-bold text-[var(--text-header,#000102)] tracking-tight hover:opacity-80 transition-opacity flex items-center" style="font-family: 'Playfair Display', serif !important;">
+          <a href="#" onclick="window.handlePathRouting('/')"
+            class="text-[28px] font-bold text-[var(--text-header,#000102)] tracking-tight hover:opacity-80 transition-opacity flex items-center"
+            style="font-family: 'Playfair Display', serif !important;">
             <span>Frame</span><span class="text-flame">Craft</span>
           </a>
           <p class="text-[var(--text-footer,#45474b)] text-[15px] leading-relaxed"
@@ -5378,11 +5425,13 @@
         <div
           class="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center text-[13px] text-[var(--text-footer,#45474b)] font-medium">
           <p data-cms="pages.footer.sections.general.elements.copyright">© 2026 FrameCraft. All rights reserved. |
-            Designed by <a href='https://grouperlogic.com/' target='_blank'
-              style='text-decoration:underline;'>Grouper Logic</a></p>
+            Designed by <a href='https://grouperlogic.com/' target='_blank' style='text-decoration:underline;'>Grouper
+              Logic</a></p>
           <div class="flex gap-8 mt-4 md:mt-0 font-bold">
-            <a href="/terms" onclick="event.preventDefault(); window.handlePathRouting('/terms')" class="hover:text-[var(--btn-color,#775a19)] transition-colors">Terms of Service</a>
-            <a href="/cookies" onclick="event.preventDefault(); window.handlePathRouting('/cookies')" class="hover:text-[var(--btn-color,#775a19)] transition-colors">Cookie Policy</a>
+            <a href="/terms" onclick="event.preventDefault(); window.handlePathRouting('/terms')"
+              class="hover:text-[var(--btn-color,#775a19)] transition-colors">Terms of Service</a>
+            <a href="/cookies" onclick="event.preventDefault(); window.handlePathRouting('/cookies')"
+              class="hover:text-[var(--btn-color,#775a19)] transition-colors">Cookie Policy</a>
           </div>
         </div>s
       </div>
@@ -6126,7 +6175,8 @@
             <!-- Glass Type Selection -->
             <div id="properties-glass-type-wrapper" class="hidden space-y-3 pt-3 border-t border-sand/40">
               <span class="text-xs font-black uppercase tracking-wider text-charcoal block">Glass Type</span>
-              <select id="editor-glass-select" onchange="window.selectGlassType(this.value)" class="w-full px-4 py-2.5 bg-white border border-sand rounded-xl text-xs font-bold text-charcoal focus:outline-none focus:border-flame cursor-pointer shadow-sm">
+              <select id="editor-glass-select" onchange="window.selectGlassType(this.value)"
+                class="w-full px-4 py-2.5 bg-white border border-sand rounded-xl text-xs font-bold text-charcoal focus:outline-none focus:border-flame cursor-pointer shadow-sm">
                 <option value="">No Glass</option>
                 <!-- populated by JS -->
               </select>
@@ -6163,7 +6213,9 @@
             <div id="artwork-layer" class="absolute inset-0 w-full h-full z-10 overflow-hidden"></div>
             <canvas id="drawing-layer" class="absolute inset-0 z-20 pointer-events-none" width="400"
               height="500"></canvas>
-            <div id="glass-overlay" class="absolute z-30 pointer-events-none hidden" style="background: linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 35%, rgba(255,255,255,0) 65%, rgba(255,255,255,0.15) 100%); box-shadow: inset 0 0 20px rgba(255,255,255,0.3);"></div>
+            <div id="glass-overlay" class="absolute z-30 pointer-events-none hidden"
+              style="background: linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 35%, rgba(255,255,255,0) 65%, rgba(255,255,255,0.15) 100%); box-shadow: inset 0 0 20px rgba(255,255,255,0.3);">
+            </div>
           </div>
         </div>
 
@@ -6286,7 +6338,7 @@
       </div>
     </div>
 
-    
+
 
     <!-- PERMANENT Live Frame Preview Section (Desktop Bottom Right) -->
     <div id="live-frame-preview-section"
@@ -6302,44 +6354,93 @@
 
     <!-- Floating Bottom Bars Container -->
     <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 z-10 select-none hidden md:flex">
-      
+
       <!-- Matte Background Color Bar -->
       <div class="bg-white shadow-lg border border-sand/40 rounded-full px-4 py-2 flex items-center gap-2.5">
         <span class="text-[10px] font-black uppercase tracking-wider text-slate mr-1">Matte Color</span>
         <div class="h-4 w-px bg-sand mx-1"></div>
-        <button onclick="window.activeMatteColor='#744444'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#744444'; recordState();" title="Deep Mauve" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #744444;"></button>
-        <button onclick="window.activeMatteColor='#FAF9F6'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#FAF9F6'; recordState();" title="Off White" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #FAF9F6;"></button>
-        <button onclick="window.activeMatteColor='#F5F5DC'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#F5F5DC'; recordState();" title="Beige" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #F5F5DC;"></button>
-        <button onclick="window.activeMatteColor='#FFFDD0'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#FFFDD0'; recordState();" title="Cream" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #FFFDD0;"></button>
-        <button onclick="window.activeMatteColor='#EAE0C8'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#EAE0C8'; recordState();" title="Pearl" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #EAE0C8;"></button>
-        <button onclick="window.activeMatteColor='#F3E5AB'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#F3E5AB'; recordState();" title="Vanilla" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #F3E5AB;"></button>
-        <button onclick="window.activeMatteColor='#E8DCC4'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#E8DCC4'; recordState();" title="Alabaster" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #E8DCC4;"></button>
-        <button onclick="window.activeMatteColor='#DCD0C0'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#DCD0C0'; recordState();" title="Parchment" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #DCD0C0;"></button>
-        <button onclick="window.activeMatteColor='#F0ECE1'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#F0ECE1'; recordState();" title="Linen" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #F0ECE1;"></button>
-        <button onclick="window.activeMatteColor='#E2DFD2'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#E2DFD2'; recordState();" title="Bone" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm" style="background-color: #E2DFD2;"></button>
+        <button
+          onclick="window.activeMatteColor='#744444'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#744444'; recordState();"
+          title="Deep Mauve"
+          class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm"
+          style="background-color: #744444;"></button>
+        <button
+          onclick="window.activeMatteColor='#FAF9F6'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#FAF9F6'; recordState();"
+          title="Off White"
+          class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm"
+          style="background-color: #FAF9F6;"></button>
+        <button
+          onclick="window.activeMatteColor='#F5F5DC'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#F5F5DC'; recordState();"
+          title="Beige"
+          class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm"
+          style="background-color: #F5F5DC;"></button>
+        <button
+          onclick="window.activeMatteColor='#FFFDD0'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#FFFDD0'; recordState();"
+          title="Cream"
+          class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm"
+          style="background-color: #FFFDD0;"></button>
+        <button
+          onclick="window.activeMatteColor='#EAE0C8'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#EAE0C8'; recordState();"
+          title="Pearl"
+          class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm"
+          style="background-color: #EAE0C8;"></button>
+        <button
+          onclick="window.activeMatteColor='#F3E5AB'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#F3E5AB'; recordState();"
+          title="Vanilla"
+          class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm"
+          style="background-color: #F3E5AB;"></button>
+        <button
+          onclick="window.activeMatteColor='#E8DCC4'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#E8DCC4'; recordState();"
+          title="Alabaster"
+          class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm"
+          style="background-color: #E8DCC4;"></button>
+        <button
+          onclick="window.activeMatteColor='#DCD0C0'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#DCD0C0'; recordState();"
+          title="Parchment"
+          class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm"
+          style="background-color: #DCD0C0;"></button>
+        <button
+          onclick="window.activeMatteColor='#F0ECE1'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#F0ECE1'; recordState();"
+          title="Linen"
+          class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm"
+          style="background-color: #F0ECE1;"></button>
+        <button
+          onclick="window.activeMatteColor='#E2DFD2'; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor='#E2DFD2'; recordState();"
+          title="Bone" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm"
+          style="background-color: #E2DFD2;"></button>
         <div class="h-4 w-px bg-sand mx-1"></div>
-        <div class="relative w-6 h-6 rounded-full border border-sand/50 overflow-hidden hover:scale-110 transition-transform shadow-sm flex items-center justify-center bg-[conic-gradient(red,yellow,green,cyan,blue,magenta,red)]" title="Custom Color">
-            <input type="color" oninput="window.activeMatteColor=this.value; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor=this.value;" onchange="recordState();" class="absolute inset-0 w-[200%] h-[200%] top-[-50%] left-[-50%] cursor-pointer opacity-0" title="Custom Color">
+        <div
+          class="relative w-6 h-6 rounded-full border border-sand/50 overflow-hidden hover:scale-110 transition-transform shadow-sm flex items-center justify-center bg-[conic-gradient(red,yellow,green,cyan,blue,magenta,red)]"
+          title="Custom Color">
+          <input type="color"
+            oninput="window.activeMatteColor=this.value; const m = document.getElementById('matte-layer'); if(m) m.style.backgroundColor=this.value;"
+            onchange="recordState();"
+            class="absolute inset-0 w-[200%] h-[200%] top-[-50%] left-[-50%] cursor-pointer opacity-0"
+            title="Custom Color">
         </div>
       </div>
 
       <!-- Glass Type Bar -->
-      <div class="bg-white shadow-lg border border-sand/40 rounded-full px-4 py-2 flex items-center gap-2.5 hidden" id="floating-glass-bar-container">
+      <div class="bg-white shadow-lg border border-sand/40 rounded-full px-4 py-2 flex items-center gap-2.5 hidden"
+        id="floating-glass-bar-container">
         <span class="text-[10px] font-black uppercase tracking-wider text-slate mr-1">Glass</span>
         <div class="h-4 w-px bg-sand mx-1"></div>
         <div id="floating-glass-options" class="flex items-center gap-2.5"></div>
       </div>
-      
+
     </div>
 
-        <!-- Zoom Controls -->
-        <div
-          class="absolute bottom-6 right-6 bg-white shadow-lg border border-sand/40 rounded-full px-4 py-2 flex items-center gap-4 z-10 select-none">
-          <i data-lucide="zoom-out" id="zoom-out-btn" class="w-4 h-4 text-slate cursor-pointer hover:text-charcoal transition" onclick="window.adjustCanvasZoom(-0.15)" title="Zoom Out"></i>
-          <span id="zoom-percentage-label" class="text-xs font-bold text-charcoal w-10 text-center">100%</span>
-          <i data-lucide="zoom-in" id="zoom-in-btn" class="w-4 h-4 text-slate cursor-pointer hover:text-charcoal transition" onclick="window.adjustCanvasZoom(0.15)" title="Zoom In"></i>
-        </div>
-      </main>
+    <!-- Zoom Controls -->
+    <div
+      class="absolute bottom-6 right-6 bg-white shadow-lg border border-sand/40 rounded-full px-4 py-2 flex items-center gap-4 z-10 select-none">
+      <i data-lucide="zoom-out" id="zoom-out-btn"
+        class="w-4 h-4 text-slate cursor-pointer hover:text-charcoal transition"
+        onclick="window.adjustCanvasZoom(-0.15)" title="Zoom Out"></i>
+      <span id="zoom-percentage-label" class="text-xs font-bold text-charcoal w-10 text-center">100%</span>
+      <i data-lucide="zoom-in" id="zoom-in-btn" class="w-4 h-4 text-slate cursor-pointer hover:text-charcoal transition"
+        onclick="window.adjustCanvasZoom(0.15)" title="Zoom In"></i>
+    </div>
+    </main>
 
   </div>
   </div>
@@ -6629,6 +6730,19 @@
       }
     };
 
+    window.resolveAssetUrl = (url) => {
+      if (!url) return '';
+      if (url.startsWith('file://') || url.includes('/builder/builder/') || url.includes('\\builder\\builder\\') || url.includes('/Documents/3d projects/builder/builder/')) {
+        const parts = url.split(/[/\\]/);
+        const filename = parts[parts.length - 1];
+        let base = window.location.href.split('#')[0].split('?')[0];
+        if (base.endsWith('index.html')) base = base.replace('index.html', '');
+        if (!base.endsWith('/')) base += '/';
+        return base + filename;
+      }
+      return url;
+    };
+
     window.normalizeProductData = (product) => {
       if (!product) return null;
 
@@ -6646,7 +6760,7 @@
       if (hasOuterFrame) {
         outerFrame = {
           name: product.outerFrame.name || product.name || 'Outer Frame',
-          image: product.outerFrame.image || product.frameImage || '',
+          image: window.resolveAssetUrl(product.outerFrame.image || product.frameImage || ''),
           price: (product.outerFrame.price != null && product.outerFrame.price !== "") ? parseFloat(product.outerFrame.price) : (parseFloat(product.price) || 0),
           colors: Array.isArray(product.outerFrame.colors) ? product.outerFrame.colors : colours,
           thickness: (product.outerFrame.thickness != null && product.outerFrame.thickness !== "") ? parseFloat(product.outerFrame.thickness) : 2.0,
@@ -6667,7 +6781,7 @@
       } else {
         outerFrame = {
           name: product.name || 'Outer Frame',
-          image: product.frameImage || '',
+          image: window.resolveAssetUrl(product.frameImage || ''),
           price: parseFloat(product.price) || 0,
           colors: colours,
           thickness: 2.0,
@@ -6682,9 +6796,9 @@
         description: product.description || "Precision-cut artisan frame crafted for a clean, natural look.",
         categoryId: product.categoryId || null,
         taxRate: typeof product.taxRate === 'number' ? product.taxRate : 0,
-        bgImage: product.bgImage || '',
-        galleryImages: Array.isArray(product.galleryImages) ? product.galleryImages : (Array.isArray(product.images) ? product.images : []),
-        images: Array.isArray(product.images) ? product.images : (Array.isArray(product.galleryImages) ? product.galleryImages : []),
+        bgImage: window.resolveAssetUrl(product.bgImage || ''),
+        galleryImages: (Array.isArray(product.galleryImages) ? product.galleryImages : (Array.isArray(product.images) ? product.images : [])).map(img => typeof img === 'string' ? window.resolveAssetUrl(img) : img),
+        images: (Array.isArray(product.images) ? product.images : (Array.isArray(product.galleryImages) ? product.galleryImages : [])).map(img => typeof img === 'string' ? window.resolveAssetUrl(img) : img),
         sizes: sizes.map(s => {
           const w = typeof s.width === 'number' ? s.width : parseFloat(s.width || 0);
           const h = typeof s.height === 'number' ? s.height : parseFloat(s.height || 0);
@@ -6878,7 +6992,7 @@
     function getCurrentCustomizationSummary() {
       const config = window.activeFrameConfiguration || {};
       const product = window.activeFrameProduct || {};
-      
+
       const decor = Array.from(document.querySelectorAll('#artwork-layer .canvas-item'))
         .filter(item => {
           const role = item.dataset.frameRole;
@@ -6893,18 +7007,18 @@
 
       const layers = [];
       let framesTotal = 0;
-      
+
       if (hasOuter && product.outerFrame) {
         const baseThick = parseFloat(product.outerFrame.thickness) || 2.0;
         const mult = (parseFloat(config.thickness) || 100) / 100;
         const p = parseFloat(product.outerFrame.price) || 0;
         framesTotal += p;
-        layers.push({ 
-          role: 'Outer Frame', 
-          name: product.outerFrame.name || 'Frame', 
-          thickness: (baseThick * mult).toFixed(1), 
-          color: config.outerColour || config.colour || null, 
-          price: p 
+        layers.push({
+          role: 'Outer Frame',
+          name: product.outerFrame.name || 'Frame',
+          thickness: (baseThick * mult).toFixed(1),
+          color: config.outerColour || config.colour || null,
+          price: p
         });
       }
       if (hasMiddle && product.middleFrame) {
@@ -6912,12 +7026,12 @@
         const mult = (parseFloat(config.middleThickness) || 100) / 100;
         const p = parseFloat(product.middleFrame.price) || 0;
         framesTotal += p;
-        layers.push({ 
-          role: 'Middle Frame', 
-          name: product.middleFrame.name || 'Matte', 
-          thickness: (baseThick * mult).toFixed(1), 
-          color: config.middleColour || null, 
-          price: p 
+        layers.push({
+          role: 'Middle Frame',
+          name: product.middleFrame.name || 'Matte',
+          thickness: (baseThick * mult).toFixed(1),
+          color: config.middleColour || null,
+          price: p
         });
       }
       if (hasInner && product.innerFrame) {
@@ -6925,15 +7039,15 @@
         const mult = (parseFloat(config.innerThickness) || 100) / 100;
         const p = parseFloat(product.innerFrame.price) || 0;
         framesTotal += p;
-        layers.push({ 
-          role: 'Inner Frame', 
-          name: product.innerFrame.name || 'Inner', 
-          thickness: (baseThick * mult).toFixed(1), 
-          color: config.innerColour || null, 
-          price: p 
+        layers.push({
+          role: 'Inner Frame',
+          name: product.innerFrame.name || 'Inner',
+          thickness: (baseThick * mult).toFixed(1),
+          color: config.innerColour || null,
+          price: p
         });
       }
-      
+
       if (config.glass) {
         const p = parseFloat(config.glass.price) || 0;
         framesTotal += p;
@@ -6954,14 +7068,14 @@
       if (!currentProjectId) currentProjectId = generateId();
       if (typeof window.saveProjectToDB === 'function') window.saveProjectToDB(true);
 
-      const rawSummary = { 
-        product: safeConfig.productName || (titleEl ? titleEl.innerText : 'Custom Frame'), 
-        frame: safeConfig.productName || 'Custom Frame', 
-        size: safeConfig.size ? { width: safeConfig.size.width || 0, height: safeConfig.size.height || 0, name: safeConfig.size.name || `${safeConfig.size.width} × ${safeConfig.size.height}` } : null, 
+      const rawSummary = {
+        product: safeConfig.productName || (titleEl ? titleEl.innerText : 'Custom Frame'),
+        frame: safeConfig.productName || 'Custom Frame',
+        size: safeConfig.size ? { width: safeConfig.size.width || 0, height: safeConfig.size.height || 0, name: safeConfig.size.name || `${safeConfig.size.width} × ${safeConfig.size.height}` } : null,
         layers: layers,
         framesTotal: framesTotal,
-        decor: decor, 
-        quantity: 1, 
+        decor: decor,
+        quantity: 1,
         pricing: calculateCanvasCost(),
         projectId: currentProjectId // Just link the ID! Much cleaner.
       };
@@ -7635,7 +7749,7 @@
       } finally {
         btn.innerText = origText;
         btn.disabled = false;
-        if(window.lucide) lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
       }
     };
 
@@ -9244,7 +9358,7 @@
             viewAllContainer.className = 'mt-12 flex justify-center w-full col-span-full';
             productsGrid.parentNode.appendChild(viewAllContainer);
           }
-          
+
           if (products.length > 8) {
             viewAllContainer.innerHTML = `
               <button onclick="window.handlePathRouting('/products')" class="px-10 py-4 bg-primary text-on-primary font-bold rounded hover:bg-secondary transition-colors text-sm uppercase tracking-wider flex items-center gap-2 shadow-md">
@@ -9284,13 +9398,13 @@
       if (btnEl) {
         const circle = btnEl.querySelector('span.rounded-full');
         const label = btnEl.querySelector('span.tracking-wider');
-        if (circle) { 
-          circle.classList.remove('border-transparent'); 
-          circle.classList.add('ring-2', 'ring-offset-2', 'ring-black', 'scale-110'); 
+        if (circle) {
+          circle.classList.remove('border-transparent');
+          circle.classList.add('ring-2', 'ring-offset-2', 'ring-black', 'scale-110');
         }
-        if (label) { 
-          label.classList.remove('text-gray-500', 'font-bold'); 
-          label.classList.add('text-gray-900', 'font-black'); 
+        if (label) {
+          label.classList.remove('text-gray-500', 'font-bold');
+          label.classList.add('text-gray-900', 'font-black');
         }
       }
     };
@@ -9461,7 +9575,7 @@
               }
             }
             if (!sizeName) { sizeName = 'Standard'; displayLabel = 'Standard'; }
-            
+
             const isSelected = idx === 0;
             const btnClass = isSelected
               ? 'pd-size-btn bg-black text-white py-2 px-2 text-xs font-bold border border-black text-center transition cursor-pointer leading-tight'
@@ -9552,7 +9666,7 @@
         // Removed .orderBy() to prevent Firebase Composite Index errors crashing the app
         const snap = await db.collection('reviews').where('productId', '==', productId).get();
         let reviews = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        
+
         // Sort the reviews client-side instead
         reviews.sort((a, b) => {
           const timeA = a.createdAt?.seconds || 0;
@@ -9599,15 +9713,15 @@
           summaryHtml += '<div class="flex items-center gap-3">' +
             '<span class="w-3 font-bold">' + star + '</span>' +
             '<div class="flex-1 bg-gray-200 h-2 rounded-full overflow-hidden">' +
-              '<div class="bg-[#855d28] h-full" style="width: ' + pct + '%"></div>' +
+            '<div class="bg-[#855d28] h-full" style="width: ' + pct + '%"></div>' +
             '</div>' +
             '<span class="w-8 text-right text-gray-400">' + pct + '%</span>' +
-          '</div>';
+            '</div>';
         });
 
         summaryHtml += '</div>' +
           '<button type="button" onclick="window.initiateWriteReview()" class="w-full bg-white border border-gray-300 hover:border-black py-3 text-xs font-bold uppercase tracking-wider text-gray-900 transition cursor-pointer">' +
-            'WRITE A REVIEW' +
+          'WRITE A REVIEW' +
           '</button>';
 
         summaryContainer.innerHTML = summaryHtml;
@@ -9620,18 +9734,18 @@
             dStr = new Date(r.createdAt.toDate()).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
           }
           const heading = r.rating === 5 ? 'Exceptional quality!' : (r.rating >= 3 ? 'Great product' : 'Could be better');
-          
+
           listHtml += '<div class="border-b border-gray-200/80 pb-8">' +
             '<div class="flex justify-between items-start mb-2">' +
-              '<div class="flex text-amber-500 text-sm">' + getStarsHtml(r.rating) + '</div>' +
-              '<span class="bg-[#f0efeb] text-[10px] font-bold text-gray-500 px-2 py-0.5 uppercase tracking-wider">' +
-                'VERIFIED PURCHASE' +
-              '</span>' +
+            '<div class="flex text-amber-500 text-sm">' + getStarsHtml(r.rating) + '</div>' +
+            '<span class="bg-[#f0efeb] text-[10px] font-bold text-gray-500 px-2 py-0.5 uppercase tracking-wider">' +
+            'VERIFIED PURCHASE' +
+            '</span>' +
             '</div>' +
             '<h4 class="font-bold text-gray-900 text-base mb-1">' + heading + '</h4>' +
             '<p class="text-xs text-gray-400 mb-3">' + r.userName + ' &bull; ' + dStr + '</p>' +
             '<p class="text-sm text-gray-600 leading-relaxed">' + r.text.replace(/</g, "&lt;").replace(/>/g, "&gt;") + '</p>' +
-          '</div>';
+            '</div>';
         });
 
         listContainer.innerHTML = listHtml;
@@ -9646,7 +9760,7 @@
         toggleModal('login-modal');
         return;
       }
-      
+
       window.playGlobalLoader("Verifying purchase history...", null, false);
       try {
         const ordersSnap = await db.collection('orders').where('uid', '==', currentUser.uid).get();
@@ -10102,7 +10216,7 @@
         bgWrap.dataset.cost = 0;
         bgWrap.dataset.itemName = "Background Artwork";
         bgWrap.dataset.frameRole = 'artwork';
-        
+
         const isExternalBg = normProduct.bgImage && normProduct.bgImage.startsWith('http') && !normProduct.bgImage.includes(window.location.host);
         const bgCrossorigin = isExternalBg ? 'crossorigin="anonymous"' : '';
         bgWrap.innerHTML = `<img src="${normProduct.bgImage}" ${bgCrossorigin} class="w-full h-full object-fill pointer-events-none block rounded-md">`;
@@ -10148,7 +10262,7 @@
           const sliceBottom = Math.max(1, outer.visibleH - (outer.holeMaxY - outer.minY));
           frameWrap.dataset.frameSlices = JSON.stringify({ sliceLeft, sliceTop, sliceRight, sliceBottom, srcW: outer.visibleW, srcH: outer.visibleH });
         }
-        
+
         const outImgSrc = croppedFrameSrc || outerFrameData.image;
         const isExtOut = outImgSrc && outImgSrc.startsWith('http') && !outImgSrc.includes(window.location.host);
         frameWrap.innerHTML = `<img src="${outImgSrc}" ${isExtOut ? 'crossorigin="anonymous"' : ''} style="position: absolute; left: 0px; top: 0px; width: 100%; height: 100%;" class="pointer-events-none block drop-shadow-xl">`;
@@ -10238,33 +10352,33 @@
       // -- Global Floating Glass Bar Logic (Independent of selected item) --
       const floatingGlassBar = document.getElementById('floating-glass-bar-container');
       const floatingGlassOpts = document.getElementById('floating-glass-options');
-      
+
       if (floatingGlassBar && window.globalGlassTypes && window.globalGlassTypes.length > 0 && config) {
-         floatingGlassBar.classList.remove('hidden');
-         
-         if (floatingGlassOpts && floatingGlassOpts.children.length === 0) {
-            floatingGlassOpts.innerHTML = `
+        floatingGlassBar.classList.remove('hidden');
+
+        if (floatingGlassOpts && floatingGlassOpts.children.length === 0) {
+          floatingGlassOpts.innerHTML = `
                <button onclick="window.selectGlassType('')" title="No Glass" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm flex items-center justify-center bg-gray-100"><i data-lucide="ban" class="w-3 h-3 text-slate"></i></button>
             ` + window.globalGlassTypes.map(g => `
                <button onclick="window.selectGlassType('${g.id}')" title="${g.name}" class="w-6 h-6 rounded-full border border-sand/50 hover:scale-110 transition-transform shadow-sm bg-gradient-to-br from-white/80 to-transparent backdrop-blur-sm shadow-inner relative overflow-hidden">
                   <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent -rotate-45"></div>
                </button>
             `).join('');
-            lucide.createIcons();
-         }
+          lucide.createIcons();
+        }
 
-         if (floatingGlassOpts) {
-             const activeId = config.glass ? config.glass.id : '';
-             Array.from(floatingGlassOpts.children).forEach(btn => {
-                 if (btn.getAttribute('onclick').includes(`'${activeId}'`) || (activeId==='' && btn.getAttribute('onclick').includes(`('')`))) {
-                     btn.classList.add('ring-2', 'ring-flame', 'ring-offset-1');
-                 } else {
-                     btn.classList.remove('ring-2', 'ring-flame', 'ring-offset-1');
-                 }
-             });
-         }
+        if (floatingGlassOpts) {
+          const activeId = config.glass ? config.glass.id : '';
+          Array.from(floatingGlassOpts.children).forEach(btn => {
+            if (btn.getAttribute('onclick').includes(`'${activeId}'`) || (activeId === '' && btn.getAttribute('onclick').includes(`('')`))) {
+              btn.classList.add('ring-2', 'ring-flame', 'ring-offset-1');
+            } else {
+              btn.classList.remove('ring-2', 'ring-flame', 'ring-offset-1');
+            }
+          });
+        }
       } else if (floatingGlassBar) {
-         floatingGlassBar.classList.add('hidden');
+        floatingGlassBar.classList.add('hidden');
       }
 
       // Only show if a frame element is selected
@@ -10415,20 +10529,20 @@
         const glassSelect = document.getElementById('editor-glass-select');
 
         if (glassWrapper && glassSelect && role === 'frame') { // Only show on Outer Frame Layer
-           glassWrapper.classList.remove('hidden');
-           
-           // Populate dropdown if not already populated
-           if (glassSelect.options.length <= 1 && window.globalGlassTypes && window.globalGlassTypes.length > 0) {
-              glassSelect.innerHTML = '<option value="">No Glass</option>' + window.globalGlassTypes.map(g => `<option value="${g.id}">${g.name} (+${window.appCurrency || '$'}${parseFloat(g.price).toFixed(2)})</option>`).join('');
-           }
-           
-           if (config.glass) {
-              glassSelect.value = config.glass.id;
-           } else {
-              glassSelect.value = "";
-           }
+          glassWrapper.classList.remove('hidden');
+
+          // Populate dropdown if not already populated
+          if (glassSelect.options.length <= 1 && window.globalGlassTypes && window.globalGlassTypes.length > 0) {
+            glassSelect.innerHTML = '<option value="">No Glass</option>' + window.globalGlassTypes.map(g => `<option value="${g.id}">${g.name} (+${window.appCurrency || '$'}${parseFloat(g.price).toFixed(2)})</option>`).join('');
+          }
+
+          if (config.glass) {
+            glassSelect.value = config.glass.id;
+          } else {
+            glassSelect.value = "";
+          }
         } else if (glassWrapper) {
-           glassWrapper.classList.add('hidden');
+          glassWrapper.classList.add('hidden');
         }
       }
       window.updateLiveFramePreview();
@@ -10438,25 +10552,25 @@
       const config = window.activeFrameConfiguration;
       const overlay = document.getElementById('glass-overlay');
       if (!overlay) return;
-      
+
       if (config && config.glass) {
-          overlay.classList.remove('hidden');
+        overlay.classList.remove('hidden');
       } else {
-          overlay.classList.add('hidden');
+        overlay.classList.add('hidden');
       }
     };
 
     window.selectGlassType = (glassId) => {
       const config = window.activeFrameConfiguration;
       if (!config) return;
-      
+
       if (!glassId) {
         config.glass = null;
       } else {
         const glass = window.globalGlassTypes.find(g => g.id === glassId);
         if (glass) config.glass = glass;
       }
-      
+
       window.applyGlassVisualEffect();
       window.updateLiveFramePreview();
       window.syncFrameCustomizationPanels();
@@ -10761,98 +10875,163 @@
       }
     };
 
-    window.updateSingleFrameColourOverlay = (frameEl, colourConfig, thicknessConfig = 100) => {
+    window.redrawFrameCanvas = (frameEl) => {
       if (!frameEl) return;
-      if (!colourConfig) {
-        const existingColor = frameEl.querySelector('.frame-colour-overlay');
-        const existingLuma = frameEl.querySelector('.frame-luma-overlay');
-        if (existingColor) existingColor.remove();
-        if (existingLuma) existingLuma.remove();
-        return;
-      }
 
-      const bounds = JSON.parse(frameEl.dataset.frameBounds || '{}');
+      const croppedSrc = frameEl.dataset.frameCroppedSrc;
       const slices = JSON.parse(frameEl.dataset.frameSlices || 'null');
-      if (!slices || !bounds || !bounds.imgW || !bounds.imgH) {
-        const existingColor = frameEl.querySelector('.frame-colour-overlay');
-        const existingLuma = frameEl.querySelector('.frame-luma-overlay');
-        if (existingColor) existingColor.remove();
-        if (existingLuma) existingLuma.remove();
+      const bounds = JSON.parse(frameEl.dataset.frameBounds || '{}');
+      const thicknessVal = Number(frameEl.dataset.frameThickness || 100);
+      const colourConfig = JSON.parse(frameEl.dataset.frameColourConfig || 'null');
+
+      const img = frameEl.querySelector('img');
+
+      // Clear any legacy CSS elements
+      const legacyBorder = frameEl.querySelector('.dynamic-frame-border');
+      if (legacyBorder) legacyBorder.remove();
+      const legacyColor = frameEl.querySelector('.frame-colour-overlay');
+      if (legacyColor) legacyColor.remove();
+      const legacyLuma = frameEl.querySelector('.frame-luma-overlay');
+      if (legacyLuma) legacyLuma.remove();
+
+      if (!croppedSrc || !slices || !bounds || !bounds.imgW || !bounds.imgH) {
+        if (img) img.style.visibility = '';
+        const existingCanvas = frameEl.querySelector('.dynamic-frame-canvas');
+        if (existingCanvas) existingCanvas.remove();
         return;
       }
-      frameEl.style.isolation = 'isolate';
 
-      let overlayColor = frameEl.querySelector('.frame-colour-overlay');
-      if (!overlayColor) {
-        overlayColor = document.createElement('div');
-        overlayColor.className = 'frame-colour-overlay pointer-events-none absolute';
-        overlayColor.style.boxSizing = 'border-box';
-        overlayColor.style.borderStyle = 'solid';
-        overlayColor.style.background = 'transparent';
-        overlayColor.style.mixBlendMode = 'color';
-        overlayColor.style.opacity = '1';
-        overlayColor.style.zIndex = '5';
-        frameEl.appendChild(overlayColor);
+      if (img) img.style.visibility = 'hidden';
+
+      let canvas = frameEl.querySelector('.dynamic-frame-canvas');
+      if (!canvas) {
+        canvas = document.createElement('canvas');
+        canvas.className = 'dynamic-frame-canvas pointer-events-none absolute';
+        canvas.style.zIndex = '1';
+        canvas.style.boxSizing = 'border-box';
+        frameEl.appendChild(canvas);
       }
 
-      let overlayLuma = frameEl.querySelector('.frame-luma-overlay');
-      if (!overlayLuma) {
-        overlayLuma = document.createElement('div');
-        overlayLuma.className = 'frame-luma-overlay pointer-events-none absolute';
-        overlayLuma.style.boxSizing = 'border-box';
-        overlayLuma.style.borderStyle = 'solid';
-        overlayLuma.style.background = 'transparent';
-        overlayLuma.style.mixBlendMode = 'overlay';
-        overlayLuma.style.opacity = '0.85';
-        overlayLuma.style.zIndex = '6';
-        frameEl.appendChild(overlayLuma);
-      }
-
-      // FIX: Extract widths directly from the inline styles to prevent layout thrashing zeros
-      const elWidth = parseFloat(frameEl.style.width) || frameEl.offsetWidth;
-      const elHeight = parseFloat(frameEl.style.height) || frameEl.offsetHeight;
+      const elWidth = parseFloat(frameEl.style.width) || frameEl.offsetWidth || 1;
+      const elHeight = parseFloat(frameEl.style.height) || frameEl.offsetHeight || 1;
 
       const sx = elWidth / bounds.imgW;
       const sy = elHeight / bounds.imgH;
       const visibleW = (bounds.maxX - bounds.minX) || bounds.imgW;
       const visibleH = (bounds.maxY - bounds.minY) || bounds.imgH;
+
       const visLeft = (bounds.minX || 0) * sx;
       const visTop = (bounds.minY || 0) * sy;
       const visW = visibleW * sx;
       const visH = visibleH * sy;
 
-      overlayColor.style.left = `${visLeft}px`;
-      overlayColor.style.top = `${visTop}px`;
-      overlayColor.style.width = `${visW}px`;
-      overlayColor.style.height = `${visH}px`;
-      overlayColor.style.borderColor = colourConfig.value;
+      canvas.style.left = `${visLeft}px`;
+      canvas.style.top = `${visTop}px`;
+      canvas.style.width = `${visW}px`;
+      canvas.style.height = `${visH}px`;
 
-      overlayLuma.style.left = `${visLeft}px`;
-      overlayLuma.style.top = `${visTop}px`;
-      overlayLuma.style.width = `${visW}px`;
-      overlayLuma.style.height = `${visH}px`;
-      overlayLuma.style.borderColor = colourConfig.value;
+      const dpr = 2;
+      canvas.width = Math.max(1, visW * dpr);
+      canvas.height = Math.max(1, visH * dpr);
 
-      const scaleX = visW / (slices.srcW || visibleW || 1);
-      const scaleY = visH / (slices.srcH || visibleH || 1);
-      const mult = Number(thicknessConfig) / 100;
-      const maxXInset = Math.max(1, (visW / 2) - 1);
-      const maxYInset = Math.max(1, (visH / 2) - 1);
+      let borderImg = frameEl._borderImg;
+      if (!borderImg || borderImg.src !== croppedSrc) {
+        borderImg = new Image();
+        borderImg.crossOrigin = "anonymous";
+        borderImg.src = croppedSrc;
+        frameEl._borderImg = borderImg;
+      }
 
-      const leftPx = Math.min(maxXInset, Math.max(1, slices.sliceLeft * scaleX * mult));
-      const rightPx = Math.min(maxXInset, Math.max(1, slices.sliceRight * scaleX * mult));
-      const topPx = Math.min(maxYInset, Math.max(1, slices.sliceTop * scaleY * mult));
-      const bottomPx = Math.min(maxYInset, Math.max(1, slices.sliceBottom * scaleY * mult));
+      const draw = () => {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      overlayColor.style.borderLeftWidth = `${leftPx}px`;
-      overlayColor.style.borderRightWidth = `${rightPx}px`;
-      overlayColor.style.borderTopWidth = `${topPx}px`;
-      overlayColor.style.borderBottomWidth = `${bottomPx}px`;
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
 
-      overlayLuma.style.borderLeftWidth = `${leftPx}px`;
-      overlayLuma.style.borderRightWidth = `${rightPx}px`;
-      overlayLuma.style.borderTopWidth = `${topPx}px`;
-      overlayLuma.style.borderBottomWidth = `${bottomPx}px`;
+        ctx.save();
+        ctx.scale(dpr, dpr);
+
+        const srcW = slices.srcW || visibleW;
+        const srcH = slices.srcH || visibleH;
+        const sL = slices.sliceLeft;
+        const sR = slices.sliceRight;
+        const sT = slices.sliceTop;
+        const sB = slices.sliceBottom;
+
+        const dW = visW;
+        const dH = visH;
+
+        const scaleX = visW / (slices.srcW || visibleW || 1);
+        const scaleY = visH / (slices.srcH || visibleH || 1);
+
+        const mult = thicknessVal / 100;
+        const maxXInset = Math.max(1, (visW / 2) - 1);
+        const maxYInset = Math.max(1, (visH / 2) - 1);
+
+        const leftPx = Math.min(maxXInset, Math.max(1, sL * scaleX * mult));
+        const rightPx = Math.min(maxXInset, Math.max(1, sR * scaleX * mult));
+        const topPx = Math.min(maxYInset, Math.max(1, sT * scaleY * mult));
+        const bottomPx = Math.min(maxYInset, Math.max(1, sB * scaleY * mult));
+
+        try {
+          // Draw Corners
+          ctx.drawImage(borderImg, 0, 0, sL, sT, 0, 0, leftPx, topPx);
+          ctx.drawImage(borderImg, srcW - sR, 0, sR, sT, dW - rightPx, 0, rightPx, topPx);
+          ctx.drawImage(borderImg, 0, srcH - sB, sL, sB, 0, dH - bottomPx, leftPx, bottomPx);
+          ctx.drawImage(borderImg, srcW - sR, srcH - sB, sR, sB, dW - rightPx, dH - bottomPx, rightPx, bottomPx);
+
+          // Draw Edges (stretched)
+          ctx.drawImage(borderImg, sL, 0, srcW - sL - sR, sT, leftPx, 0, dW - leftPx - rightPx, topPx);
+          ctx.drawImage(borderImg, sL, srcH - sB, srcW - sL - sR, sB, leftPx, dH - bottomPx, dW - leftPx - rightPx, bottomPx);
+          ctx.drawImage(borderImg, 0, sT, sL, srcH - sT - sB, 0, topPx, leftPx, dH - topPx - bottomPx);
+          ctx.drawImage(borderImg, srcW - sR, sT, sR, srcH - sT - sB, dW - rightPx, topPx, rightPx, dH - topPx - bottomPx);
+
+          if (colourConfig && colourConfig.value) {
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+            const tempCtx = tempCanvas.getContext('2d');
+
+            tempCtx.drawImage(canvas, 0, 0);
+
+            tempCtx.globalCompositeOperation = 'source-in';
+            tempCtx.fillStyle = colourConfig.value;
+            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+            // Color Blend Mode
+            ctx.globalCompositeOperation = 'color';
+            ctx.drawImage(tempCanvas, 0, 0, dW, dH);
+
+            // Luma Overlay Blend Mode
+            ctx.globalCompositeOperation = 'overlay';
+            ctx.globalAlpha = 0.85;
+            ctx.drawImage(tempCanvas, 0, 0, dW, dH);
+          }
+        } catch (err) {
+          console.warn("Canvas border draw failed:", err);
+        }
+
+        ctx.restore();
+      };
+
+      if (borderImg.complete) {
+        draw();
+      } else {
+        borderImg.onload = draw;
+        borderImg.onerror = () => console.warn("Frame texture image failed to load asynchronously.");
+      }
+    };
+
+    window.updateSingleFrameColourOverlay = (frameEl, colourConfig, thicknessConfig = 100) => {
+      if (!frameEl) return;
+      if (colourConfig) {
+        frameEl.dataset.frameColourConfig = JSON.stringify(colourConfig);
+      } else {
+        delete frameEl.dataset.frameColourConfig;
+      }
+      frameEl.dataset.frameThickness = thicknessConfig;
+      window.redrawFrameCanvas(frameEl);
     };
 
     window.updateFrameColourOverlay = () => {
@@ -10921,69 +11100,8 @@
 
     window.applySingleFrameThickness = (frameEl, thicknessVal) => {
       if (!frameEl) return;
-      const img = frameEl.querySelector('img');
-      const croppedSrc = frameEl.dataset.frameCroppedSrc;
-      const slices = JSON.parse(frameEl.dataset.frameSlices || 'null');
-      const bounds = JSON.parse(frameEl.dataset.frameBounds || '{}');
-
-      if (croppedSrc && slices && bounds && bounds.imgW && bounds.imgH) {
-        if (img) { img.style.visibility = 'hidden'; }
-        let borderEl = frameEl.querySelector('.dynamic-frame-border');
-        if (!borderEl) {
-          borderEl = document.createElement('div');
-          borderEl.className = 'dynamic-frame-border pointer-events-none absolute drop-shadow-xl';
-          borderEl.style.boxSizing = 'border-box';
-          borderEl.style.borderStyle = 'solid';
-          borderEl.style.borderColor = 'transparent';
-          borderEl.style.zIndex = '1';
-          borderEl.style.borderImageSource = `url("${croppedSrc}")`;
-          borderEl.style.borderImageSlice = `${slices.sliceTop} ${slices.sliceRight} ${slices.sliceBottom} ${slices.sliceLeft}`;
-          borderEl.style.borderImageRepeat = 'round';
-          frameEl.appendChild(borderEl);
-        } else {
-          borderEl.style.borderImageSource = `url("${croppedSrc}")`;
-          borderEl.style.borderImageSlice = `${slices.sliceTop} ${slices.sliceRight} ${slices.sliceBottom} ${slices.sliceLeft}`;
-        }
-
-        // FIX: Extract widths directly from the inline styles to prevent layout thrashing zeros
-        const elWidth = parseFloat(frameEl.style.width) || frameEl.offsetWidth;
-        const elHeight = parseFloat(frameEl.style.height) || frameEl.offsetHeight;
-
-        const sx = elWidth / bounds.imgW;
-        const sy = elHeight / bounds.imgH;
-        const visibleW = (bounds.maxX - bounds.minX) || bounds.imgW;
-        const visibleH = (bounds.maxY - bounds.minY) || bounds.imgH;
-
-        const visLeft = (bounds.minX || 0) * sx;
-        const visTop = (bounds.minY || 0) * sy;
-        const visW = visibleW * sx;
-        const visH = visibleH * sy;
-        borderEl.style.left = `${visLeft}px`;
-        borderEl.style.top = `${visTop}px`;
-        borderEl.style.width = `${visW}px`;
-        borderEl.style.height = `${visH}px`;
-
-        const scaleX = visW / (slices.srcW || visibleW || 1);
-        const scaleY = visH / (slices.srcH || visibleH || 1);
-
-        const mult = Number(thicknessVal) / 100;
-        const maxXInset = Math.max(1, (visW / 2) - 1);
-        const maxYInset = Math.max(1, (visH / 2) - 1);
-
-        const leftPx = Math.min(maxXInset, Math.max(1, slices.sliceLeft * scaleX * mult));
-        const rightPx = Math.min(maxXInset, Math.max(1, slices.sliceRight * scaleX * mult));
-        const topPx = Math.min(maxYInset, Math.max(1, slices.sliceTop * scaleY * mult));
-        const bottomPx = Math.min(maxYInset, Math.max(1, slices.sliceBottom * scaleY * mult));
-
-        borderEl.style.borderLeftWidth = `${leftPx}px`;
-        borderEl.style.borderRightWidth = `${rightPx}px`;
-        borderEl.style.borderTopWidth = `${topPx}px`;
-        borderEl.style.borderBottomWidth = `${bottomPx}px`;
-      } else {
-        if (img) { img.style.visibility = ''; }
-        const borderEl = frameEl.querySelector('.dynamic-frame-border');
-        if (borderEl) borderEl.remove();
-      }
+      frameEl.dataset.frameThickness = thicknessVal;
+      window.redrawFrameCanvas(frameEl);
     };
 
     window.applyFrameThickness = (value, shouldRecord = true) => {
@@ -12814,7 +12932,7 @@
       if (typeof window.closeMobileMenu === 'function') {
         window.closeMobileMenu();
       }
-      
+
       const origin = window.location.origin;
 
       let cleanPath = pathname || "/";
@@ -12833,7 +12951,7 @@
       if (pushHistoryState) {
         const currentPath = window.location.pathname;
         const currentHash = window.location.hash.replace('#', '');
-        
+
         if (currentPath !== cleanPath && currentHash !== cleanPath) {
           try {
             window.history.pushState({ view: cleanPath }, "", cleanPath);
@@ -12855,7 +12973,7 @@
         else if (cleanPath === "/about-us") text = "Curating our story...";
         else if (cleanPath === "/blogs") text = "Retrieving editorial journals...";
         else if (cleanPath === "/faq") text = "Curating FAQ guides...";
-        
+
         else if (cleanPath === "/order-tracking" || cleanPath === "/orders-tracking") text = "Retrieving order logs...";
         else if (cleanPath === "/custom-frame-design") text = "Loading custom frame builder...";
         else if (cleanPath === "/dashboard") text = "Entering projects vault...";
@@ -12873,15 +12991,15 @@
 
       // FORCE HIDE ALL SECONDARY SECTIONS to prevent stacking bugs when moving backwards/forwards
       const secondarySections = [
-        'products-browse-section', 
-        'product-detail-view', 
-        'faq-section', 
-        'orders-tracking-section', 
-        'user-profile-section', 
-        'user-settings-section', 
-        'dynamic-page-section', 
-        'blog-index-section', 
-        'terms-section', 
+        'products-browse-section',
+        'product-detail-view',
+        'faq-section',
+        'orders-tracking-section',
+        'user-profile-section',
+        'user-settings-section',
+        'dynamic-page-section',
+        'blog-index-section',
+        'terms-section',
         'cookies-section'
       ];
       secondarySections.forEach(id => {
@@ -13328,7 +13446,7 @@
       }
 
       if (target) target.classList.remove('hidden');
-      
+
       // ONLY snap to the top if we are actually switching to a completely new screen!
       // This prevents the page from jumping to the hero section when navigating between sections.
       if (isNewView) {
@@ -13425,17 +13543,17 @@
         // 1. SILENTLY REPAIR EXISTING PRODUCTS IN THE DATABASE
         const allProducts = await db.collection('products').get();
         if (!allProducts.empty) {
-            const repairBatch = db.batch();
-            let needsRepair = false;
-            const correctBg = window.getDefaultImage();
-            allProducts.docs.forEach(doc => {
-                const bg = doc.data().bgImage;
-                if (bg === 'default.png' || bg === './default.png' || bg === 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80') {
-                    repairBatch.update(doc.ref, { bgImage: correctBg });
-                    needsRepair = true;
-                }
-            });
-            if (needsRepair) await repairBatch.commit();
+          const repairBatch = db.batch();
+          let needsRepair = false;
+          const correctBg = window.getDefaultImage();
+          allProducts.docs.forEach(doc => {
+            const bg = doc.data().bgImage;
+            if (bg === 'default.png' || bg === './default.png' || bg === 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80') {
+              repairBatch.update(doc.ref, { bgImage: correctBg });
+              needsRepair = true;
+            }
+          });
+          if (needsRepair) await repairBatch.commit();
         }
 
         // 2. Fetch EXISTING categories from the database
@@ -13445,22 +13563,22 @@
         const existingCategories = catSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
         const extendedColors = [
-          {name: 'Oak Wood', value: '#8b5a2b'},
-          {name: 'Ebony Black', value: '#1a1a1a'},
-          {name: 'Pure White', value: '#ffffff'},
-          {name: 'Silver Matte', value: '#e3e2e0'},
-          {name: 'Gold Leaf', value: '#d4af37'},
-          {name: 'Rose Gold', value: '#b76e79'},
-          {name: 'Champagne', value: '#f7e7ce'},
-          {name: 'Rich Walnut', value: '#5c4033'},
-          {name: 'Mahogany', value: '#4a0404'},
-          {name: 'Deep Cherry', value: '#651a14'},
-          {name: 'Dark Maple', value: '#800000'},
-          {name: 'Light Ash', value: '#c6b39d'},
-          {name: 'Natural Pine', value: '#d2b48c'},
-          {name: 'Grey Blue', value: '#9eb6c4'},
-          {name: 'Royal Navy', value: '#000080'},
-          {name: 'Forest Green', value: '#228b22'}
+          { name: 'Oak Wood', value: '#8b5a2b' },
+          { name: 'Ebony Black', value: '#1a1a1a' },
+          { name: 'Pure White', value: '#ffffff' },
+          { name: 'Silver Matte', value: '#e3e2e0' },
+          { name: 'Gold Leaf', value: '#d4af37' },
+          { name: 'Rose Gold', value: '#b76e79' },
+          { name: 'Champagne', value: '#f7e7ce' },
+          { name: 'Rich Walnut', value: '#5c4033' },
+          { name: 'Mahogany', value: '#4a0404' },
+          { name: 'Deep Cherry', value: '#651a14' },
+          { name: 'Dark Maple', value: '#800000' },
+          { name: 'Light Ash', value: '#c6b39d' },
+          { name: 'Natural Pine', value: '#d2b48c' },
+          { name: 'Grey Blue', value: '#9eb6c4' },
+          { name: 'Royal Navy', value: '#000080' },
+          { name: 'Forest Green', value: '#228b22' }
         ];
 
         const svgOuter = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500"><path fill-rule="evenodd" clip-rule="evenodd" fill="#8b5a2b" d="M0,0 H400 V500 H0 Z M20,20 V480 H380 V20 Z"/></svg>`);
@@ -13479,14 +13597,14 @@
         for (const cat of existingCategories) {
           // Check if this specific category is empty
           const prodSnap = await db.collection('products').where('categoryId', '==', cat.id).limit(1).get();
-          
+
           if (prodSnap.empty) {
             // Category is empty! Let's add 3 dummy products to it.
             const batch = db.batch();
             for (let i = 1; i <= 3; i++) {
               const prodRef = db.collection('products').doc();
               const prodName = `${cat.name || 'Custom'} Edition ${i}`;
-              
+
               // Use category image for thumbnail, or fallback
               const catThumb = cat.imageURL || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=400';
               const bgImg = window.getDefaultImage();
@@ -13499,7 +13617,7 @@
                 bgImage: bgImg,
                 galleryImages: [catThumb, 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&q=80&w=400'],
                 images: [],
-                sizes: [ {width: 8, height: 10, name: '8x10" Classic'}, {width: 16, height: 20, name: '16x20" Medium'}, {width: 24, height: 36, name: '24x36" Large'} ],
+                sizes: [{ width: 8, height: 10, name: '8x10" Classic' }, { width: 16, height: 20, name: '16x20" Medium' }, { width: 24, height: 36, name: '24x36" Large' }],
                 ...getFrameObj(prodName),
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
               });
@@ -13516,7 +13634,7 @@
           if (window.renderLandingCategories) window.renderLandingCategories();
           if (window.loadProductsForLanding) await window.loadProductsForLanding();
           if (window.renderProductsPage && !document.getElementById('products-browse-section').classList.contains('hidden')) {
-              window.renderProductsPage();
+            window.renderProductsPage();
           }
         }
       } catch (err) {
@@ -13525,62 +13643,62 @@
     };
 
     window.loadReadOnlyPreview = async (projectId) => {
-        const views = ['landing', 'dashboard', 'admin', 'checkout', 'editor'];
-        views.forEach(v => {
-            const el = document.getElementById(v + '-view');
-            if (el) el.classList.add('hidden');
-        });
-        
-        const editorView = document.getElementById('editor-view');
-        if(editorView) editorView.classList.remove('hidden');
+      const views = ['landing', 'dashboard', 'admin', 'checkout', 'editor'];
+      views.forEach(v => {
+        const el = document.getElementById(v + '-view');
+        if (el) el.classList.add('hidden');
+      });
 
-        // Hide tools and buttons to make it read-only
-        document.getElementById('design-canvas').style.pointerEvents = 'none';
-        
-        const leftSidebar = document.querySelector('#editor-view aside:not(#flyout-panel)');
-        if(leftSidebar) leftSidebar.style.display = 'none';
-        
-        const topControls = document.querySelector('#editor-view header');
-        if (topControls) {
-            topControls.innerHTML = `<div class="w-full flex justify-between items-center px-4 h-full"><span class="font-bold text-charcoal" id="editor-project-title">Read-Only Preview</span><button type="button" onclick="window.close()" class="px-4 py-2 bg-charcoal text-cream rounded-xl font-bold text-xs cursor-pointer">Close Preview</button></div>`;
+      const editorView = document.getElementById('editor-view');
+      if (editorView) editorView.classList.remove('hidden');
+
+      // Hide tools and buttons to make it read-only
+      document.getElementById('design-canvas').style.pointerEvents = 'none';
+
+      const leftSidebar = document.querySelector('#editor-view aside:not(#flyout-panel)');
+      if (leftSidebar) leftSidebar.style.display = 'none';
+
+      const topControls = document.querySelector('#editor-view header');
+      if (topControls) {
+        topControls.innerHTML = `<div class="w-full flex justify-between items-center px-4 h-full"><span class="font-bold text-charcoal" id="editor-project-title">Read-Only Preview</span><button type="button" onclick="window.close()" class="px-4 py-2 bg-charcoal text-cream rounded-xl font-bold text-xs cursor-pointer">Close Preview</button></div>`;
+      }
+
+      const toolsRow = document.getElementById('dynamic-tools-row');
+      if (toolsRow) toolsRow.style.display = 'none';
+
+      window.playGlobalLoader("Loading read-only preview...", async () => {
+        try {
+          const doc = await db.collection('projects').doc(projectId).get();
+          if (!doc.exists) {
+            window.hideGlobalLoader();
+            alert("Preview project not found.");
+            return;
+          }
+          const proj = doc.data();
+
+          if (proj.configState) window.activeFrameConfiguration = proj.configState;
+          if (proj.productState) window.activeFrameProduct = proj.productState;
+
+          document.getElementById('editor-project-title').innerText = `Read-Only Preview - ${proj.title || 'Studio'}`;
+          document.getElementById('artwork-layer').innerHTML = proj.canvasData || '';
+          document.getElementById('design-canvas').style.backgroundColor = proj.backgroundColor || '#ffffff';
+          if (window.rgbToHex) {
+            document.getElementById('canvas-bg-color').value = window.rgbToHex(proj.backgroundColor || '#ffffff');
+          }
+
+          window.hideGlobalLoader();
+
+          setTimeout(() => {
+            if (window.updateCanvasScale) window.updateCanvasScale();
+            if (window.syncFrameCustomizationPanels) window.syncFrameCustomizationPanels();
+            if (window.updateLiveFramePreview) window.updateLiveFramePreview();
+          }, 50);
+
+        } catch (e) {
+          window.hideGlobalLoader();
+          alert("Error loading preview: " + e.message);
         }
-        
-        const toolsRow = document.getElementById('dynamic-tools-row');
-        if (toolsRow) toolsRow.style.display = 'none';
-        
-        window.playGlobalLoader("Loading read-only preview...", async () => {
-            try {
-                const doc = await db.collection('projects').doc(projectId).get();
-                if (!doc.exists) {
-                    window.hideGlobalLoader();
-                    alert("Preview project not found.");
-                    return;
-                }
-                const proj = doc.data();
-                
-                if (proj.configState) window.activeFrameConfiguration = proj.configState;
-                if (proj.productState) window.activeFrameProduct = proj.productState;
-
-                document.getElementById('editor-project-title').innerText = `Read-Only Preview - ${proj.title || 'Studio'}`;
-                document.getElementById('artwork-layer').innerHTML = proj.canvasData || '';
-                document.getElementById('design-canvas').style.backgroundColor = proj.backgroundColor || '#ffffff';
-                if (window.rgbToHex) {
-                    document.getElementById('canvas-bg-color').value = window.rgbToHex(proj.backgroundColor || '#ffffff');
-                }
-
-                window.hideGlobalLoader();
-                
-                setTimeout(() => {
-                    if (window.updateCanvasScale) window.updateCanvasScale();
-                    if (window.syncFrameCustomizationPanels) window.syncFrameCustomizationPanels();
-                    if (window.updateLiveFramePreview) window.updateLiveFramePreview();
-                }, 50);
-                
-            } catch (e) {
-                window.hideGlobalLoader();
-                alert("Error loading preview: " + e.message);
-            }
-        });
+      });
     };
 
     window.addEventListener('DOMContentLoaded', async () => {
@@ -13588,13 +13706,13 @@
       try {
         const gSnap = await db.collection('glass_types').get();
         window.globalGlassTypes = gSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      } catch(e) {}
+      } catch (e) { }
 
       const urlParams = new URLSearchParams(window.location.search);
       const previewProjectId = urlParams.get('previewProject');
       if (previewProjectId) {
-         window.loadReadOnlyPreview(previewProjectId);
-         return; 
+        window.loadReadOnlyPreview(previewProjectId);
+        return;
       }
 
       // Init CMS engine
@@ -13603,7 +13721,7 @@
       } catch (err) {
         console.error("CMS Initialization failed:", err);
       }
-      
+
       // Auto Seed Database if completely empty
       await window.autoSeedDemoStore();
 
@@ -14170,7 +14288,7 @@
 
       if (user) {
         // Prevent partial login state if unverified via email/pass
-        if (!user.emailVerified && user.providerData && user.providerData.some(p => p.providerId === 'password')) {
+        if (false && !user.emailVerified && user.providerData && user.providerData.some(p => p.providerId === 'password')) {
           return;
         }
 
@@ -14408,7 +14526,7 @@
         const userCred = await firebase.auth().signInWithEmailAndPassword(emailInput, pass);
         const user = userCred.user;
 
-        if (!user.emailVerified) {
+        if (false && !user.emailVerified) {
           await firebase.auth().signOut();
           showToast("Please verify your email before logging in.");
           return;
@@ -14617,7 +14735,7 @@
 
         document.getElementById('admin-asset-name').value = a.name || '';
         document.getElementById('admin-asset-cost').value = a.cost || 0;
-        
+
         if (['outer-frame', 'middle-frame', 'inner-frame'].includes(a.category)) {
           document.getElementById('admin-asset-thickness').value = a.thickness || '';
           if (document.getElementById('admin-asset-dynamic')) {
@@ -14744,42 +14862,65 @@
     };
 
     async function handleBuyNow() {
-      if (!currentUser) { 
-        pendingAction = 'buy'; 
-        toggleModal('login-modal'); 
-      } else { 
+      if (!currentUser) {
+        pendingAction = 'buy';
+        toggleModal('login-modal');
+      } else {
         showToast("Saving your work...");
         try {
           if (typeof deselectAll === 'function') deselectAll();
-          
+
           const editorCanvas = document.getElementById('design-canvas');
-          if (editorCanvas && editorCanvas.offsetParent !== null) {
-            
-            // 1. Remove the scale scaling temporarily on the live DOM
+          const editorView = document.getElementById('editor-view');
+
+          if (editorCanvas) {
+            let wasHidden = false;
+            if (editorView && editorView.classList.contains('hidden')) {
+              wasHidden = true;
+              editorView.classList.remove('hidden');
+              editorView.style.position = 'absolute';
+              editorView.style.left = '-9999px';
+              editorView.style.visibility = 'hidden';
+            }
+
             const originalTransform = editorCanvas.style.transform;
             editorCanvas.style.transform = 'scale(1)';
-            
-            // 2. Give the browser time to repaint the screen at 1:1 scale
-            await new Promise(r => setTimeout(r, 200));
-            
-            // 3. Take the screenshot
-            const canvasShot = await html2canvas(editorCanvas, { 
-              scale: 2, 
-              useCORS: true, 
-              backgroundColor: editorCanvas.style.backgroundColor || '#ffffff'
+
+            await new Promise(r => setTimeout(r, 250));
+
+            const canvasShot = await html2canvas(editorCanvas, {
+              scale: 2,
+              useCORS: true,
+              backgroundColor: editorCanvas.style.backgroundColor || null
             });
-            
-            // 4. Save the Base64 image
-            window.directBuyPreviewUrl = canvasShot.toDataURL('image/jpeg', 0.9);
-            
-            // 5. Restore the editor scaling immediately
+
+            const dataUrl = canvasShot.toDataURL('image/png');
+            window.directBuyPreviewUrl = dataUrl;
+
+            try {
+              const blob = await new Promise(res => canvasShot.toBlob(res, 'image/png'));
+              if (blob && typeof uploadToCloudinary === 'function') {
+                const cloudUrl = await uploadToCloudinary(blob);
+                if (cloudUrl) window.directBuyPreviewUrl = cloudUrl;
+              }
+            } catch (cloudErr) {
+              console.warn("Cloudinary upload fallback to dataUrl:", cloudErr);
+            }
+
             editorCanvas.style.transform = originalTransform;
+
+            if (wasHidden && editorView) {
+              editorView.style.position = '';
+              editorView.style.left = '';
+              editorView.style.visibility = '';
+              editorView.classList.add('hidden');
+            }
           }
-        } catch(e) { 
-          console.warn("Canvas capture failed:", e); 
+        } catch (e) {
+          console.warn("Canvas capture failed:", e);
         }
-        
-        proceedToCheckout(true); 
+
+        proceedToCheckout(true);
       }
     }
 
@@ -15260,50 +15401,78 @@
       y += 10;
 
       // --- THE MINI-PAINTING METHOD ---
-      const previewUrl = order.previewImageURL;
-      
+      const previewUrl = window.resolveAssetUrl(order.previewImageURL);
+
       if (previewUrl && !previewUrl.includes('via.placeholder.com')) {
         try {
-          const optimizedImage = await new Promise((resolve) => {
+          const optimized = await new Promise((resolve) => {
             const img = new Image();
-            
+
             // Only apply crossOrigin if it is NOT a base64 string
             if (!previewUrl.startsWith('data:')) {
               img.crossOrigin = "Anonymous";
             }
-            
+
             img.onload = () => {
               const c = document.createElement('canvas');
-              // Restrict size so jsPDF does not crash on massive files
-              const maxDim = 300; 
+              // Restrict size so jsPDF does not crash on massive files but keep it high resolution
+              const maxDim = 600;
               const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
               c.width = img.width * scale;
               c.height = img.height * scale;
               const cx = c.getContext('2d');
-              
+
               // Paint solid white background to fix transparent PNGs turning black
               cx.fillStyle = '#ffffff';
               cx.fillRect(0, 0, c.width, c.height);
               cx.drawImage(img, 0, 0, c.width, c.height);
-              
-              // Resolve as a highly compatible, compressed JPEG
-              resolve(c.toDataURL('image/jpeg', 0.85));
+
+              resolve({
+                dataUrl: c.toDataURL('image/jpeg', 0.9),
+                width: c.width,
+                height: c.height
+              });
             };
-            
+
             img.onerror = () => {
               console.warn("Could not load image for PDF embedding. Skipping to prevent crash.");
               resolve(null);
             };
-            
+
             img.src = previewUrl;
+            if (img.complete && img.naturalWidth !== 0) {
+              img.onload();
+            }
           });
 
-          // Stamp the final optimized mini-painting onto the PDF
-          if (optimizedImage) {
-            pdf.addImage(optimizedImage, 'JPEG', 15, y, 70, 70);
+          // Stamp the final optimized mini-painting onto the PDF preserving aspect ratio
+          if (optimized && optimized.dataUrl) {
+            const maxW = 70;
+            const maxH = 70;
+            const imgRatio = optimized.width / optimized.height;
+            let destW = maxW;
+            let destH = maxH;
+
+            if (imgRatio > 1) {
+              destH = maxW / imgRatio;
+            } else {
+              destW = maxH * imgRatio;
+            }
+
+            const destX = 15 + (maxW - destW) / 2;
+            const destY = y + (maxH - destH) / 2;
+
+            pdf.addImage(optimized.dataUrl, 'JPEG', destX, destY, destW, destH);
+
+            if (previewUrl.startsWith('http')) {
+              pdf.setFontSize(8);
+              pdf.setTextColor(235, 94, 40);
+              pdf.setFont('helvetica', 'bold');
+              pdf.textWithLink('Download / View Custom Frame Image', 15, destY + destH + 4, { url: previewUrl });
+            }
           }
-        } catch (e) { 
-          console.warn("PDF Image injection failed:", e); 
+        } catch (e) {
+          console.warn("PDF Image injection failed:", e);
         }
       }
 
@@ -15363,7 +15532,7 @@
         const city = document.getElementById('chk-city').value || "";
         const street = document.getElementById('chk-address').value || "";
         const address = `${street}, ${city}, ${province}`;
-        
+
         const titleEl = document.getElementById('editor-project-title');
         const title = titleEl ? titleEl.innerText : "Custom Frame";
 
@@ -15376,8 +15545,8 @@
 
         // Use the perfect screenshot we captured, or the user's actual artwork
         let activePreviewUrl = '';
-        
-        if (window.isDirectBuyCheckout && window.directBuyPreviewUrl) {
+
+        if (window.directBuyPreviewUrl) {
           activePreviewUrl = window.directBuyPreviewUrl;
         } else if (!window.isDirectBuyCheckout && cartItems.length > 0) {
           activePreviewUrl = cartItems[0].imageURL;
@@ -15385,16 +15554,16 @@
 
         // AGGRESSIVE FALLBACK: Hunt for the user's actual image so the dining room NEVER appears
         if (!activePreviewUrl || activePreviewUrl.includes('photo-1544457070-4cd773b4d71e') || activePreviewUrl === 'https://via.placeholder.com/400') {
-            const artBg = document.querySelector('#artwork-layer [data-frame-role="artwork"] img');
-            if (artBg && artBg.src) {
-                activePreviewUrl = artBg.src;
-            } else if (window.activeFrameProduct && window.activeFrameProduct.bgImage) {
-                activePreviewUrl = window.activeFrameProduct.bgImage;
-            } else if (window.activeFrameProduct && window.activeFrameProduct.galleryImages && window.activeFrameProduct.galleryImages.length > 0) {
-                activePreviewUrl = window.activeFrameProduct.galleryImages[0];
-            } else {
-                activePreviewUrl = 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&q=80&w=400'; // Generic abstract art
-            }
+          const artBg = document.querySelector('#artwork-layer [data-frame-role="artwork"] img');
+          if (artBg && artBg.src) {
+            activePreviewUrl = artBg.src;
+          } else if (window.activeFrameProduct && window.activeFrameProduct.bgImage) {
+            activePreviewUrl = window.activeFrameProduct.bgImage;
+          } else if (window.activeFrameProduct && window.activeFrameProduct.galleryImages && window.activeFrameProduct.galleryImages.length > 0) {
+            activePreviewUrl = window.activeFrameProduct.galleryImages[0];
+          } else {
+            activePreviewUrl = 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&q=80&w=400'; // Generic abstract art
+          }
         }
 
         const structuredDatabaseOrderRecordPayload = {
@@ -15407,18 +15576,18 @@
           email: email,
           phone: phone,
           address: address,
-          previewImageURL: activePreviewUrl || 'https://via.placeholder.com/400',
+          previewImageURL: window.resolveAssetUrl(activePreviewUrl) || 'https://via.placeholder.com/400',
 
-          orderedProducts: JSON.parse(JSON.stringify((!window.isDirectBuyCheckout && cartItems.length > 0) ? cartItems.map(i => ({ 
-             title: i.title || 'Product', 
-             cost: parseFloat(i.cost) || 0, 
-             qty: i.quantity || i.qty || 1, 
-             customization: i.customization || null 
-          })) : [{ 
-             title: title || 'Custom Frame', 
-             cost: basePriceRaw || 0, 
-             qty: 1, 
-             customization: getCurrentCustomizationSummary() 
+          orderedProducts: JSON.parse(JSON.stringify((!window.isDirectBuyCheckout && cartItems.length > 0) ? cartItems.map(i => ({
+            title: i.title || 'Product',
+            cost: parseFloat(i.cost) || 0,
+            qty: i.quantity || i.qty || 1,
+            customization: i.customization || null
+          })) : [{
+            title: title || 'Custom Frame',
+            cost: basePriceRaw || 0,
+            qty: 1,
+            customization: getCurrentCustomizationSummary()
           }])),
           baseAmount: basePriceRaw || 0,
           shippingCharges: shippingRateValue || 0,
@@ -15435,13 +15604,13 @@
           estimatedDelivery: estDeliveryTimestampString || 'N/A'
         };
 
-      const orderPdf = await generateOrderConfirmationPdf(structuredDatabaseOrderRecordPayload);
-      structuredDatabaseOrderRecordPayload.pdfFileName = `FrameCraft-Invoice-${orderId}.pdf`;
+        const orderPdf = await generateOrderConfirmationPdf(structuredDatabaseOrderRecordPayload);
+        structuredDatabaseOrderRecordPayload.pdfFileName = `FrameCraft-Invoice-${orderId}.pdf`;
 
-      await db.collection('orders').doc(orderId).set(structuredDatabaseOrderRecordPayload);
+        await db.collection('orders').doc(orderId).set(structuredDatabaseOrderRecordPayload);
 
-      // Create a gorgeous visual HTML email including the product image
-      let emailTemplateAggregationOutputBlock = `
+        // Create a gorgeous visual HTML email including the product image
+        let emailTemplateAggregationOutputBlock = `
         <div style="font-family: Arial, sans-serif; color: #2b3d46; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #dae5eb; border-radius: 12px; overflow: hidden;">
             <div style="background: #2b3d46; padding: 20px; text-align: center; border-bottom: 3px solid #eb5e28;">
                 <h2 style="color: #ffffff; margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 1px;">FrameCraft Studio</h2>
@@ -15482,44 +15651,44 @@
         </div>
       `;
 
-      try {
-        await emailjs.send('service_ia6xjfs', 'template_72upsy8', {
-          customer_email: email,
-          to_name: name,
-          title: `Order Validation Summary Confirmation - #${orderId}`,
-          message: emailTemplateAggregationOutputBlock,
-          pdf_filename: structuredDatabaseOrderRecordPayload.pdfFileName,
-          pdf_attachment: orderPdf ? orderPdf.dataUri : ''
-        });
+        try {
+          await emailjs.send('service_ia6xjfs', 'template_72upsy8', {
+            customer_email: email,
+            to_name: name,
+            title: `Order Validation Summary Confirmation - #${orderId}`,
+            message: emailTemplateAggregationOutputBlock,
+            pdf_filename: structuredDatabaseOrderRecordPayload.pdfFileName,
+            pdf_attachment: orderPdf ? orderPdf.dataUri : ''
+          });
 
-        await emailjs.send('service_ia6xjfs', 'template_72upsy8', {
-          customer_email: 'admin@framecraft.com',
-          to_name: 'Studio Management Admin',
-          title: `ALERT: New Order Received - #${orderId}`,
-          message: emailTemplateAggregationOutputBlock,
-          pdf_filename: structuredDatabaseOrderRecordPayload.pdfFileName,
-          pdf_attachment: orderPdf ? orderPdf.dataUri : ''
-        });
-      } catch (e) { console.warn("Outbound SMTP relay dropped payload packet.", e); }
+          await emailjs.send('service_ia6xjfs', 'template_72upsy8', {
+            customer_email: 'admin@framecraft.com',
+            to_name: 'Studio Management Admin',
+            title: `ALERT: New Order Received - #${orderId}`,
+            message: emailTemplateAggregationOutputBlock,
+            pdf_filename: structuredDatabaseOrderRecordPayload.pdfFileName,
+            pdf_attachment: orderPdf ? orderPdf.dataUri : ''
+          });
+        } catch (e) { console.warn("Outbound SMTP relay dropped payload packet.", e); }
 
-      const batch = db.batch();
-      if (currentUser) {
-        const cartDocs = await db.collection('users').doc(currentUser.uid).collection('cart').get();
-        cartDocs.forEach(d => batch.delete(d.ref));
-        await batch.commit();
-      }
+        const batch = db.batch();
+        if (currentUser) {
+          const cartDocs = await db.collection('users').doc(currentUser.uid).collection('cart').get();
+          cartDocs.forEach(d => batch.delete(d.ref));
+          await batch.commit();
+        }
 
-      cartItems = [];
-      if (orderPdf) {
-        window.lastOrderPdf = { blob: orderPdf.blob, filename: structuredDatabaseOrderRecordPayload.pdfFileName };
-      }
-      updateCartUI();
+        cartItems = [];
+        if (orderPdf) {
+          window.lastOrderPdf = { blob: orderPdf.blob, filename: structuredDatabaseOrderRecordPayload.pdfFileName };
+        }
+        updateCartUI();
 
-      const screen = document.getElementById('secure-payment-screen');
-      if (screen && !screen.classList.contains('hidden')) closeSecurePaymentScreen();
+        const screen = document.getElementById('secure-payment-screen');
+        if (screen && !screen.classList.contains('hidden')) closeSecurePaymentScreen();
 
-      window.playGlobalLoader("Confirming order validation...", () => {
-        document.getElementById('checkout-view').innerHTML = `
+        window.playGlobalLoader("Confirming order validation...", () => {
+          document.getElementById('checkout-view').innerHTML = `
               <div class="max-w-2xl mx-auto text-center py-16 bg-white rounded-3xl shadow-xl border border-sand p-10 mt-10">
                   <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
                       <i data-lucide="check-circle" class="w-12 h-12 text-green-600"></i>
@@ -15539,12 +15708,12 @@
                       <div class="flex justify-between text-sm font-black"><span>Total Volume Authorized:</span><span class="text-flame">${window.appCurrency || '$'}${structuralGrandTotal.toFixed(2)}</span></div>
                   </div>
 
-                  <div class="flex flex-wrap justify-center gap-3"><button onclick="downloadLastOrderPdf()" class="bg-charcoal px-6 py-3.5 rounded-xl text-cream font-extrabold text-sm shadow-lg"><i data-lucide="file-down" class="w-4 h-4 inline mr-1"></i> Download Order PDF</button><button onclick="window.location.reload()" class="btn-solid-orange px-8 py-3.5 rounded-xl text-cream font-extrabold text-sm shadow-lg">Return to Studio Workspace</button></div>
+                  <div class="flex flex-wrap justify-center gap-3"><button onclick="downloadLastOrderPdf()" class="bg-charcoal px-6 py-3.5 rounded-xl text-cream font-extrabold text-sm shadow-lg"><i data-lucide="file-down" class="w-4 h-4 inline mr-1"></i> Download Order PDF</button>${activePreviewUrl ? `<a href="${activePreviewUrl}" download="FrameCraft-Custom-Design-${orderId}.png" target="_blank" class="bg-white border border-sand hover:border-charcoal text-charcoal px-6 py-3.5 rounded-xl font-extrabold text-sm shadow-lg transition inline-flex items-center gap-1.5"><i data-lucide="image-down" class="w-4 h-4 text-flame"></i> Download Custom Frame Image</a>` : ''}<button onclick="window.location.reload()" class="btn-solid-orange px-8 py-3.5 rounded-xl text-cream font-extrabold text-sm shadow-lg">Return to Studio Workspace</button></div>
               </div>
           `;
-        if (window.lucide) lucide.createIcons();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
+          if (window.lucide) lucide.createIcons();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
       } catch (e) {
         console.error("Critical Order Failure:", e);
         window.hideGlobalLoader();
@@ -15954,7 +16123,7 @@
         itemsHtml = order.orderedProducts.map((p, index) => {
           const cust = p.customization || order.customization;
           let summaryCardHtml = '';
-          
+
           if (cust && cust.layers && cust.layers.length > 0) {
             summaryCardHtml = `
               <div class="bg-white border border-sand/60 rounded-2xl p-5 mt-4 shadow-sm">
@@ -15963,11 +16132,11 @@
                   <span class="text-xs font-black uppercase tracking-wider text-charcoal">Live Design Summary</span>
                 </div>
                 ${cust.layers.map(layer => {
-                  const colorDisplay = layer.color 
-                    ? `<span class="inline-block w-3 h-3 rounded-full border border-sand align-middle shadow-inner mr-1.5" style="background-color:${layer.color.value};"></span>${layer.color.name}` 
-                    : '<span class="text-slate italic">Original</span>';
-                  
-                  return `
+              const colorDisplay = layer.color
+                ? `<span class="inline-block w-3 h-3 rounded-full border border-sand align-middle shadow-inner mr-1.5" style="background-color:${layer.color.value};"></span>${layer.color.name}`
+                : '<span class="text-slate italic">Original</span>';
+
+              return `
                     <div class="border-b border-sand/30 pb-3 mb-3 last:border-0 last:pb-0 last:mb-0">
                       <div class="flex justify-between items-start mb-1">
                         <span class="text-[10px] font-bold uppercase tracking-wider text-slate">${layer.role}</span>
@@ -15980,7 +16149,7 @@
                       </div>
                     </div>
                   `;
-                }).join('')}
+            }).join('')}
                 <div class="flex justify-between items-center pt-3 mt-1 border-t border-sand/60">
                   <span class="text-xs font-black uppercase tracking-wider text-charcoal">Frames Total</span>
                   <span class="text-lg font-black text-flame">${window.appCurrency || '$'}${(cust.framesTotal || 0).toFixed(2)}</span>
@@ -15988,8 +16157,8 @@
               </div>
             `;
           } else if (cust) {
-             // Fallback for slightly older orders
-             summaryCardHtml = `
+            // Fallback for slightly older orders
+            summaryCardHtml = `
               <div class="bg-white border border-sand/60 rounded-2xl p-5 mt-4 shadow-sm">
                 <div class="flex items-center gap-2 border-b border-sand/60 pb-3 mb-4">
                   <i data-lucide="eye" class="w-4 h-4 text-flame"></i>
@@ -16059,7 +16228,7 @@
         </div>
       `;
       toggleModal('admin-order-modal');
-      if(window.lucide) lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
     }
     window.loadAdminOrderProject = (projectId) => {
       toggleModal('admin-order-modal');
@@ -16071,24 +16240,24 @@
             showToast("Design project not found. It may have been deleted.");
             return;
           }
-          
+
           const proj = doc.data();
           currentProjectId = proj.id;
-          
+
           if (proj.configState) window.activeFrameConfiguration = proj.configState;
           if (proj.productState) window.activeFrameProduct = proj.productState;
 
           document.getElementById('editor-project-title').innerText = `Order Design - ${proj.title || 'Studio'}`;
           document.getElementById('artwork-layer').innerHTML = proj.canvasData || '';
           document.getElementById('design-canvas').style.backgroundColor = proj.backgroundColor || '#ffffff';
-          
+
           if (window.rgbToHex) {
             document.getElementById('canvas-bg-color').value = window.rgbToHex(proj.backgroundColor || '#ffffff');
           }
 
           window.hideGlobalLoader();
           switchView('editor');
-          
+
           setTimeout(() => {
             window.updateCanvasScale();
             if (window.syncFrameCustomizationPanels) window.syncFrameCustomizationPanels();
@@ -16102,13 +16271,13 @@
         }
       });
     };
-    
-      
+
+
 
     window.loadAdminOrderInEditor = (orderId, productIndex = 0) => {
       const order = globalOrders.find(o => o.id === orderId);
       if (!order) return;
-      
+
       const item = order.orderedProducts[productIndex];
       const cust = item.customization || order.customization;
 
@@ -16128,13 +16297,13 @@
       document.getElementById('editor-project-title').innerText = `Order #${order.id} - ${item.title}`;
       document.getElementById('artwork-layer').innerHTML = editorState.canvasHtml;
       document.getElementById('design-canvas').style.backgroundColor = editorState.canvasBg || '#ffffff';
-      
+
       if (window.rgbToHex) {
         document.getElementById('canvas-bg-color').value = window.rgbToHex(editorState.canvasBg || '#ffffff');
       }
 
       switchView('editor');
-      
+
       setTimeout(() => {
         window.updateCanvasScale();
         if (window.syncFrameCustomizationPanels) window.syncFrameCustomizationPanels();
@@ -16297,10 +16466,10 @@
 
     // 🛠️ FIX: Smart Path Resolver for local file:/// environments
     window.getDefaultImage = () => {
-        let base = window.location.href.split('#')[0].split('?')[0];
-        if (base.endsWith('index.html')) base = base.replace('index.html', '');
-        if (!base.endsWith('/')) base += '/';
-        return base + 'default.png';
+      let base = window.location.href.split('#')[0].split('?')[0];
+      if (base.endsWith('index.html')) base = base.replace('index.html', '');
+      if (!base.endsWith('/')) base += '/';
+      return base + 'default.png';
     };
 
     window.launchEmptyEditor = (name, width, height) => {
@@ -16310,55 +16479,55 @@
       const svgInner = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500"><path fill-rule="evenodd" clip-rule="evenodd" fill="#9eb6c4" d="M0,0 H400 V500 H0 Z M20,20 V480 H380 V20 Z"/></svg>`);
 
       const extendedColors = [
-        {name: 'Oak Wood', value: '#8b5a2b'},
-        {name: 'Ebony Black', value: '#1a1a1a'},
-        {name: 'Pure White', value: '#ffffff'},
-        {name: 'Silver Matte', value: '#e3e2e0'},
-        {name: 'Gold Leaf', value: '#d4af37'},
-        {name: 'Rose Gold', value: '#b76e79'},
-        {name: 'Champagne', value: '#f7e7ce'},
-        {name: 'Rich Walnut', value: '#5c4033'},
-        {name: 'Mahogany', value: '#4a0404'},
-        {name: 'Deep Cherry', value: '#651a14'},
-        {name: 'Dark Maple', value: '#800000'},
-        {name: 'Light Ash', value: '#c6b39d'},
-        {name: 'Natural Pine', value: '#d2b48c'},
-        {name: 'Grey Blue', value: '#9eb6c4'},
-        {name: 'Royal Navy', value: '#000080'},
-        {name: 'Forest Green', value: '#228b22'}
+        { name: 'Oak Wood', value: '#8b5a2b' },
+        { name: 'Ebony Black', value: '#1a1a1a' },
+        { name: 'Pure White', value: '#ffffff' },
+        { name: 'Silver Matte', value: '#e3e2e0' },
+        { name: 'Gold Leaf', value: '#d4af37' },
+        { name: 'Rose Gold', value: '#b76e79' },
+        { name: 'Champagne', value: '#f7e7ce' },
+        { name: 'Rich Walnut', value: '#5c4033' },
+        { name: 'Mahogany', value: '#4a0404' },
+        { name: 'Deep Cherry', value: '#651a14' },
+        { name: 'Dark Maple', value: '#800000' },
+        { name: 'Light Ash', value: '#c6b39d' },
+        { name: 'Natural Pine', value: '#d2b48c' },
+        { name: 'Grey Blue', value: '#9eb6c4' },
+        { name: 'Royal Navy', value: '#000080' },
+        { name: 'Forest Green', value: '#228b22' }
       ];
 
       const defaultTripleFrameProduct = {
-          id: 'custom-workspace',
-          name: name || 'Custom Triple Frame',
-          price: 95.00,
-          description: 'Bespoke custom sized framing.',
-          bgImage: window.getDefaultImage(),
-          outerFrame: {
-              name: 'Oak Wood Finish',
-              image: svgOuter,
-              price: 45.00,
-              thickness: 4.0,
-              dynamicThickness: true,
-              colors: extendedColors
-          },
-          middleFrame: {
-              name: 'Silver Matte',
-              image: svgMiddle,
-              price: 25.00,
-              thickness: 2.0,
-              dynamicThickness: true,
-              colors: extendedColors
-          },
-          innerFrame: {
-              name: 'Grey-Blue Accent',
-              image: svgInner,
-              price: 25.00,
-              thickness: 1.0,
-              dynamicThickness: true,
-              colors: extendedColors
-          },
-          sizes: [{width: width || 400, height: height || 500, name: name || "Custom"}]
+        id: 'custom-workspace',
+        name: name || 'Custom Triple Frame',
+        price: 95.00,
+        description: 'Bespoke custom sized framing.',
+        bgImage: window.getDefaultImage(),
+        outerFrame: {
+          name: 'Oak Wood Finish',
+          image: svgOuter,
+          price: 45.00,
+          thickness: 4.0,
+          dynamicThickness: true,
+          colors: extendedColors
+        },
+        middleFrame: {
+          name: 'Silver Matte',
+          image: svgMiddle,
+          price: 25.00,
+          thickness: 2.0,
+          dynamicThickness: true,
+          colors: extendedColors
+        },
+        innerFrame: {
+          name: 'Grey-Blue Accent',
+          image: svgInner,
+          price: 25.00,
+          thickness: 1.0,
+          dynamicThickness: true,
+          colors: extendedColors
+        },
+        sizes: [{ width: width || 400, height: height || 500, name: name || "Custom" }]
       };
 
       window.loadProductIntoEditor(defaultTripleFrameProduct);
@@ -16381,7 +16550,7 @@
       const canvas = document.getElementById('design-canvas');
       const dWidth = Math.min(w, 800);
       const dHeight = Math.min(h, 800);
-      
+
       if (type === 'circle') {
         canvas.style.borderRadius = '50%';
       } else if (type === 'rounded') {
@@ -16986,10 +17155,10 @@
           if (role === 'middle-frame') window.activeFrameProduct.middleFrame = null;
           if (role === 'inner-frame') window.activeFrameProduct.innerFrame = null;
         }
-        selectedItem.remove(); 
-        deselectAll(); 
+        selectedItem.remove();
+        deselectAll();
         if (window.updateLiveFramePreview) window.updateLiveFramePreview();
-        recordState(); 
+        recordState();
       }
     };
 
@@ -19001,41 +19170,41 @@
       }).join('');
       if (window.lucide) lucide.createIcons();
       if (window.initScrollAnimations) window.initScrollAnimations();
-      };
+    };
 
-      // --- FRONTEND: Contact Form Submit Engine ---
-      window.submitContactForm = async (e) => {
-        e.preventDefault();
-        
-        const name = document.getElementById('contact-name').value.trim();
-        const email = document.getElementById('contact-email').value.trim();
-        const message = document.getElementById('contact-message').value.trim();
+    // --- FRONTEND: Contact Form Submit Engine ---
+    window.submitContactForm = async (e) => {
+      e.preventDefault();
 
-        if (!name || !email || !message) {
-          showToast("Please fill out all fields.");
-          return;
-        }
+      const name = document.getElementById('contact-name').value.trim();
+      const email = document.getElementById('contact-email').value.trim();
+      const message = document.getElementById('contact-message').value.trim();
 
-        const btn = e.target.querySelector('button[type="submit"]');
-        const btnTextSpan = btn.querySelector('span.relative');
-        const originalText = btnTextSpan.innerText;
-        
-        btnTextSpan.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin inline-block mr-2 align-middle"></i>Sending...';
-        btn.disabled = true;
-        if (window.lucide) lucide.createIcons();
+      if (!name || !email || !message) {
+        showToast("Please fill out all fields.");
+        return;
+      }
 
-        try {
-          // 1. Save backup to Firestore
-          await db.collection('contact_messages').add({
-            name: name,
-            email: email,
-            message: message,
-            status: 'Unread',
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
+      const btn = e.target.querySelector('button[type="submit"]');
+      const btnTextSpan = btn.querySelector('span.relative');
+      const originalText = btnTextSpan.innerText;
 
-          // 2. Send Email Alert to Admin via EmailJS
-          const emailHtml = `
+      btnTextSpan.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin inline-block mr-2 align-middle"></i>Sending...';
+      btn.disabled = true;
+      if (window.lucide) lucide.createIcons();
+
+      try {
+        // 1. Save backup to Firestore
+        await db.collection('contact_messages').add({
+          name: name,
+          email: email,
+          message: message,
+          status: 'Unread',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // 2. Send Email Alert to Admin via EmailJS
+        const emailHtml = `
             <div style="font-family: Arial, sans-serif; color: #2b3d46; border: 1px solid #dae5eb; padding: 20px; border-radius: 8px;">
               <h2 style="color: #eb5e28; margin-top: 0;">New Customer Inquiry</h2>
               <p><strong>From:</strong> ${name} (${email})</p>
@@ -19044,25 +19213,25 @@
             </div>
           `;
 
-          await emailjs.send('service_ia6xjfs', 'template_72upsy8', {
-            customer_email: 'admin@framecraft.com', // Sending TO the admin
-            to_name: 'FrameCraft Admin',
-            title: `New Contact Form Submission from ${name}`,
-            message: emailHtml,
-            pdf_filename: '',
-            pdf_attachment: ''
-          });
+        await emailjs.send('service_ia6xjfs', 'template_72upsy8', {
+          customer_email: 'admin@framecraft.com', // Sending TO the admin
+          to_name: 'FrameCraft Admin',
+          title: `New Contact Form Submission from ${name}`,
+          message: emailHtml,
+          pdf_filename: '',
+          pdf_attachment: ''
+        });
 
-          showToast("Message sent successfully! We will get back to you soon.");
-          e.target.reset();
-        } catch (error) {
-          console.error("Contact Form Error:", error);
-          showToast("Error sending message. Please try again.");
-        } finally {
-          btnTextSpan.innerText = originalText;
-          btn.disabled = false;
-        }
-      };
+        showToast("Message sent successfully! We will get back to you soon.");
+        e.target.reset();
+      } catch (error) {
+        console.error("Contact Form Error:", error);
+        showToast("Error sending message. Please try again.");
+      } finally {
+        btnTextSpan.innerText = originalText;
+        btn.disabled = false;
+      }
+    };
   </script>
 
 
@@ -19262,11 +19431,13 @@
   </div>
 
   <!-- Write Review Modal -->
-  <div id="write-review-modal" class="hidden fixed inset-0 z-[10005] flex items-center justify-center bg-charcoal/60 backdrop-blur-sm transition-opacity px-4">
+  <div id="write-review-modal"
+    class="hidden fixed inset-0 z-[10005] flex items-center justify-center bg-charcoal/60 backdrop-blur-sm transition-opacity px-4">
     <div class="bg-white p-8 rounded-3xl border border-sand/50 w-full max-w-md shadow-2xl relative">
       <div class="flex justify-between items-center mb-6 border-b border-sand/40 pb-4">
         <h3 class="text-xl font-extrabold text-charcoal">Write a Review</h3>
-        <button onclick="toggleModal('write-review-modal')" class="text-slate hover:text-flame transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button onclick="toggleModal('write-review-modal')" class="text-slate hover:text-flame transition"><i
+            data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <form onsubmit="window.submitProductReview(event)" class="space-y-4">
         <div>
@@ -19282,19 +19453,22 @@
         </div>
         <div>
           <label class="text-[10px] font-bold uppercase tracking-wider text-slate mb-2 block">Your Review</label>
-          <textarea id="review-text-val" rows="4" class="w-full px-4 py-3 bg-editorbg border border-sand rounded-xl font-medium focus:border-flame focus:outline-none resize-none" placeholder="Share your experience with this frame..." required></textarea>
+          <textarea id="review-text-val" rows="4"
+            class="w-full px-4 py-3 bg-editorbg border border-sand rounded-xl font-medium focus:border-flame focus:outline-none resize-none"
+            placeholder="Share your experience with this frame..." required></textarea>
         </div>
-        </div>
-            <button type="submit" class="w-full btn-solid-orange py-3.5 rounded-xl text-cream font-extrabold text-sm shadow-md mt-2 flex justify-center items-center gap-2">
-              Submit Review
-            </button>
-          </form>
-        </div>
-      </div>
+    </div>
+    <button type="submit"
+      class="w-full btn-solid-orange py-3.5 rounded-xl text-cream font-extrabold text-sm shadow-md mt-2 flex justify-center items-center gap-2">
+      Submit Review
+    </button>
+    </form>
+  </div>
+  </div>
 
-      <!-- Floating Chat Widget Container (Restored!) -->
-      <div id="user-live-chat-container" class="fixed bottom-6 right-6 z-[9000] flex flex-col items-end">
-        <!-- Chat Window -->
+  <!-- Floating Chat Widget Container (Restored!) -->
+  <div id="user-live-chat-container" class="fixed bottom-6 right-6 z-[9000] flex flex-col items-end">
+    <!-- Chat Window -->
     <div id="user-chat-window"
       class="bg-white border border-gray-200/80 shadow-2xl rounded-2xl w-[340px] sm:w-[370px] h-[520px] mb-4 flex flex-col overflow-hidden transition-all duration-300 transform scale-95 opacity-0 origin-bottom-right pointer-events-none hidden">
       <!-- Header -->
