@@ -13581,9 +13581,10 @@
           { name: 'Forest Green', value: '#228b22' }
         ];
 
-        const svgOuter = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500"><path fill-rule="evenodd" clip-rule="evenodd" fill="#8b5a2b" d="M0,0 H400 V500 H0 Z M20,20 V480 H380 V20 Z"/></svg>`);
-        const svgMiddle = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500"><path fill-rule="evenodd" clip-rule="evenodd" fill="#e3e2e0" d="M0,0 H400 V500 H0 Z M20,20 V480 H380 V20 Z"/></svg>`);
-        const svgInner = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500"><path fill-rule="evenodd" clip-rule="evenodd" fill="#9eb6c4" d="M0,0 H400 V500 H0 Z M20,20 V480 H380 V20 Z"/></svg>`);
+        const toBase64Svg = (str) => "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(str)));
+        const svgOuter = toBase64Svg(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500"><path fill-rule="evenodd" clip-rule="evenodd" fill="#8b5a2b" d="M0,0 H400 V500 H0 Z M20,20 V480 H380 V20 Z"/></svg>`);
+        const svgMiddle = toBase64Svg(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500"><path fill-rule="evenodd" clip-rule="evenodd" fill="#e3e2e0" d="M0,0 H400 V500 H0 Z M20,20 V480 H380 V20 Z"/></svg>`);
+        const svgInner = toBase64Svg(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500"><path fill-rule="evenodd" clip-rule="evenodd" fill="#9eb6c4" d="M0,0 H400 V500 H0 Z M20,20 V480 H380 V20 Z"/></svg>`);
 
         const getFrameObj = (namePrefix) => ({
           outerFrame: { name: `${namePrefix} Outer`, image: svgOuter, price: 45.00, thickness: 4.0, dynamicThickness: true, colors: extendedColors },
@@ -14886,11 +14887,25 @@
             const originalTransform = editorCanvas.style.transform;
             editorCanvas.style.transform = 'scale(1)';
 
+            // Convert any unencoded SVG data URIs inside canvas to clean Base64 data URIs so html2canvas never taints the canvas
+            const canvasImgs = editorCanvas.querySelectorAll('img');
+            for (const img of canvasImgs) {
+              if (img.src && img.src.includes('data:image/svg+xml') && !img.src.includes('base64')) {
+                try {
+                  const rawSvg = decodeURIComponent(img.src.replace(/^data:image\/svg\+xml;(charset=utf-8,)?/, ''));
+                  img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(rawSvg)));
+                } catch (svgErr) {
+                  console.warn("SVG sanitization failed:", svgErr);
+                }
+              }
+            }
+
             await new Promise(r => setTimeout(r, 250));
 
             const canvasShot = await html2canvas(editorCanvas, {
               scale: 2,
               useCORS: true,
+              allowTaint: true,
               backgroundColor: editorCanvas.style.backgroundColor || null
             });
 
