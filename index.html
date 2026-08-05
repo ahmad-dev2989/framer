@@ -15263,31 +15263,60 @@
       const previewUrl = order.previewImageURL;
       if (previewUrl && !previewUrl.includes('via.placeholder.com')) {
         try {
-          let finalBase64Img = previewUrl;
+          // ALWAYS process via canvas to ensure format (JPEG), manageable size, and solid background
+          let finalBase64Img = await new Promise((res, rej) => {
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.onload = () => {
+              const c = document.createElement('canvas');
+              const maxW = 300; // Optimal size for PDF rendering
+              const scale = Math.min(1, maxW / img.width);
+              c.width = img.width * scale;
+              c.height = img.height * scale;
+              const cx = c.getContext('2d');
+              
+              // Fill white background to prevent transparent PNGs turning black
+              cx.fillStyle = '#ffffff';
+              cx.fillRect(0, 0, c.width, c.height);
+              
+              cx.drawImage(img, 0, 0, c.width, c.height);
+              res(c.toDataURL('image/jpeg', 0.8)); 
+            };
+            img.onerror = () => {
+              console.warn("CORS failed for Image object, attempting fetch fallback...");
+              fetch(previewUrl)
+                .then(response => response.blob())
+                .then(blob => {
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    const fallbackImg = new Image();
+                    fallbackImg.onload = () => {
+                      const c = document.createElement('canvas');
+                      const maxW = 300;
+                      const scale = Math.min(1, maxW / fallbackImg.width);
+                      c.width = fallbackImg.width * scale;
+                      c.height = fallbackImg.height * scale;
+                      const cx = c.getContext('2d');
+                      cx.fillStyle = '#ffffff';
+                      cx.fillRect(0, 0, c.width, c.height);
+                      cx.drawImage(fallbackImg, 0, 0, c.width, c.height);
+                      res(c.toDataURL('image/jpeg', 0.8));
+                    };
+                    fallbackImg.src = reader.result;
+                  };
+                  reader.readAsDataURL(blob);
+                })
+                .catch(err => rej(new Error("Image load failed completely: " + err.message)));
+            };
+            img.src = previewUrl;
+          });
 
-          // If the image is a URL (not a screenshot), convert it to Base64 first
-          if (!previewUrl.startsWith('data:image')) {
-            finalBase64Img = await new Promise((res, rej) => {
-              const img = new Image();
-              img.crossOrigin = "Anonymous";
-              img.onload = () => {
-                const c = document.createElement('canvas');
-                const maxW = 200;
-                const scale = Math.min(1, maxW / img.width);
-                c.width = img.width * scale;
-                c.height = img.height * scale;
-                const cx = c.getContext('2d');
-                cx.drawImage(img, 0, 0, c.width, c.height);
-                res(c.toDataURL('image/jpeg', 0.6)); 
-              };
-              img.onerror = () => rej(new Error("Image load failed due to CORS"));
-              img.src = previewUrl;
-            });
-          }
-
-          // Directly inject the Base64 image into the PDF
+          // Directly inject the standardized Base64 image into the PDF
           if (finalBase64Img && finalBase64Img.startsWith('data:image')) {
             pdf.addImage(finalBase64Img, 'JPEG', 15, y, 70, 70);
+            
+            // Re-assign the optimized image back to the order to prevent Firestore 1MB limits
+            order.previewImageURL = finalBase64Img;
           }
         } catch (e) { 
           console.warn("Could not embed image in PDF:", e); 
