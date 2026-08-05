@@ -16227,6 +16227,29 @@
       e.target.value = '';
     });
 
+    window.downloadAdminOrderPdf = async (orderId) => {
+      const order = globalOrders.find(o => o.id === orderId);
+      if (!order) return showToast("Order not found.");
+      showToast("Generating PDF invoice...");
+      try {
+        const pdfData = await generateOrderConfirmationPdf(order);
+        if (pdfData && pdfData.blob) {
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(pdfData.blob);
+          link.download = `FrameCraft-Invoice-${order.id}.pdf`;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          showToast("PDF downloaded successfully.");
+        } else {
+          showToast("Could not generate PDF invoice.");
+        }
+      } catch (err) {
+        console.error("PDF generation failed:", err);
+        showToast("PDF generation error: " + err.message);
+      }
+    };
+
     function viewOrderDetails(id) {
       const order = globalOrders.find(o => o.id === id);
       if (!order) return;
@@ -16307,9 +16330,14 @@
 
           return `
             <div class="mb-4">
-              <div class="flex justify-between items-center mb-1">
+              <div class="flex justify-between items-center mb-1 flex-wrap gap-2">
                 <span class="text-lg font-black text-charcoal">${p.title} <span class="text-slate font-bold text-xs ml-1">(x${p.qty || 1})</span></span>
-                ${order.previewImageURL ? `<a href="${order.previewImageURL}" download="FrameCraft-Custom-Design-${order.id}.png" target="_blank" class="px-4 py-2 bg-editorbg border border-sand hover:border-flame text-charcoal rounded-xl flex items-center gap-2 text-xs font-bold transition shadow-sm cursor-pointer" style="pointer-events: auto;"><i data-lucide="image-down" class="w-4 h-4 text-flame"></i> Download Frame Image</a>` : `<span class="text-[10px] text-slate font-bold uppercase tracking-wider bg-sand/30 px-2 py-1 rounded">No Image Available</span>`}
+                <div class="flex items-center gap-2 flex-wrap justify-end">
+                  ${order.previewImageURL ? `<a href="${order.previewImageURL}" download="FrameCraft-Custom-Design-${order.id}.png" target="_blank" class="px-3 py-1.5 bg-editorbg border border-sand hover:border-flame text-charcoal rounded-xl flex items-center gap-1.5 text-xs font-bold transition shadow-sm cursor-pointer" style="pointer-events: auto;"><i data-lucide="image-down" class="w-4 h-4 text-flame"></i> Download Frame Image</a>` : ''}
+                  <button onclick="window.downloadAdminOrderPdf('${order.id}')" class="px-3 py-1.5 bg-flame text-cream hover:bg-flame/90 rounded-xl flex items-center gap-1.5 text-xs font-black transition shadow-md cursor-pointer">
+                    <i data-lucide="file-text" class="w-4 h-4 text-cream"></i> Download PDF Invoice
+                  </button>
+                </div>
               </div>
               ${cust && cust.size ? `<div class="text-xs font-bold text-slate mb-2">Base Size: <span class="text-charcoal">${cust.size.name}</span></div>` : ''}
               ${cust && cust.decor?.length ? `<div class="text-xs font-bold text-slate mb-2">Decor Elements: <span class="text-charcoal">${cust.decor.map(d => d.name).join(', ')}</span></div>` : ''}
