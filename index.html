@@ -15139,138 +15139,195 @@
 
     async function generateOrderConfirmationPdf(order) {
       const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ unit: 'mm', format: 'a4' });
 
-      // 1. Create a hidden DOM element for our HTML Invoice
-      const invoiceEl = document.createElement('div');
-      
-      // Styling it to match an A4 page exactly (794x1123 at 96 DPI)
-      invoiceEl.style.cssText = 'position: fixed; top: 0; left: 0; z-index: -100; opacity: 0; pointer-events: none; width: 794px; min-height: 1123px; background: white; padding: 0; box-sizing: border-box; font-family: Helvetica, Arial, sans-serif;';
-      
-      // Generate the table rows for products
-      const productsHtml = (order.orderedProducts || []).map(p => `
-          <tr style="border-bottom: 1px solid #dae5eb;">
-              <td style="padding: 18px 0; color: #2b3d46; font-weight: bold; font-size: 15px;">${p.title}</td>
-              <td style="padding: 18px 0; text-align: center; color: #4a5c66; font-size: 15px;">${p.qty || 1}</td>
-              <td style="padding: 18px 0; text-align: right; color: #2b3d46; font-weight: bold; font-size: 15px;">${window.appCurrency || '$'}${(p.cost || 0).toFixed(2)}</td>
-          </tr>
-      `).join('');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
 
-      // Determine Image
-      const imgHtml = (order.previewImageURL && !order.previewImageURL.includes('via.placeholder.com')) 
-          ? `<img id="pdf-target-img" src="${order.previewImageURL}" crossorigin="anonymous" style="width: 220px; height: 220px; object-fit: contain; border-radius: 8px; border: 1px solid #e3e2e0; background: white;">` 
-          : '';
+      // 1. Header (Dark Slate Background)
+      pdf.setFillColor(43, 61, 70);
+      pdf.rect(0, 0, pageWidth, 35, 'F');
+      pdf.setFillColor(235, 94, 40);
+      pdf.rect(0, 35, pageWidth, 2, 'F');
 
-      // Inject the exact layout of the invoice
-      invoiceEl.innerHTML = `
-          <!-- Header -->
-          <div style="background-color: #2b3d46; padding: 40px; border-bottom: 8px solid #eb5e28; display: flex; justify-content: space-between; align-items: center;">
-              <h1 style="color: white; font-size: 38px; font-weight: bold; margin: 0;">FrameCraft</h1>
-              <div style="text-align: right;">
-                  <h2 style="color: #eb5e28; font-size: 28px; font-weight: bold; margin: 0 0 8px 0;">INVOICE</h2>
-                  <p style="color: white; font-size: 15px; margin: 0;">Order #${order.id}</p>
-              </div>
-          </div>
+      // Header Text
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(26);
+      pdf.text('FrameCraft', 15, 22);
 
-          <div style="padding: 40px;">
-              <!-- Customer & Order Info -->
-              <div style="display: flex; justify-content: space-between; margin-bottom: 50px;">
-                  <div style="width: 48%;">
-                      <h3 style="color: #9eb6c4; font-size: 13px; font-weight: bold; letter-spacing: 1px; margin: 0 0 10px 0;">BILL TO</h3>
-                      <p style="color: #2b3d46; font-size: 18px; font-weight: bold; margin: 0 0 5px 0;">${order.customer || 'Guest User'}</p>
-                      <p style="color: #2b3d46; font-size: 14px; margin: 0 0 4px 0;">${order.email || ''}</p>
-                      <p style="color: #2b3d46; font-size: 14px; margin: 0 0 4px 0;">${order.phone || ''}</p>
-                      <p style="color: #2b3d46; font-size: 14px; margin: 0;">${order.address || ''}</p>
-                  </div>
-                  <div style="width: 48%;">
-                      <h3 style="color: #9eb6c4; font-size: 13px; font-weight: bold; letter-spacing: 1px; margin: 0 0 10px 0;">ORDER DETAILS</h3>
-                      <table style="width: 100%; font-size: 14px; color: #2b3d46; border: none; text-align: left;">
-                          <tr><th style="padding-bottom: 8px; width: 120px;">Date:</th><td style="padding-bottom: 8px;">${order.date || ''}</td></tr>
-                          <tr><th style="padding-bottom: 8px;">Method:</th><td style="padding-bottom: 8px;">${order.paymentMethod} (${order.paymentStatus})</td></tr>
-                          <tr><th>Est. Delivery:</th><td>${order.estimatedDelivery || ''}</td></tr>
-                      </table>
-                  </div>
-              </div>
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(20);
+      pdf.setTextColor(235, 94, 40);
+      pdf.text('INVOICE', pageWidth - 15, 20, { align: 'right' });
 
-              <!-- Items Table -->
-              <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px;">
-                  <thead>
-                      <tr style="border-top: 1px solid #dae5eb; border-bottom: 1px solid #dae5eb;">
-                          <th style="text-align: left; padding: 14px 0; color: #9eb6c4; font-size: 13px; letter-spacing: 1px;">ITEM DESCRIPTION</th>
-                          <th style="text-align: center; padding: 14px 0; color: #9eb6c4; font-size: 13px; letter-spacing: 1px; width: 100px;">QTY</th>
-                          <th style="text-align: right; padding: 14px 0; color: #9eb6c4; font-size: 13px; letter-spacing: 1px; width: 150px;">TOTAL</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      ${productsHtml}
-                  </tbody>
-              </table>
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(11);
+      pdf.setTextColor(255, 255, 255);
+      pdf.text(`Order #${order.id}`, pageWidth - 15, 28, { align: 'right' });
 
-              <!-- Bottom Section (Image + Totals) -->
-              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 40px;">
-                  
-                  <!-- Product Image -->
-                  <div style="width: 45%;">
-                      ${imgHtml}
-                  </div>
-                  
-                  <!-- Totals -->
-                  <div style="width: 50%; padding-top: 20px;">
-                      <div style="display: flex; justify-content: flex-end; margin-bottom: 12px; font-size: 16px; color: #2b3d46;">
-                          <span style="width: 100px; text-align: left;">Subtotal:</span>
-                          <span style="width: 90px; text-align: right;">${window.appCurrency || '$'}${(order.baseAmount || 0).toFixed(2)}</span>
-                      </div>
-                      <div style="display: flex; justify-content: flex-end; margin-bottom: 24px; font-size: 16px; color: #2b3d46;">
-                          <span style="width: 100px; text-align: left;">Shipping:</span>
-                          <span style="width: 90px; text-align: right;">${window.appCurrency || '$'}${(order.shippingCharges || 0).toFixed(2)}</span>
-                      </div>
-                      
-                      <div style="display: flex; justify-content: flex-end;">
-                          <div style="background-color: #2b3d46; padding: 16px 24px; display: inline-flex; justify-content: space-between; align-items: center; width: 260px;">
-                              <span style="color: white; font-weight: bold; font-size: 18px;">GRAND TOTAL:</span>
-                              <span style="color: #eb5e28; font-weight: bold; font-size: 19px;">${order.total}</span>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-          
-          <!-- Footer Text -->
-          <div style="position: absolute; bottom: 40px; width: 100%; text-align: center; color: #9eb6c4; font-size: 14px;">
-              <p style="margin: 0 0 4px 0;">Thank you for shopping with FrameCraft Studio!</p>
-              <p style="margin: 0;">hello@framecraft.studio</p>
-          </div>
-      `;
+      // 2. Customer & Order Details
+      pdf.setTextColor(43, 61, 70);
+      let y = 50;
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(10);
+      pdf.setTextColor(158, 182, 196);
+      pdf.text('BILL TO', 15, y);
 
-      document.body.appendChild(invoiceEl);
+      y += 6;
+      pdf.setTextColor(43, 61, 70);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(12);
+      pdf.text(order.customer || 'Guest User', 15, y);
 
-      // 2. FORCE browser to wait for the image to load into the DOM before capturing
-      const targetImg = invoiceEl.querySelector('#pdf-target-img');
-      if (targetImg) {
-          await new Promise((resolve) => {
-              if (targetImg.complete) resolve();
-              else {
-                  targetImg.onload = resolve;
-                  targetImg.onerror = resolve; // Continue even if image fails, to not hang the checkout
-              }
-          });
-      }
+      y += 6;
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(10);
+      pdf.text(order.email || '', 15, y);
+      y += 5;
+      pdf.text(order.phone || '', 15, y);
 
-      // 3. Take a high-resolution snapshot using html2canvas
-      const canvas = await html2canvas(invoiceEl, {
-          scale: 2, 
-          useCORS: true,
-          backgroundColor: '#ffffff'
+      const splitAddress = pdf.splitTextToSize(order.address || '', 80);
+      y += 5;
+      pdf.text(splitAddress, 15, y);
+
+      // Right Column
+      let ry = 50;
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(10);
+      pdf.setTextColor(158, 182, 196);
+      pdf.text('ORDER DETAILS', 120, ry);
+
+      ry += 6;
+      pdf.setTextColor(43, 61, 70);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Date:', 120, ry);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(order.date || '', 150, ry);
+
+      ry += 6;
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Method:', 120, ry);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`${order.paymentMethod} (${order.paymentStatus})`, 150, ry);
+
+      ry += 6;
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Est. Delivery:', 120, ry);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(order.estimatedDelivery || '', 150, ry);
+
+      // Line Separator
+      y = Math.max(y + (splitAddress.length * 5), ry) + 15;
+      pdf.setDrawColor(218, 229, 235);
+      pdf.line(15, y, pageWidth - 15, y);
+
+      // Products Table Header
+      y += 8;
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(10);
+      pdf.setTextColor(158, 182, 196);
+      pdf.text('ITEM DESCRIPTION', 15, y);
+      pdf.text('QTY', 140, y, { align: 'center' });
+      pdf.text('TOTAL', pageWidth - 15, y, { align: 'right' });
+
+      y += 4;
+      pdf.line(15, y, pageWidth - 15, y);
+
+      // Products List
+      y += 8;
+      pdf.setTextColor(43, 61, 70);
+      pdf.setFontSize(11);
+      (order.orderedProducts || []).forEach(p => {
+        pdf.setFont('helvetica', 'bold');
+        const splitTitle = pdf.splitTextToSize(p.title, 110);
+        pdf.text(splitTitle, 15, y);
+
+        pdf.setFont('helvetica', 'normal');
+        pdf.text(String(p.qty || 1), 140, y, { align: 'center' });
+
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(`${window.appCurrency || '$'}${(p.cost || 0).toFixed(2)}`, pageWidth - 15, y, { align: 'right' });
+
+        y += (splitTitle.length * 6) + 4;
       });
 
-      // Cleanup DOM immediately
-      document.body.removeChild(invoiceEl);
+      pdf.line(15, y, pageWidth - 15, y);
 
-      // 4. Inject the flattened, perfect image into a blank PDF
-      const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      // 6. Totals & Product Image (THE MINI-PAINTING FIX)
+      y += 10;
+      const previewUrl = order.previewImageURL;
       
-      pdf.addImage(canvas.toDataURL('image/jpeg', 0.85), 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      if (previewUrl && !previewUrl.includes('via.placeholder.com')) {
+        try {
+          const optimizedImage = await new Promise((resolve) => {
+            const img = new Image();
+            // Crucial: Only apply crossOrigin if it's an actual external URL
+            if (!previewUrl.startsWith('data:')) {
+              img.crossOrigin = "Anonymous";
+            }
+            
+            img.onload = () => {
+              const c = document.createElement('canvas');
+              const maxDim = 400; // Optimal max dimension for PDF
+              const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+              c.width = img.width * scale;
+              c.height = img.height * scale;
+              const cx = c.getContext('2d');
+              
+              // Force white background to prevent transparent PNG bugs
+              cx.fillStyle = '#ffffff';
+              cx.fillRect(0, 0, c.width, c.height);
+              cx.drawImage(img, 0, 0, c.width, c.height);
+              
+              // Compress to standard JPEG
+              resolve(c.toDataURL('image/jpeg', 0.85));
+            };
+            
+            img.onerror = () => {
+              console.warn("Could not load image for PDF embedding. Skipping to prevent crash.");
+              resolve(null);
+            };
+            
+            img.src = previewUrl;
+          });
+
+          if (optimizedImage) {
+            // Draw image on the left side
+            pdf.addImage(optimizedImage, 'JPEG', 15, y, 70, 70);
+          }
+        } catch (e) { 
+          console.warn("PDF Image injection failed:", e); 
+        }
+      }
+
+      // Totals (aligned to the right)
+      let ty = y + 5;
+      pdf.setFontSize(11);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text('Subtotal:', 140, ty);
+      pdf.text(`${window.appCurrency || '$'}${(order.baseAmount || 0).toFixed(2)}`, pageWidth - 15, ty, { align: 'right' });
+
+      ty += 8;
+      pdf.text('Shipping:', 140, ty);
+      pdf.text(`${window.appCurrency || '$'}${(order.shippingCharges || 0).toFixed(2)}`, pageWidth - 15, ty, { align: 'right' });
+
+      ty += 12;
+      pdf.setFillColor(43, 61, 70);
+      pdf.rect(130, ty - 7, 70, 12, 'F');
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(14);
+      pdf.text('GRAND TOTAL:', 135, ty);
+      pdf.setTextColor(235, 94, 40);
+      pdf.text(String(order.total), pageWidth - 17, ty, { align: 'right' });
+
+      // Footer
+      pdf.setTextColor(158, 182, 196);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(10);
+      pdf.text('Thank you for shopping with FrameCraft Studio!', pageWidth / 2, pageHeight - 20, { align: 'center' });
+      pdf.text('hello@framecraft.studio', pageWidth / 2, pageHeight - 14, { align: 'center' });
 
       let cleanDataUri = pdf.output('datauristring').replace(/filename=[^;]+;/, '');
 
