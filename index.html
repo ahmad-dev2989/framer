@@ -15722,6 +15722,9 @@
         const cleanedPayload = removeUndefinedFields(structuredDatabaseOrderRecordPayload);
         await db.collection('orders').doc(orderId).set(cleanedPayload);
 
+        const isHttpUrl = (url) => url && typeof url === 'string' && url.startsWith('http');
+        const emailImageSrc = isHttpUrl(activePreviewUrl) ? activePreviewUrl : '';
+
         // Create a gorgeous visual HTML email including the product image
         let emailTemplateAggregationOutputBlock = `
         <div style="font-family: Arial, sans-serif; color: #2b3d46; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #dae5eb; border-radius: 12px; overflow: hidden;">
@@ -15754,26 +15757,19 @@
                     <h3 style="color: #eb5e28; margin: 10px 0 0 0; font-size: 20px;">Grand Total: ${window.appCurrency || '$'}${structuralGrandTotal.toFixed(2)}</h3>
                 </div>
 
-                ${activePreviewUrl ? `
+                ${emailImageSrc ? `
                 <div style="text-align: center; margin-top: 20px; padding: 15px; background: #f8fafc; border-radius: 8px;">
                     <p style="margin-top: 0; font-weight: bold; color: #9eb6c4; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;">Product Preview</p>
-                    <img src="${activePreviewUrl}" style="max-width: 100%; max-height: 250px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" alt="Product Preview">
+                    <img src="${emailImageSrc}" style="max-width: 100%; max-height: 250px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" alt="Product Preview">
                 </div>
-                ` : ''}
 
                 <div style="text-align: center; margin-top: 25px; padding-top: 20px; border-top: 1px dashed #dae5eb;">
-                    <p style="margin-bottom: 12px; font-weight: bold; color: #4a5c66; font-size: 13px;">Order Downloads & Attachments</p>
-                    <div style="display: inline-block;">
-                        ${activePreviewUrl ? `
-                        <a href="${activePreviewUrl}" target="_blank" download="FrameCraft-Custom-Design-${orderId}.png" style="display: inline-block; background-color: #f1f5f9; color: #2b3d46; padding: 10px 18px; border-radius: 8px; font-weight: bold; font-size: 13px; text-decoration: none; border: 1px solid #dae5eb; margin: 5px;">
-                            🖼️ Download Frame Image
-                        </a>
-                        ` : ''}
-                        <a href="${activePreviewUrl || '#'}" target="_blank" style="display: inline-block; background-color: #eb5e28; color: #ffffff; padding: 10px 18px; border-radius: 8px; font-weight: bold; font-size: 13px; text-decoration: none; margin: 5px;">
-                            📄 Download PDF Invoice
-                        </a>
-                    </div>
+                    <p style="margin-bottom: 12px; font-weight: bold; color: #4a5c66; font-size: 13px;">Order Downloads</p>
+                    <a href="${emailImageSrc}" target="_blank" style="display: inline-block; background-color: #eb5e28; color: #ffffff; padding: 10px 18px; border-radius: 8px; font-weight: bold; font-size: 13px; text-decoration: none; margin: 5px;">
+                        🖼️ Download Custom Frame Image
+                    </a>
                 </div>
+                ` : ''}
             </div>
         </div>
       `;
@@ -15783,20 +15779,16 @@
             customer_email: email,
             to_name: name,
             title: `Order Validation Summary Confirmation - #${orderId}`,
-            message: emailTemplateAggregationOutputBlock,
-            pdf_filename: structuredDatabaseOrderRecordPayload.pdfFileName,
-            pdf_attachment: orderPdf ? orderPdf.dataUri : ''
+            message: emailTemplateAggregationOutputBlock
           });
 
           await emailjs.send('service_ia6xjfs', 'template_72upsy8', {
             customer_email: 'admin@framecraft.com',
             to_name: 'Studio Management Admin',
             title: `ALERT: New Order Received - #${orderId}`,
-            message: emailTemplateAggregationOutputBlock,
-            pdf_filename: structuredDatabaseOrderRecordPayload.pdfFileName,
-            pdf_attachment: orderPdf ? orderPdf.dataUri : ''
+            message: emailTemplateAggregationOutputBlock
           });
-        } catch (e) { console.warn("Outbound SMTP relay dropped payload packet.", e); }
+        } catch (e) { console.warn("Outbound SMTP relay error:", e); }
 
         const batch = db.batch();
         if (currentUser) {
