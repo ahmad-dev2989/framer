@@ -14881,7 +14881,9 @@
               editorView.classList.remove('hidden');
               editorView.style.position = 'absolute';
               editorView.style.left = '-9999px';
-              editorView.style.visibility = 'hidden';
+              editorView.style.top = '-9999px';
+              editorView.style.opacity = '0';
+              editorView.style.pointerEvents = 'none';
             }
 
             const originalTransform = editorCanvas.style.transform;
@@ -14900,7 +14902,7 @@
               }
             }
 
-            await new Promise(r => setTimeout(r, 250));
+            await new Promise(r => setTimeout(r, 350));
 
             const canvasShot = await html2canvas(editorCanvas, {
               scale: 2,
@@ -14927,7 +14929,9 @@
             if (wasHidden && editorView) {
               editorView.style.position = '';
               editorView.style.left = '';
-              editorView.style.visibility = '';
+              editorView.style.top = '';
+              editorView.style.opacity = '';
+              editorView.style.pointerEvents = '';
               editorView.classList.add('hidden');
             }
           }
@@ -16195,7 +16199,7 @@
             <div class="mb-4">
               <div class="flex justify-between items-center mb-1">
                 <span class="text-lg font-black text-charcoal">${p.title} <span class="text-slate font-bold text-xs ml-1">(x${p.qty || 1})</span></span>
-                ${(cust && cust.projectId) ? `<button type="button" onclick="window.open('?previewProject=${cust.projectId}', '_blank')" class="px-4 py-2 bg-editorbg border border-sand hover:border-flame text-charcoal rounded-xl flex items-center gap-2 text-xs font-bold transition shadow-sm cursor-pointer" style="pointer-events: auto;"><i data-lucide="external-link" class="w-3.5 h-3.5"></i> View Preview</button>` : `<span class="text-[10px] text-slate font-bold uppercase tracking-wider bg-sand/30 px-2 py-1 rounded">Legacy Order</span>`}
+                ${order.previewImageURL ? `<a href="${order.previewImageURL}" download="FrameCraft-Custom-Design-${order.id}.png" target="_blank" class="px-4 py-2 bg-editorbg border border-sand hover:border-flame text-charcoal rounded-xl flex items-center gap-2 text-xs font-bold transition shadow-sm cursor-pointer" style="pointer-events: auto;"><i data-lucide="image-down" class="w-4 h-4 text-flame"></i> Download Frame Image</a>` : `<span class="text-[10px] text-slate font-bold uppercase tracking-wider bg-sand/30 px-2 py-1 rounded">No Image Available</span>`}
               </div>
               ${cust && cust.size ? `<div class="text-xs font-bold text-slate mb-2">Base Size: <span class="text-charcoal">${cust.size.name}</span></div>` : ''}
               ${cust && cust.decor?.length ? `<div class="text-xs font-bold text-slate mb-2">Decor Elements: <span class="text-charcoal">${cust.decor.map(d => d.name).join(', ')}</span></div>` : ''}
