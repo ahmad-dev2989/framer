@@ -7471,6 +7471,9 @@
 
     // --- ADMIN: Categories Logic ---
     window.loadCategoriesData = async () => {
+      if (globalCategories && globalCategories.length > 0) {
+        return;
+      }
       try {
         const snap = await db.collection('categories').orderBy('createdAt', 'desc').get();
         globalCategories = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -8930,6 +8933,27 @@
       });
     } catch (e) {
       console.warn("Could not bind realtime products listener:", e);
+    }
+
+    // Realtime Listener for Categories Collection
+    try {
+      db.collection('categories').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+        globalCategories = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        if (typeof window.renderLandingCategories === 'function') {
+          window.renderLandingCategories();
+        }
+        if (typeof window.loadCategoriesTable === 'function') {
+          window.loadCategoriesTable();
+        }
+        if (typeof window.renderProductsPage === 'function' && !document.getElementById('products-browse-section').classList.contains('hidden')) {
+          window.renderProductsPage();
+        }
+      }, err => {
+        console.warn("Firestore realtime categories listener fallback:", err);
+      });
+    } catch (e) {
+      console.warn("Could not bind realtime categories listener:", e);
     }
 
     async function deleteProduct(productId) {
@@ -13753,6 +13777,9 @@
         return;
       }
 
+      // Execute initial path routing immediately so the user's initial route is rendered without waiting for network calls
+      window.handlePathRouting(window.location.pathname, false);
+
       // Init CMS engine
       try {
         await window.initCms();
@@ -13806,8 +13833,12 @@
         window.history.replaceState({ view: cleanPath }, "", cleanPath);
       }
 
-      // 4. Initial path routing execution
-      window.handlePathRouting(window.location.pathname, false);
+      // 4. Initial path routing completion: DO NOT override user view if they have already opened product details or another sub-view!
+      const pdView = document.getElementById('product-detail-view');
+      const isProductDetailOpen = pdView && !pdView.classList.contains('hidden');
+      if (!isProductDetailOpen) {
+        window.handlePathRouting(window.location.pathname, false);
+      }
 
       // Initialize dropdown toggle events
       document.querySelectorAll('.dropdown-trigger').forEach(trigger => {
@@ -14326,7 +14357,7 @@
 
       if (user) {
         // Prevent partial login state if unverified via email/pass
-        if (false && !user.emailVerified && user.providerData && user.providerData.some(p => p.providerId === 'password')) {
+        if (!user.emailVerified && user.providerData && user.providerData.some(p => p.providerId === 'password')) {
           return;
         }
 
@@ -14564,7 +14595,7 @@
         const userCred = await firebase.auth().signInWithEmailAndPassword(emailInput, pass);
         const user = userCred.user;
 
-        if (false && !user.emailVerified) {
+        if (!user.emailVerified) {
           await firebase.auth().signOut();
           showToast("Please verify your email before logging in.");
           return;
